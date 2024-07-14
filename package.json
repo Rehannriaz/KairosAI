@@ -1,8 +1,11 @@
 {
-  "name": "@./source",
+  "name": "@kairos/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "ada:dev": "cd packages/Ada && yarn dev"
+
+  },
   "private": true,
   "dependencies": {
     "next": "14.2.3",
