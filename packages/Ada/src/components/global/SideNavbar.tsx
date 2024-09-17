@@ -1,6 +1,6 @@
 // components/SideNavbar.tsx
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
@@ -14,8 +14,6 @@ import {
   SportsGymnasticsOutlined,
 } from '@mui/icons-material';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
-import MenuIcon from '@mui/icons-material/Menu'; // Menu icon for toggling
-import CloseIcon from '@mui/icons-material/Close'; // Close icon for toggling
 import { useRouter, usePathname } from 'next/navigation';
 import LogoPage from './LogoPage';
 import { useSidebar } from '@/contexts/SidebarContext';
@@ -60,18 +58,6 @@ const SideNavbar = () => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } w-fit h-screen shadow-lg border-e-2 rounded-b-lg overflow-y-auto bg-white`}
       >
-        {/* Toggle Button */}
-        <button
-          onClick={toggleSidebar}
-          className=" top-2 right-2 z-50  transition duration-100 ease-in focus:outline-none hover:bg-black hover:text-white rounded-full p-1 absolute"
-        >
-          {isOpen ? (
-            <CloseIcon className="text-3xl" />
-          ) : (
-            <MenuIcon className="text-3xl" />
-          )}
-        </button>
-
         <div className="flex flex-col justify-center">
           {/* Logo */}
           <div
