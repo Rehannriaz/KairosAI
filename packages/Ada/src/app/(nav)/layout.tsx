@@ -22,7 +22,7 @@ const NavbarLayoutContent = ({ children }: { children: React.ReactNode }) => {
             isOpen ? 'w-[calc(100%-16rem)]' : 'w-full'
           }`}
         >
-          {children}
+          <div className="p-12">{children}</div>
         </div>
       </div>
     </div>
