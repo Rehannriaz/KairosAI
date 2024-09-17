@@ -17,21 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-primary flex w-full">
-        <SidebarProvider>
-          <div className="flex flex-col flex-1">
-            <div>
-              <Header />
-            </div>
-            <div className="flex flex-row">
-              <div className="w-1/7">
-                <SideNavbar />
-              </div>
-              <div className="w-6/7">{children}</div>
-            </div>
-          </div>
-        </SidebarProvider>
-      </body>
+      <body className="">{children}</body>
     </html>
   );
 }
