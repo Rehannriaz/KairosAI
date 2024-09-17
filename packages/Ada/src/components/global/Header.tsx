@@ -18,8 +18,8 @@ const Header = () => {
       {/* Logo and Hamburger */}
       <div className="flex items-center space-x-4">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <Image src="/next.svg" alt="Logo" width={40} height={40} />
+        <div className="flex items-center space-x-4">
+          <Image src="/next.svg" alt="Logo" width={60} height={60} />
           <span className="text-xl font-bold">KairosAI</span>
         </div>
         {/* Hamburger Menu Button */}
@@ -29,7 +29,7 @@ const Header = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="hidden lg:flex flex-1 mx-4">
+      <div className="hidden lg:flex flex-1 mx-4 ">
         <div className="relative w-full max-w-md">
           <input
             type="text"
