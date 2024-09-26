@@ -35,7 +35,7 @@ export default function NavbarLayout({
   children: React.ReactNode;
 }) {
   return (
-    <body className="bg-primary flex w-full">
+    <body className="bg-primary flex w-full ">
       <SidebarProvider>
         <NavbarLayoutContent>{children}</NavbarLayoutContent>
       </SidebarProvider>

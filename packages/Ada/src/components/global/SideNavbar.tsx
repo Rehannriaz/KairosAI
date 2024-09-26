@@ -27,7 +27,7 @@ const SideNavbar = () => {
   const getActiveTab = () => {
     if (pathname === '/dashboard') {
       return 'dashboard';
-    } else if (pathname.includes('/job-listing')) {
+    } else if (pathname.includes('/single-job')) {
       return 'job-listing';
     } else if (pathname.includes('/key-metrics')) {
       return 'key-metrics';
@@ -78,7 +78,7 @@ const SideNavbar = () => {
           />
           <LogoPage
             title={'Jobs Listing'}
-            llink={'/job-listing'}
+            llink={'/single-job'}
             iconn={<SearchOutlinedIcon />}
             active={activeTab === 'job-listing'}
           />
