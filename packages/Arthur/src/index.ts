@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import connectToDatabase from './utils/database';
-import UserRoutes from './routes/userRoutes'; // Updated import
+import router from './routes/resumeRoutes'; // Updated import
 import { PORT } from './config';
 
 dotenv.config();
@@ -13,7 +13,7 @@ const app: Application = express();
 app.use(bodyParser.json());
 
 // Routes
-app.use('/api/users', UserRoutes); // Use the updated UserRoutes class
+app.use('/api/resumes', router); // Use the updated UserRoutes class
 
 // Start Server
 app.listen(PORT, async () => {
