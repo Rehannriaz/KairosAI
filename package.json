@@ -3,13 +3,15 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "ada:dev": "cd packages/Ada && yarn dev"
+    "ada:dev": "cd packages/Ada && yarn dev",
+    "backendExample:dev": "cd packages/backendExample && yarn dev"
   },
   "private": true,
   "dependencies": {
-    "chart.js": "^4.4.4",
     "antd": "^5.20.6",
+    "chart.js": "^4.4.4",
     "next": "14.2.3",
+    "pg": "^8.13.1",
     "react": "18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.3.1",
