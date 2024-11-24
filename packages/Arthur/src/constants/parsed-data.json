@@ -1,0 +1,83 @@
+[
+    {
+      "name": "John Doe",
+      "location": "San Francisco, CA",
+      "contact": {
+        "email": "johndoe@example.com",
+        "phone": "123-456-7890"
+      },
+      "professional_summary": "Experienced software engineer with a focus on web development and cloud solutions.",
+      "skills": [
+        "JavaScript",
+        "React",
+        "Node.js",
+        "AWS",
+        "TypeScript",
+        "Docker",
+        "CI/CD"
+      ],
+      "employment_history": [
+        {
+          "role": "Frontend Developer",
+          "company": "Tech Solutions Inc.",
+          "duration": "3 years"
+        },
+        {
+          "role": "Software Engineer",
+          "company": "Innovative Apps LLC",
+          "duration": "2 years"
+        }
+      ],
+      "education": {
+        "degree": "Bachelor of Science",
+        "field_of_study": "Computer Science",
+        "graduation_year": 2017
+      },
+      "preferences": {
+        "job_type": "Full-Time",
+        "preferred_location": ["San Francisco", "Remote"],
+        "industry": "Technology"
+      }
+    },
+    {
+      "name": "Jane Smith",
+      "location": "New York, NY",
+      "contact": {
+        "email": "janesmith@example.com",
+        "phone": "987-654-3210"
+      },
+      "professional_summary": "Data scientist with expertise in machine learning, statistical modeling, and big data technologies.",
+      "skills": [
+        "Python",
+        "R",
+        "SQL",
+        "TensorFlow",
+        "Scikit-learn",
+        "Tableau",
+        "Hadoop"
+      ],
+      "employment_history": [
+        {
+          "role": "Data Analyst",
+          "company": "Big Data Analytics Co.",
+          "duration": "2 years"
+        },
+        {
+          "role": "Data Scientist",
+          "company": "AI Solutions Ltd.",
+          "duration": "3 years"
+        }
+      ],
+      "education": {
+        "degree": "Master of Science",
+        "field_of_study": "Data Science",
+        "graduation_year": 2019
+      },
+      "preferences": {
+        "job_type": "Full-Time",
+        "preferred_location": ["New York", "Boston", "Remote"],
+        "industry": "Finance"
+      }
+    }
+  ]
+  

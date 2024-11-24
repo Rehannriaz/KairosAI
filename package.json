@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "ada:dev": "cd packages/Ada && yarn dev",
-    "backendExample:dev": "cd packages/backendExample && yarn dev"
+    "backendExample:dev": "cd packages/backendExample && yarn dev",
+    "arthur:dev": "cd packages/Arthur && yarn dev"
   },
   "private": true,
   "dependencies": {

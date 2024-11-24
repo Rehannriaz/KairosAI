@@ -59,3 +59,17 @@ CREATE TABLE admin (
     user_id INT REFERENCES users(user_id),
     permissions TEXT
 );
+
+CREATE TABLE resumes (
+    id SERIAL PRIMARY KEY, -- Auto-incrementing ID for the resume
+    name VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    professional_summary TEXT NOT NULL,
+    skills TEXT[], -- Array of strings for skills
+    employment_history JSONB, -- Use JSONB for storing the employment history as an object
+    education JSONB, -- Use JSONB for education details as an object
+    preferences JSONB -- Use JSONB for preferences details as an object
+);
+
