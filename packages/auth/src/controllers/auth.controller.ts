@@ -83,6 +83,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
     // Return user details (without password) in the response
     res.status(200).json({
       message: 'Login successful',
+      token: token,
       user: {
         id: user.user_id,
         name: user.name,
