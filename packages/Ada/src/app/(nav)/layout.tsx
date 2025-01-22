@@ -8,9 +8,7 @@ const NavbarLayoutContent = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex flex-col flex-1">
-      <div>
-        <Header />
-      </div>
+      <Header />
       <div className="flex flex-row">
         <div
           className={`transition-all duration-300 ${isOpen ? 'w-1/7' : 'w-0'}`}
@@ -35,10 +33,10 @@ export default function NavbarLayout({
   children: React.ReactNode;
 }) {
   return (
-    <body className="bg-primary flex w-full ">
+    <span className="bg-main flex w-full ">
       <SidebarProvider>
         <NavbarLayoutContent>{children}</NavbarLayoutContent>
       </SidebarProvider>
-    </body>
+    </span>
   );
 }

@@ -6,7 +6,8 @@
     "ada:dev": "cd packages/Ada && yarn dev",
     "backendExample:dev": "cd packages/backendExample && yarn dev",
     "arthur:dev": "cd packages/Arthur && yarn dev",
-    "john:dev": "cd packages/John && yarn dev"
+    "john:dev": "cd packages/John && yarn dev",
+    "auth:dev": "cd packages/auth && yarn dev"
   },
   "private": true,
   "dependencies": {
