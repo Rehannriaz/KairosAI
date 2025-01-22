@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/popover';
 import authServiceInstance from '@/api/authService';
 import { useRouter } from 'next/navigation';
+import { getUsername } from '@/lib';
 
 const Header = () => {
   const { toggleSidebar } = useSidebar(); // Use the context
@@ -76,7 +77,7 @@ const Header = () => {
           </PopoverTrigger>
           <PopoverContent className="">
             <div className="flex flex-col ml-2">
-              <span className="font-bold">username</span>
+              <span className="font-bold">{getUsername()}</span>
               <div className="text-right cursor-pointer mt-5 p-2 w-full rounded-r-md hover:bg-[#222222] hover:text-white transition duration-100 ease-in">
                 View Profile
               </div>
