@@ -11,6 +11,8 @@
     "arthur:dev": "cd packages/Arthur && yarn dev",
     "john:dev": "cd packages/John && yarn dev",
     "auth:dev": "cd packages/auth && yarn dev"
+    "polly:dev": "cd packages/Polly && yarn dev"
+
   },
   "private": true,
   "dependencies": {
