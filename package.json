@@ -2,6 +2,9 @@
   "name": "@kairos/source",
   "version": "0.0.0",
   "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "ada:dev": "cd packages/Ada && yarn dev",
     "backendExample:dev": "cd packages/backendExample && yarn dev",
