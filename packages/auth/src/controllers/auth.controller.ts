@@ -82,7 +82,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
       httpOnly: true, // Prevent JavaScript access
       secure: true, // Use secure cookies in production
       // sameSite: 'strict', // Prevent CSRF
-      maxAge: 3600000, // 1 hour in milliseconds
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
     });
 
     // Return user details (without password) in the response

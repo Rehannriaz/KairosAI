@@ -42,7 +42,7 @@ const getAllChatsForJob = async (
     console.log('job and user', jobId, userId);
     // Fetch all chats for the given job ID (Replace with actual database call)
     const result = await pool.query(
-      'SELECT * FROM job j JOIN mock_interview mi ON j.job_id = mi.job_id WHERE mi.job_id = $1 AND mi.user_id = $2',
+      'SELECT * FROM jobs j JOIN mock_interview mi ON j.job_id = mi.job_id WHERE mi.job_id = $1 AND mi.user_id = $2',
       [jobId, userId]
     );
 
