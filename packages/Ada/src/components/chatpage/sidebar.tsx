@@ -43,10 +43,11 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
           company: chat.company,
           position: chat.title,
           date: chat.date,
-          lastMessage:
-            `${
-              chat?.interview_data?.[chat.interview_data.length - 2]?.content
-            }...` || 'No messages',
+          lastMessage: `${
+            chat?.interview_data?.[
+              chat.interview_data.length - 1
+            ]?.content?.slice(0, 10) || 'No messages'
+          }...`,
         }));
         const sortedChats = processedChats.sort((a, b) => {
           return new Date(a.date).getTime() - new Date(b.date).getTime();

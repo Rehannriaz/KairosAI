@@ -15,7 +15,10 @@ CREATE TABLE job (
     location VARCHAR(100),
     salary NUMERIC CHECK (salary >= 0),
     description TEXT,
-    skills_required TEXT
+    skills_required TEXT,
+    listingUrl VARCHAR(255) UNIQUE,
+    postedDate TIMESTAMP NOT NULL,
+    aboutRole TEXT,
 );
 
 -- Create MOCK_INTERVIEW table
