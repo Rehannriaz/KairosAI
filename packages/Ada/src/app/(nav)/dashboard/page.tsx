@@ -36,11 +36,11 @@ const Page = () => {
           title="Total Users"
         />
       </div>
-      <div className='flex flex-wrap justify-evenly mt-4 gap-x-4'>
+      <div className="flex flex-wrap justify-evenly mt-4 gap-x-4">
         <div className="card bg-white shadow-sm rounded-sm p-6">
           <LineChart />
         </div>
-        <div className='card bg-white shadow-sm rounded-sm p-6'>
+        <div className="card bg-white shadow-sm rounded-sm p-6">
           <DoughnutChart />
         </div>
       </div>
