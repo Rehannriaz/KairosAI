@@ -11,7 +11,7 @@ interface PageProps {
 export default function Page({ params }: PageProps) {
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar jobID={params.jobID} />
+      <Sidebar jobID={params.jobID} chatID={params.chatID} />
       <Chat jobID={params.jobID} chatID={params.chatID} />
     </div>
   );

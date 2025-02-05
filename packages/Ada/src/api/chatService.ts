@@ -105,6 +105,29 @@ class ChatService {
       throw error; // Propagate the error for further handling
     }
   }
+
+  async deleteChatForSpecificJob(chatID: string) {
+    try {
+      const jwtToken = await getJWT();
+      const response = await fetch(`${johnBaseURL}/interview/${chatID}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Something went wrong.`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error deleting chat from server: ', error);
+      throw error;
+    }
+  }
 }
 
 const chatServiceInstance = new ChatService();

@@ -42,9 +42,10 @@ const getAllChatsForJob = async (
     console.log('job and user', jobId, userId);
     // Fetch all chats for the given job ID (Replace with actual database call)
     const result = await pool.query(
-      'SELECT * FROM mock_interview WHERE job_id = $1 AND user_id = $2',
+      'SELECT * FROM job j JOIN mock_interview mi ON j.job_id = mi.job_id WHERE mi.job_id = $1 AND mi.user_id = $2',
       [jobId, userId]
     );
+
     return result.rows.length ? result.rows : null;
   } catch (error: any) {
     console.error('Error fetching chats:', error.message);
@@ -105,6 +106,41 @@ const updateInterviewData = async (
     throw new Error('Failed to update interview data.');
   }
 };
+const getInterviewData = async (
+  interviewId: string,
+  userId: string,
+  jobId: string
+): Promise<any> => {
+  try {
+    const result = await pool.query(
+      'SELECT interview_data FROM mock_interview WHERE interview_id = $1 AND user_id = $2 AND job_id = $3',
+      [interviewId, userId, jobId]
+    );
+
+    if (result.rows.length > 0) {
+      return result.rows[0];
+    }
+    return null; // If no interview data exists
+  } catch (error: any) {
+    console.error('Error fetching interview data:', error.message);
+    throw new Error('Failed to fetch interview data.');
+  }
+};
+
+const deleteChatForJob = async (
+  chatID: string,
+  userId: string
+): Promise<any> => {
+  try {
+    await pool.query(
+      'DELETE FROM mock_interview WHERE interview_id = $1 AND user_id = $2',
+      [chatID, userId]
+    );
+  } catch (error: any) {
+    console.error('Error deleting chat:', error.message);
+    throw new Error('Failed to delete chat.');
+  }
+};
 
 export default {
   getChatCompletion,
@@ -112,4 +148,6 @@ export default {
   getChatForJob,
   initiateInterview,
   updateInterviewData,
+  getInterviewData,
+  deleteChatForJob,
 };

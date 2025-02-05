@@ -65,9 +65,24 @@ const getChatForJob = async (req: any, res: any) => {
   }
 };
 
+const deleteChatForJob = async (req: any, res: any) => {
+  const { chatID } = req.params;
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const response = await interviewServices.deleteChatForJob(chatID, req.user);
+    res.status(200).json(response);
+  } catch (error: any) {
+    console.error('Error in deleteChatForJob:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export default {
   startInterview,
   getAllChatsForJob,
   getChatForJob,
   initiateInterview,
+  deleteChatForJob,
 };

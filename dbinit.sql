@@ -11,6 +11,9 @@ CREATE TABLE users (
 CREATE TABLE job (
     job_id CHAR(24) PRIMARY KEY DEFAULT substring(md5(random()::text), 1, 24),
     title VARCHAR(100),
+    company VARCHAR(100),
+    location VARCHAR(100),
+    salary NUMERIC CHECK (salary >= 0),
     description TEXT,
     skills_required TEXT
 );

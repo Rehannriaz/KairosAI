@@ -19,27 +19,43 @@ Resume: ${resumeText.details}.
 Ask follow-up questions based on the candidate's responses and maintain a professional tone.
 `;
 
-    // Reinitialize if history is too long
-    if (interviewHistory.length > 50) {
-      console.warn('Resetting interview history to prevent overload.');
-      interviewHistory = [];
+    // Fetch existing interview history from the database (if exists)
+    let interviewHistory: { role: string; content: string }[] = [];
+    if (interviewId && userObj && jobId) {
+      const interviewData = await interviewRepository.getInterviewData(
+        interviewId,
+        userObj.userId,
+        jobId
+      );
+      console.log('interviewData', interviewData);
+
+      if (interviewData && interviewData.interview_data) {
+        // Check if interview_data is a string before parsing
+        let interviewDataParsed;
+        try {
+          interviewDataParsed =
+            typeof interviewData.interview_data === 'string'
+              ? JSON.parse(interviewData.interview_data)
+              : interviewData.interview_data; // No need to parse if it's already an object
+        } catch (error: any) {
+          console.error('Error parsing interview data:', error.message);
+          interviewDataParsed = []; // Fallback to an empty array if parsing fails
+        }
+
+        interviewHistory = interviewDataParsed;
+        console.log('interviewhist', interviewHistory);
+      } else {
+        // Initialize if no history exists
+        interviewHistory.push({ role: 'system', content: systemPrompt });
+      }
     }
 
-    // Initialize chat history if empty
-    if (interviewHistory.length === 0) {
-      interviewHistory.push({ role: 'system', content: systemPrompt });
-      interviewHistory.push({
-        role: 'user',
-        content: `Candidate's Resume:\n${resumeText.details}`,
-      });
-    }
-
-    // Add user's response to the chat history
+    // Add the user's response if provided
     if (userResponse) {
       interviewHistory.push({ role: 'user', content: userResponse });
     }
 
-    // Get AI-generated response
+    // Get AI's response based on the current history
     const botResponse = await interviewRepository.getChatCompletion(
       interviewHistory
     );
@@ -47,7 +63,7 @@ Ask follow-up questions based on the candidate's responses and maintain a profes
     // Append the AI's response to the history
     interviewHistory.push({ role: 'assistant', content: botResponse });
 
-    // Filter out system prompt and resume content
+    // Filter out system prompt and resume content for final storage
     const filteredHistory = interviewHistory.filter(
       (msg) =>
         msg.role !== 'system' &&
@@ -56,9 +72,9 @@ Ask follow-up questions based on the candidate's responses and maintain a profes
     );
 
     // Prepare the updated interview data to save into the database
+    console.log('updatedInterviewData', filteredHistory);
     const updatedInterviewData = JSON.stringify(filteredHistory);
-
-    // Update the interview_data in the database (replace with actual query)
+    // Update the interview data in the database
     if (interviewId && userObj && jobId) {
       await interviewRepository.updateInterviewData(
         interviewId,
@@ -68,7 +84,7 @@ Ask follow-up questions based on the candidate's responses and maintain a profes
       );
     }
 
-    return filteredHistory; // Only return the filtered conversation
+    return filteredHistory; // Return the filtered conversation
   } catch (error: any) {
     console.error('Error in processInterview:', error.message);
     throw error; // Let the controller handle the error
@@ -115,9 +131,22 @@ const initiateInterview = async (
     throw new Error('Failed to initiate interview.');
   }
 };
+const deleteChatForJob = async (
+  chatID: string,
+  userObj: User
+): Promise<any> => {
+  try {
+    return await interviewRepository.deleteChatForJob(chatID, userObj.userId);
+  } catch (error: any) {
+    console.error('Error deleting chat:', error.message);
+    throw new Error('Failed to delete chat.');
+  }
+};
+
 export default {
   processInterview,
   fetchChatsForJob,
   fetchChatForJob,
   initiateInterview,
+  deleteChatForJob,
 };

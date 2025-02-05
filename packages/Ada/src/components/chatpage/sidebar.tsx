@@ -2,8 +2,20 @@
 import chatServiceInstance from '@/api/chatService';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface ChatHistory {
   id: string;
@@ -13,46 +25,72 @@ interface ChatHistory {
   lastMessage: string;
 }
 
-// Mock data - in a real app this would come from your database
-const chatHistory: ChatHistory[] = [
-  {
-    id: '1',
-    company: 'Tech Corp',
-    position: 'Senior Frontend Developer',
-    date: '2024-02-05',
-    lastMessage: 'Tell me about your experience with React...',
-  },
-  {
-    id: '2',
-    company: 'Startup Inc',
-    position: 'Full Stack Engineer',
-    date: '2024-02-04',
-    lastMessage: 'How do you handle state management?',
-  },
-  // Add more mock data as needed
-];
-
-export function Sidebar({ jobID }: { jobID: string }) {
+export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
   const [loading, setLoading] = useState(false);
+  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+  const router = useRouter();
+
   useEffect(() => {
     const fetchChat = async () => {
       try {
         setLoading(true);
-        const chat = await chatServiceInstance.getAllChatsForSpecificJob(jobID);
-        console.log('jobs', chat);
+        const chatData = await chatServiceInstance.getAllChatsForSpecificJob(
+          jobID
+        );
+        // Process the chat data into the format for chatHistory
+        const processedChats: ChatHistory[] = chatData.map((chat: any) => ({
+          id: chat.interview_id,
+          company: chat.company,
+          position: chat.title,
+          date: chat.date,
+          lastMessage:
+            `${
+              chat?.interview_data?.[chat.interview_data.length - 2]?.content
+            }...` || 'No messages',
+        }));
+        const sortedChats = processedChats.sort((a, b) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        });
+        setChatHistory(sortedChats);
       } catch (error) {
         console.error('Error fetching chat:', error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchChat();
-  }, [jobID]);
+  }, [chatID, jobID]);
+
+  const handleNewInterview = async () => {
+    try {
+      const newChat = await chatServiceInstance.initateChatForSpecificJob(
+        jobID
+      );
+      router.push(`/mock-interviews/${jobID}/${newChat.interview_id}`);
+    } catch (error) {
+      console.error('Error initiating chat:', error);
+    }
+  };
+
+  const handleDeleteChat = async (chatId: string) => {
+    try {
+      await chatServiceInstance.deleteChatForSpecificJob(chatId); // Implement delete function in your API
+      // Remove the deleted chat from the state
+      setChatHistory(chatHistory.filter((chat) => chat.id !== chatId));
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+    }
+  };
 
   return (
     <div className="w-80 border-r bg-muted/10">
       <div className="p-4 border-b">
-        <Button className="w-full justify-start" variant="outline">
+        <Button
+          className="w-full justify-start"
+          variant="outline"
+          onClick={handleNewInterview}
+        >
           <PlusCircle className="mr-2 h-4 w-4" />
           New Interview
         </Button>
@@ -60,18 +98,57 @@ export function Sidebar({ jobID }: { jobID: string }) {
       <ScrollArea className="h-[calc(100vh-5rem)]">
         <div className="p-4 space-y-4">
           {chatHistory.map((chat) => (
-            <button
+            <div
+              onClick={() => {
+                router.push(`/mock-interviews/${jobID}/${chat.id}`);
+              }}
               key={chat.id}
-              className="w-full text-left p-4 rounded-lg hover:bg-muted transition-colors border"
+              className={`cursor-pointer w-full text-left p-4 rounded-lg hover:bg-muted transition-colors border ${
+                chatID === chat.id ? 'border-black' : 'bg-transparent'
+              }`}
             >
-              <div className="font-semibold">{chat.company}</div>
-              <div className="text-sm text-muted-foreground">
-                {chat.position}
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="font-semibold">{chat.company}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {chat.position}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-2 truncate">
+                    {chat?.lastMessage || 'No messages'}
+                  </div>
+                </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <Trash className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your interview history and remove your data from
+                        our servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering the click for navigation
+                          handleDeleteChat(chat.id);
+                        }}
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
-              <div className="text-xs text-muted-foreground mt-2 truncate">
-                {chat.lastMessage}
-              </div>
-            </button>
+            </div>
           ))}
         </div>
       </ScrollArea>

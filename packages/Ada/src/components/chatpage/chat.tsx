@@ -48,14 +48,15 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
       content: input,
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...(prev || []), userMessage]);
+
     setInput('');
     setLoading(true);
     setLoadingMessageId(userMessage.id);
 
     try {
       const data = await chatServiceInstance.postChat(input, chatID, jobID);
-
+      console.log('data', data);
       if (data.res) {
         const newMessages = data.res.map((msg: any, index: number) => ({
           id: `${Date.now()}-${index}`,
@@ -88,9 +89,9 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
       </div>
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
-          {messages?.map((message) => (
+          {messages?.map((message, index) => (
             <div
-              key={message.id}
+              key={`${message.id}-${index}`}
               className={`flex ${
                 message.role === 'user' ? 'justify-end' : 'justify-start'
               }`}
