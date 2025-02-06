@@ -8,7 +8,7 @@ CREATE TABLE users (
 );
 
 -- Create JOB table
-CREATE TABLE job (
+CREATE TABLE jobs (
     job_id CHAR(24) PRIMARY KEY DEFAULT substring(md5(random()::text), 1, 24),
     title VARCHAR(100),
     company VARCHAR(100),
@@ -18,7 +18,7 @@ CREATE TABLE job (
     skills_required TEXT,
     listingUrl VARCHAR(255) UNIQUE,
     postedDate TIMESTAMP NOT NULL,
-    aboutRole TEXT,
+    aboutRole TEXT
 );
 
 -- Create MOCK_INTERVIEW table
