@@ -1,14 +1,14 @@
 import interviewRepository from '../repositories/interview.repository';
 import jobListingText from '../constants/job-listing.json';
 import resumeText from '../constants/resume-text.json';
-import { User } from '../models/userTypes';
+import { UserJWT } from 'common/src/types/UserTypes';
 
 let interviewHistory: { role: string; content: string }[] = [];
 
 const processInterview = async (
   userResponse?: string,
   interviewId?: string,
-  userObj?: User,
+  userObj?: UserJWT,
   jobId?: string
 ): Promise<any[]> => {
   try {
@@ -93,7 +93,7 @@ Ask follow-up questions based on the candidate's responses and maintain a profes
 
 const fetchChatsForJob = async (
   jobID: string,
-  userObj: User
+  userObj: UserJWT
 ): Promise<any[]> => {
   try {
     // Fetch all chats for the given job ID (Replace with actual database call)
@@ -107,7 +107,7 @@ const fetchChatsForJob = async (
 const fetchChatForJob = async (
   jobID: string,
   chatID: string,
-  userObj: User
+  userObj: UserJWT
 ): Promise<any> => {
   try {
     return await interviewRepository.getChatForJob(
@@ -122,7 +122,7 @@ const fetchChatForJob = async (
 };
 const initiateInterview = async (
   jobID: string,
-  userObj: User
+  userObj: UserJWT
 ): Promise<any> => {
   try {
     return await interviewRepository.initiateInterview(jobID, userObj.userId);
@@ -133,7 +133,7 @@ const initiateInterview = async (
 };
 const deleteChatForJob = async (
   chatID: string,
-  userObj: User
+  userObj: UserJWT
 ): Promise<any> => {
   try {
     return await interviewRepository.deleteChatForJob(chatID, userObj.userId);
