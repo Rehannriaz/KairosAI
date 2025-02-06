@@ -29,8 +29,8 @@ const SideNavbar = () => {
       return 'dashboard';
     } else if (pathname.includes('/single-job')) {
       return 'job-listing';
-    } else if (pathname.includes('/key-metrics')) {
-      return 'key-metrics';
+    } else if (pathname.includes('/recommendation')) {
+      return 'job-recommendations';
     } else if (pathname.includes('/target')) {
       return 'Target';
     } else if (pathname.includes('/goals')) {
@@ -83,8 +83,8 @@ const SideNavbar = () => {
             active={activeTab === 'job-listing'}
           />
           <LogoPage
-            title={'Key Metrics'}
-            llink={'/key-metrics'}
+            title={'Recommend Jobs'}
+            llink={'/recommendation'}
             iconn={<WorkOutlineIcon />}
             active={activeTab === 'key-metrics'}
           />

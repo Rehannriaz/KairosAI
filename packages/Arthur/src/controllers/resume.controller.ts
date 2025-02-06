@@ -6,8 +6,8 @@ export const getAllResumes = async (req: Request, res: Response): Promise<any> =
   try {
     console.log("reached here")
     const resumes = await pool.query('SELECT * FROM resumes');
-    console.log("resumes",resumes);
-    return res.status(200).json(resumes);
+    console.log("resumes",resumes.rows);
+    return res.status(200).json(resumes.rows);
   } catch (error) {
     return res.status(500).json({ message: 'Error fetching resumes', error });
   }

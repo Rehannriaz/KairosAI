@@ -7,18 +7,19 @@ CREATE TABLE users (
     role VARCHAR(50)
 );
 
--- Create JOB table
 CREATE TABLE jobs (
-    job_id CHAR(24) PRIMARY KEY DEFAULT substring(md5(random()::text), 1, 24),
-    title VARCHAR(100),
-    company VARCHAR(100),
-    location VARCHAR(100),
-    salary NUMERIC CHECK (salary >= 0),
-    description TEXT,
-    skills_required TEXT,
-    listingUrl VARCHAR(255) UNIQUE,
-    postedDate TIMESTAMP NOT NULL,
-    aboutRole TEXT
+    job_id          CHAR(24) PRIMARY KEY DEFAULT SUBSTRING(md5(random()::text), 1, 24),
+    title           VARCHAR(100) NOT NULL,
+    company         VARCHAR(100) NOT NULL,
+    location        VARCHAR(100) NOT NULL,
+    listing_url     TEXT NOT NULL,
+    posted_date     DATE,
+    about_role      TEXT,
+    requirements    TEXT,
+    full_description TEXT,
+    scraped_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    salary          NUMERIC CHECK (salary >= 0),
+    embedding VECTOR(1536) -- Added vector column for embeddings
 );
 
 -- Create MOCK_INTERVIEW table
@@ -53,17 +54,24 @@ CREATE TABLE admin (
     permissions TEXT
 );
 
+CREATE TABLE user_primary_resume (
+    user_id CHAR(24) PRIMARY KEY REFERENCES users(user_id) ON DELETE CASCADE,
+    resume_id CHAR(24) UNIQUE REFERENCES resumes(id) ON DELETE SET NULL
+);
+
+
 -- Create RESUMES table with a foreign key to users
 CREATE TABLE resumes (
-    id CHAR(24) PRIMARY KEY DEFAULT substring(md5(random()::text), 1, 24), -- 24-character identifier for the resume
-    user_id CHAR(24) REFERENCES users(user_id) ON DELETE CASCADE, -- Foreign key referencing users
+    id CHAR(24) PRIMARY KEY DEFAULT substring(md5(random()::text), 1, 24),
+    user_id CHAR(24) REFERENCES users(user_id) ON DELETE CASCADE,
     name VARCHAR(255) NOT NULL,
     location VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(50) NOT NULL,
     professional_summary TEXT NOT NULL,
-    skills TEXT[], -- Array of strings for skills
-    employment_history JSONB, -- Use JSONB for storing the employment history as an object
-    education JSONB, -- Use JSONB for education details as an object
-    preferences JSONB -- Use JSONB for preferences details as an object
+    skills TEXT[],
+    employment_history JSONB,
+    education JSONB,
+    preferences JSONB,
+    embedding VECTOR(1536) -- Added vector column for embeddings
 );
