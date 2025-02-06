@@ -1,5 +1,6 @@
 import { Chat } from '@/components/chatpage/chat';
 import { Sidebar } from '@/components/chatpage/sidebar';
+import BaseHeader from '@/components/global/BaseHeader';
 
 interface PageProps {
   params: {
@@ -10,9 +11,12 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   return (
-    <div className="flex h-screen bg-background">
-      <Sidebar jobID={params.jobID} chatID={params.chatID} />
-      <Chat jobID={params.jobID} chatID={params.chatID} />
-    </div>
+    <>
+      <BaseHeader />
+      <div className="flex justify-center align-top bg-background">
+        <Sidebar jobID={params.jobID} chatID={params.chatID} />
+        <Chat jobID={params.jobID} chatID={params.chatID} />
+      </div>
+    </>
   );
 }
