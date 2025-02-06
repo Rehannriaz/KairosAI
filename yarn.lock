@@ -3840,7 +3840,7 @@ arraybuffer.prototype.slice@^1.0.4:
     get-intrinsic "^1.2.6"
     is-array-buffer "^3.0.4"
 
-"arthur@file:/home/zaid/FYP/KairosAI/packages/Arthur":
+"arthur@file:/home/rehan/FYP/packages/Arthur":
   version "1.0.0"
   resolved "file:packages/Arthur"
   dependencies:
@@ -3878,7 +3878,7 @@ asynckit@^0.4.0:
   resolved "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz"
   integrity sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==
 
-"authmicroservice@file:/home/zaid/FYP/KairosAI/packages/auth":
+"authmicroservice@file:/home/rehan/FYP/packages/auth":
   version "1.0.0"
   resolved "file:packages/auth"
   dependencies:
@@ -4055,7 +4055,7 @@ babel-preset-jest@^29.6.3:
     babel-plugin-jest-hoist "^29.6.3"
     babel-preset-current-node-syntax "^1.0.0"
 
-"backendexample@file:/home/zaid/FYP/KairosAI/packages/backendExample":
+"backendexample@file:/home/rehan/FYP/packages/backendExample":
   version "1.0.0"
   resolved "file:packages/backendExample"
   dependencies:
@@ -4584,7 +4584,7 @@ common-path-prefix@^3.0.0:
   resolved "https://registry.npmjs.org/common-path-prefix/-/common-path-prefix-3.0.0.tgz"
   integrity sha512-QE33hToZseCH3jS0qN96O/bSh3kaw/h+Tq7ngyY9eWDUnTlTNUyqfqvCXioLe5Na5jFsL78ra/wuBU4iuEgd4w==
 
-"common@file:/home/zaid/FYP/KairosAI/packages/common":
+"common@file:/home/rehan/FYP/packages/common":
   version "1.0.0"
   resolved "file:packages/common"
   dependencies:
@@ -7556,7 +7556,7 @@ jiti@^1.21.0:
   resolved "https://registry.npmjs.org/jiti/-/jiti-1.21.6.tgz"
   integrity sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==
 
-"john@file:/home/zaid/FYP/KairosAI/packages/John":
+"john@file:/home/rehan/FYP/packages/John":
   version "1.0.0"
   resolved "file:packages/John"
   dependencies:
@@ -7746,7 +7746,7 @@ jws@^3.2.2:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
 
-"kairos-ai@file:/home/zaid/FYP/KairosAI/packages/Ada":
+"kairos-ai@file:/home/rehan/FYP/packages/Ada":
   version "0.1.0"
   resolved "file:packages/Ada"
   dependencies:
@@ -9075,7 +9075,7 @@ pkg-dir@^7.0.0:
   dependencies:
     find-up "^6.3.0"
 
-"polly@file:/home/zaid/FYP/KairosAI/packages/Polly":
+"polly@file:/home/rehan/FYP/packages/Polly":
   version "1.0.0"
   resolved "file:packages/Polly"
   dependencies:
