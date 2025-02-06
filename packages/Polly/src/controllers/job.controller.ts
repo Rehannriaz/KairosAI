@@ -11,10 +11,19 @@ const getAllJobs = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const createJob = async (req: Request, res: Response): Promise<void> => {
+const scrapeJobs = async (req: Request, res: Response): Promise<void> => {
   try {
-    const job = await jobServices.createJob(req.body);
+    const job = await jobServices.scrapeJobs();
     res.status(201).json(job);
+  } catch (error: Error | any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getJobById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const job = await jobServices.getJobById(req.params.id);
+    res.status(200).json(job);
   } catch (error: Error | any) {
     res.status(500).json({ error: error.message });
   }
@@ -24,5 +33,6 @@ const createJob = async (req: Request, res: Response): Promise<void> => {
 
 export default {
   getAllJobs,
-  createJob,
+  scrapeJobs,
+  getJobById,
 };

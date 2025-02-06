@@ -1,124 +1,92 @@
-'use client';
-import { useEffect, useState } from 'react';
+"use client";
+import { useEffect, useState } from "react";
+import { Table } from "antd";
+import { useRouter } from "next/navigation";
+import jobServiceInstance from "@/api/jobService";
 
-import { Table } from 'antd';
+interface Job {
+  job_id: string;
+  title: string;
+  location: string;
+  posted_date: string;
+  listing_url: string;
+  company: string; // Added this since it's in your response
+}
 
-const Recommendation = () => {
+export default function RecommendationPage() {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
   useEffect(() => {
-    const fetchResumes = async () => {
+    async function fetchJobs() {
       try {
-        // Fetch all resumes
-        const response = await fetch(`${process.env.NEXT_PUBLIC_DB}/api/resumes`); // Replace <ARTHUR_PORT> with the actual port number
-        const data = await response.json();
-        console.log('All Resumes:', data);
-
-        // Fetch resume by ID (replace '1' with the actual ID to fetch)
-        const responseById = await fetch('http://localhost:<ARTHUR_PORT>/api/resumes/1');
-        const resumeById = await responseById.json();
-        console.log('Resume by ID:', resumeById);
+        const response = await jobServiceInstance.getAllJobs();
+        console.log("Response: ", response);
+        
+        // Since response is already an array of jobs, we can map it directly
+        const mappedJobs = response.map((job: Job) => ({
+          job_id: job.job_id,
+          title: job.title,
+          location: job.location,
+          posted_date: job.posted_date || '', // Add fallback in case it's undefined
+          listing_url: job.listing_url,
+          company: job.company,
+        }));
+        
+        setJobs(mappedJobs);
       } catch (error) {
-        console.error('Error fetching resumes:', error);
+        console.error("Failed to fetch jobs:", error);
+      } finally {
+        setLoading(false);
       }
-    };
-
-    fetchResumes();
+    }
+    fetchJobs();
   }, []);
-  // Dummy job data
-  const jobData = [
-    {
-      key: '1',
-      title: 'Frontend Developer',
-      company: 'TechCorp',
-      location: 'New York, NY',
-      salary: '$90,000 - $110,000',
-    },
-    {
-      key: '2',
-      title: 'Backend Developer',
-      company: 'CodeBase Inc.',
-      location: 'San Francisco, CA',
-      salary: '$100,000 - $130,000',
-    },
-    {
-      key: '3',
-      title: 'UI/UX Designer',
-      company: 'DesignPro',
-      location: 'Austin, TX',
-      salary: '$75,000 - $95,000',
-    },
-    {
-      key: '4',
-      title: 'UI/UX Designer',
-      company: 'DesignPro',
-      location: 'Austin, TX',
-      salary: '$75,000 - $95,000',
-    },
-    {
-      key: '5',
-      title: 'UI/UX Designer',
-      company: 'DesignPro',
-      location: 'Austin, TX',
-      salary: '$75,000 - $95,000',
-    },
-    {
-      key: '6',
-      title: 'UI/UX Designer',
-      company: 'DesignPro',
-      location: 'Austin, TX',
-      salary: '$75,000 - $95,000',
-    },
-    {
-      key: '7',
-      title: 'UI/UX Designer',
-      company: 'DesignPro',
-      location: 'Austin, TX',
-      salary: '$75,000 - $95,000',
-    },
-    {
-      key: '8',
-      title: 'UI/UX Designer',
-      company: 'DesignPro',
-      location: 'Austin, TX',
-      salary: '$75,000 - $95,000',
-    },
-  ];
 
-  // Table columns definition
+  const handleRowClick = (record: Job) => {
+    router.push(`/jobs/${record.job_id}`);
+  };
+
   const columns = [
-    {
-      title: 'Job Title',
-      dataIndex: 'title',
-      key: 'title',
+    { title: "Job Title", 
+      dataIndex: "title", 
+      key: "title",
+      render: (text: string, record: Job) => `${text} at ${record.company}`
+    },
+    { title: "Location", dataIndex: "location", key: "location" },
+    { 
+      title: "Posted", 
+      dataIndex: "posted_date", 
+      key: "posted_date",
+      render: (date: string) => {
+        if (!date) return '';
+        return new Date(date).toLocaleDateString();
+      }
     },
     {
-      title: 'Company',
-      dataIndex: 'company',
-      key: 'company',
-    },
-    {
-      title: 'Location',
-      dataIndex: 'location',
-      key: 'location',
-    },
-    {
-      title: 'Salary',
-      dataIndex: 'salary',
-      key: 'salary',
+      title: "Details",
+      dataIndex: "listing_url",
+      key: "listing_url",
+      render: (url: string) => (
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          View
+        </a>
+      ),
     },
   ];
 
   return (
-    <section className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Recommended Jobs</h1>
-      <p className="mb-6">Based on your resume, we have found the best matching jobs for you:</p>
-      <Table 
-        columns={columns} 
-        dataSource={jobData} 
-        pagination={{ pageSize: 5 }} 
-        bordered
-      />
-    </section>
+    <Table 
+      columns={columns} 
+      dataSource={jobs} 
+      loading={loading} 
+      rowKey="job_id"
+      pagination={{ pageSize: 10 }}
+      onRow={(record) => ({
+        onClick: () => handleRowClick(record),
+        style: { cursor: 'pointer' }
+      })}
+    />
   );
-};
-
-export default Recommendation;
+}

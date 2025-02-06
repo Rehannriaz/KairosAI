@@ -9,3 +9,16 @@ const DB_PORT = parseInt(process.env.DB_PORT || '');
 const PORT = parseInt(process.env.PORT || '');
 
 export { USERNAME, PASSWORD, HOST, DB, PORT, DB_PORT };
+
+export const scrapingConfig = {
+    baseUrl: "https://www.linkedin.com/jobs/search",
+    outputFile: "linkedin_jobs_detailed.json",
+    searchQuery: "software developer",
+    location: "remote",
+    pagination: {
+      enabled: true,
+      pageParam: "start",
+      maxPages: 3,
+      itemsPerPage: 25,
+    },
+  };
