@@ -1,64 +1,74 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Upload, File, Loader2 } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { useState } from 'react';
+import { Upload, File, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import resumeServiceInstance from '@/api/resumeService';
 
 export default function ResumeUpload() {
-  const [file, setFile] = useState<File | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
-  const router = useRouter()
+  const [file, setFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const router = useRouter();
 
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
   const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-  }
+    e.preventDefault();
+    setIsDragging(false);
+  };
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
+    e.preventDefault();
+    setIsDragging(false);
 
-    const droppedFile = e.dataTransfer.files[0]
+    const droppedFile = e.dataTransfer.files[0];
     if (isValidFileType(droppedFile)) {
-      setFile(droppedFile)
+      setFile(droppedFile);
     }
-  }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0]
+    const selectedFile = e.target.files?.[0];
     if (selectedFile && isValidFileType(selectedFile)) {
-      setFile(selectedFile)
+      setFile(selectedFile);
     }
-  }
+  };
 
   const isValidFileType = (file: File) => {
-    const validTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
-    return validTypes.includes(file.type)
-  }
+    const validTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    return validTypes.includes(file.type);
+  };
 
   const handleSubmit = async () => {
-    if (!file) return
+    if (!file) return;
 
-    setIsUploading(true)
+    setIsUploading(true);
     // Simulate file upload and parsing
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsUploading(false)
+    try {
+      const response = await resumeServiceInstance.uploadResume(file);
+      console.log('result', response);
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      throw error;
+    }
+    setIsUploading(false);
 
     // Navigate to the review page
-    router.push("/resume/review")
-  }
+    // router.push('/resume/review');
+  };
 
   const handleCancel = () => {
-    router.push("/resume")
-  }
+    router.push('/resume');
+  };
 
   return (
     <div className="container mx-auto max-w-3xl py-10">
@@ -72,8 +82,8 @@ export default function ResumeUpload() {
           className={`
             border-2 border-dashed rounded-lg p-10 text-center
             transition-colors duration-200
-            ${isDragging ? "border-primary bg-primary/5" : "border-gray-200"}
-            ${file ? "bg-green-50 border-green-500" : ""}
+            ${isDragging ? 'border-primary bg-primary/5' : 'border-gray-200'}
+            ${file ? 'bg-green-50 border-green-500' : ''}
           `}
         >
           {!file ? (
@@ -85,11 +95,20 @@ export default function ResumeUpload() {
                 <p className="text-lg">Drag and drop your resume here</p>
                 <p className="text-sm mb-3 text-muted-foreground">or</p>
                 <label className="mt-2 cursor-pointer text-primary hover:text-primary/80">
-                  <span className="bg-black hover:bg-slate-800 px-8 py-2 rounded-md text-white">Browse files</span>
-                  <input type="file" className="hidden" accept=".pdf,.docx" onChange={handleFileChange} />
+                  <span className="bg-black hover:bg-slate-800 px-8 py-2 rounded-md text-white">
+                    Browse files
+                  </span>
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept=".pdf,.docx"
+                    onChange={handleFileChange}
+                  />
                 </label>
               </div>
-              <p className="text-sm text-muted-foreground">Supported formats: PDF, DOCX</p>
+              <p className="text-sm text-muted-foreground">
+                Supported formats: PDF, DOCX
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -98,7 +117,9 @@ export default function ResumeUpload() {
               </div>
               <div>
                 <p className="text-lg font-medium">{file.name}</p>
-                <p className="text-sm text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                <p className="text-sm text-muted-foreground">
+                  {(file.size / 1024 / 1024).toFixed(2)} MB
+                </p>
               </div>
             </div>
           )}
@@ -116,13 +137,12 @@ export default function ResumeUpload() {
                   Processing...
                 </>
               ) : (
-                "Submit Resume"
+                'Submit Resume'
               )}
             </Button>
           </div>
         )}
       </Card>
     </div>
-  )
+  );
 }
-

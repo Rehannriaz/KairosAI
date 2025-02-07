@@ -7,8 +7,14 @@ const processResume = async (req: any, res: any) => {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-
-    const extractedData = await ResumeService.extractResumeData(req.file);
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    console.log('reached here', req.file);
+    const extractedData = await ResumeService.extractResumeData(
+      req.user.userId,
+      req.file
+    );
     return res.json(extractedData);
   } catch (error) {
     console.error('Error processing resume:', error);
