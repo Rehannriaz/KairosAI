@@ -5,8 +5,8 @@ export interface DecodedToken extends JwtPayload {
   userName: string;
   email: string;
   role: string;
-  iat: number;
-  exp: number;
+  iat?: number;
+  exp?: number;
 }
 export interface AuthenticatedRequest extends Request {
   user?: DecodedToken;

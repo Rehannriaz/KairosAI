@@ -2,10 +2,11 @@ import OpenAI from 'openai';
 import fileParser from '../utils/fileParser';
 import ResumeRepository from '../repositories/resume.repository';
 import dotenv from 'dotenv';
+import { OPENAI_API_KEY } from '../config';
 
 dotenv.config();
 
-const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openaiClient = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 class ResumeService {
   static async extractResumeData(file: Express.Multer.File) {
