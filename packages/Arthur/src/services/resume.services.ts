@@ -1,38 +1,53 @@
-import resumeRepository from '../repositories/resume.repository'; // Import the repository for resumes
-import { IResume } from '../models/resume.model'; // Use the resume model
+import OpenAI from 'openai';
+import fileParser from '../utils/fileParser';
+import ResumeRepository from '../repositories/resume.repository';
+import dotenv from 'dotenv';
 
-// Get all resumes
-const getAllResumes = async (): Promise<IResume[]> => {
-  return await resumeRepository.findAllResumes(); // Fetch all resumes from the repository
-};
+dotenv.config();
 
-// Get a resume by ID
-const getResumeById = async (id: string): Promise<IResume | null> => {
-  return await resumeRepository.findResumeById(id); // Fetch a specific resume by ID
-};
+const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Create a new parsed resume
-const createResume = async (resumeData: IResume): Promise<IResume> => {
-  return await resumeRepository.createResume(resumeData); // Create a new resume
-};
+class ResumeService {
+  static async extractResumeData(file: Express.Multer.File) {
+    const text = await fileParser.extractText(file);
 
-// Update an existing resume
-const updateResume = async (
-  id: string,
-  resumeData: Partial<IResume>
-): Promise<IResume | null> => {
-  return await resumeRepository.updateResume(id, resumeData); // Update the resume
-};
+    if (!text) {
+      throw new Error('Failed to extract text from the resume');
+    }
 
-// Delete a resume by ID
-const deleteResume = async (id: string): Promise<IResume | null> => {
-  return await resumeRepository.deleteResume(id); // Delete a resume
-};
+    const prompt = `
+    Extract the following details from the given resume text in JSON format:
+    - Name
+    - Location
+    - Email
+    - Phone
+    - Professional Summary
+    - Skills (as an array)
+    - Employment History (as an array of {job_title, company, years})
+    - Education (as an array of {degree, institution, years})
 
-export default {
-  getAllResumes,
-  getResumeById,
-  createResume,
-  updateResume,
-  deleteResume,
-};
+    Resume Text:
+    ${text}
+    `;
+
+    const response = await openaiClient.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a helpful AI extracting resume details.',
+        },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0,
+    });
+
+    return JSON.parse(response.choices[0].message.content || '{}');
+  }
+
+  static async getUserResumes(userId: number) {
+    return await ResumeRepository.getUserResumes(userId);
+  }
+}
+
+export default ResumeService;
