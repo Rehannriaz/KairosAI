@@ -1,18 +1,11 @@
 import { Router } from 'express';
-import { 
-  getAllResumes,
-  getResumeById,
-  createResume,
-  updateResume,
-  deleteResume
-} from '../controllers/resume.controller'; // Import functions directly
+import multer from 'multer';
+import ResumeController from '../controllers/resume.controller';
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
-router.get('/', getAllResumes); // Get all resumes
-router.get('/:id', getResumeById); // Get resume by ID
-router.post('/', createResume); // Create new parsed resume
-router.put('/:id', updateResume); // Update resume
-router.delete('/:id', deleteResume); // Delete resume
+router.post('/upload', upload.single('file'), ResumeController.processResume);
+router.get('/', ResumeController.getUserResumes); // New route
 
 export default router;

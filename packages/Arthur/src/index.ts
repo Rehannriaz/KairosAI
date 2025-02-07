@@ -6,27 +6,18 @@ import router from './routes/resumeRoutes'; // Updated import
 import { PORT } from './config';
 import cors from 'cors';
 import validateToken from 'common/src/middlewares/authMiddleware';
+
 dotenv.config();
 
 const app: Application = express();
 
 // cors
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    methods: 'GET,POST,PUT,DELETE,OPTIONS',
-    credentials: true,
-    allowedHeaders: 'Content-Type,Authorization',
-  })
-);
+app.use(cors());
 
-// Middleware
 app.use(bodyParser.json());
 
-// Routes
-app.use('/api/resumes', validateToken(), router); // Use the updated UserRoutes class
+app.use('/api/resumes', validateToken(), router);
 
-// Start Server
 app.listen(PORT, async () => {
   await connectToDatabase();
   console.log(`Server running on port ${PORT}`);
