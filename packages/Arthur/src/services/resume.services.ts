@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { OPENAI_API_KEY } from '../config';
 import resumeRepository from '../repositories/resume.repository';
 import { OpenAIEmbeddings } from '@langchain/openai';
+import { IResume } from '../models/resume.model';
 
 dotenv.config();
 
@@ -82,8 +83,30 @@ const extractResumeData = async (userId: string, file: Express.Multer.File) => {
   }
 };
 
-const getUserResumes = async (userId: number) => {
+const getUserResumes = async (userId: string) => {
   return await ResumeRepository.getUserResumes(userId);
 };
+const getResumeById = async (id: string): Promise<IResume | null> => {
+  return await resumeRepository.findResumeById(id); // Fetch a specific resume by ID
+};
 
-export default { extractResumeData, getUserResumes };
+
+// Update an existing resume
+const updateResume = async (
+  id: string,
+  resumeData: Partial<IResume>
+): Promise<IResume | null> => {
+  return await resumeRepository.updateResume(id, resumeData); // Update the resume
+};
+
+// Delete a resume by ID
+const deleteResume = async (id: string): Promise<IResume | null> => {
+  return await resumeRepository.deleteResume(id); // Delete a resume
+};
+
+
+
+export default { extractResumeData, getUserResumes,
+  getResumeById,
+  updateResume,
+  deleteResume };

@@ -23,11 +23,11 @@ const processResume = async (req: any, res: any) => {
 };
 
 const getUserResumes = async (req: any, res: any) => {
+  console.log("here");
   try {
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
     const resumes = await ResumeService.getUserResumes(req.user.userId);
     return res.json(resumes);
   } catch (error) {
@@ -35,5 +35,47 @@ const getUserResumes = async (req: any, res: any) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+const getResumeById = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const resume = await ResumeService.getResumeById(id); // Fetch a resume by ID
+    if (!resume) {
+      return res.status(404).json({ message: 'Resume not found' });
+    }
+    return res.status(200).json(resume);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error fetching resume', error });
+  }
+};
 
-export default { processResume, getUserResumes };
+
+// Update an existing resume
+const updateResume = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const resumeData = req.body; // Get updated resume data
+    const updatedResume = await ResumeService.updateResume(id, resumeData);
+    if (!updatedResume) {
+      return res.status(404).json({ message: 'Resume not found' });
+    }
+    return res.status(200).json(updatedResume);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error updating resume', error });
+  }
+};
+
+// Delete a resume
+const deleteResume = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const deletedResume = await ResumeService.deleteResume(id);
+    if (!deletedResume) {
+      return res.status(404).json({ message: 'Resume not found' });
+    }
+    return res.status(200).json({ message: 'Resume deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error deleting resume', error });
+  }
+};
+
+export default { processResume, getUserResumes,getResumeById,updateResume,deleteResume };
