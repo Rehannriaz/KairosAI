@@ -1,11 +1,12 @@
+import resumeController from '../controllers/resume.controller';
 import { Router } from 'express';
 import multer from 'multer';
-import ResumeController from '../controllers/resume.controller';
 
 const router = Router();
-const upload = multer({ storage: multer.memoryStorage() });
+const storage = multer.memoryStorage(); // Store file in memory, or use `diskStorage` to save locally
+const upload = multer({ storage });
 
-router.post('/upload', upload.single('file'), ResumeController.processResume);
-router.get('/', ResumeController.getUserResumes); // New route
+router.post('/upload', upload.single('file'), resumeController.processResume);
+router.get('/', resumeController.getUserResumes); // New route
 
 export default router;

@@ -75,3 +75,36 @@ CREATE TABLE resumes (
     preferences JSONB,
     embedding VECTOR(1536) -- Added vector column for embeddings
 );
+
+
+CREATE OR REPLACE FUNCTION set_primary_resume()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if the user already has a primary resume
+    IF NOT EXISTS (SELECT 1 FROM user_primary_resume WHERE user_id = NEW.user_id) THEN
+        -- Set the new resume as the primary one
+        INSERT INTO user_primary_resume (user_id, resume_id)
+        VALUES (NEW.user_id, NEW.id);
+    ELSE
+        -- If the user has a primary resume, update it to the new resume
+        UPDATE user_primary_resume
+        SET resume_id = NEW.id
+        WHERE user_id = NEW.user_id;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER after_resume_insert
+AFTER INSERT ON resumes
+FOR EACH ROW
+EXECUTE FUNCTION set_primary_resume();
+
+
+-- manually update resume_id for a user
+-- UPDATE user_primary_resume
+-- SET resume_id = 'new_resume_id'
+-- WHERE user_id = 'user_id';
+
