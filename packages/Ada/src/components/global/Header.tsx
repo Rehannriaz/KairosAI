@@ -35,9 +35,13 @@ const Header = () => {
       {/* Logo and Hamburger */}
       <div className="flex items-center space-x-4">
         {/* Logo */}
-        <div className="flex items-center space-x-4">
-          <Image src="/next.svg" alt="Logo" width={60} height={60} />
-          <span className="text-xl font-bold">KairosAI</span>
+        <div
+          className="flex items-center space-x-4 cursor-pointer"
+          onClick={() => {
+            router.push('/dashboard');
+          }}
+        >
+          <Image src="/logo_black.png" alt="Logo" width={65} height={65} />
         </div>
         {/* Hamburger Menu Button */}
         <button onClick={toggleSidebar} className=" text-xl">
@@ -67,13 +71,15 @@ const Header = () => {
         <Popover>
           <PopoverTrigger>
             {' '}
-            <Image
-              src="/next.svg"
-              alt="Profile"
-              width={40}
-              height={40}
-              className="rounded-full cursor-pointer"
-            />
+            <span className="block w-10 h-10 overflow-hidden rounded-full border-[0.5px] border-black">
+              <Image
+                src="/logo_black.png"
+                alt="Profile"
+                width={40}
+                height={40}
+                className="rounded-full cursor-pointer"
+              />
+            </span>
           </PopoverTrigger>
           <PopoverContent className="">
             <div className="flex flex-col ml-2">

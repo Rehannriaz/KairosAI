@@ -12,6 +12,7 @@ import {
   FavoriteBorderOutlined,
   SettingsOutlined,
   SportsGymnasticsOutlined,
+  DevicesOutlined,
 } from '@mui/icons-material';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import { useRouter, usePathname } from 'next/navigation';
@@ -25,6 +26,7 @@ const SideNavbar = () => {
   const { isOpen, toggleSidebar } = useSidebar(); // Use the context
 
   const getActiveTab = () => {
+    if (!pathname) return '';
     if (pathname === '/dashboard') {
       return 'dashboard';
     } else if (pathname.includes('/single-job')) {
@@ -43,6 +45,8 @@ const SideNavbar = () => {
       return 'Weekly Wellness Workout';
     } else if (pathname.includes('/settings')) {
       return 'Settings';
+    } else if (pathname.includes('mock-interviews')) {
+      return 'mock-interviews';
     } else {
       return '';
     }
@@ -63,10 +67,10 @@ const SideNavbar = () => {
           <div
             className="flex flex-col pt-12 mb-20 items-center cursor-pointer"
             onClick={() => {
-              router.push('/');
+              router.push('/dashboard');
             }}
           >
-            <Image src={'/next.svg'} width={109} height={66} alt="logo" />
+            <Image src={'/logo_black.png'} width={109} height={66} alt="logo" />
           </div>
 
           {/* Sidebar Links */}
@@ -82,12 +86,12 @@ const SideNavbar = () => {
             iconn={<SearchOutlinedIcon />}
             active={activeTab === 'job-listing'}
           />
-          <LogoPage
+          {/* <LogoPage
             title={'Recommend Jobs'}
             llink={'/recommendation'}
             iconn={<WorkOutlineIcon />}
             active={activeTab === 'key-metrics'}
-          />
+          /> */}
           <LogoPage
             title={'Resume'}
             llink={'/resume'}
@@ -95,10 +99,10 @@ const SideNavbar = () => {
             active={activeTab === 'Resume'}
           />
           <LogoPage
-            title={'Goals'}
-            llink={'/goals'}
-            iconn={<FavoriteBorderOutlined />}
-            active={activeTab === 'Goals'}
+            title={'Interview'}
+            llink={'/mock-interviews'}
+            iconn={<DevicesOutlined />}
+            active={activeTab === 'mock-interviews'}
           />
           <LogoPage
             title={'Resources'}
