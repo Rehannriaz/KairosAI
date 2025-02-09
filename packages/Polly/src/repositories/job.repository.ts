@@ -25,24 +25,31 @@ const findJobById = async (id: string): Promise<IJob | null> => {
   }
 };
 
-const scrapeJobs = async (job: IJob): Promise<IJob> => {
-  const result = await pool.query(
-    'INSERT INTO jobs (title, company, location, listingUrl, postedDate, aboutRole, requirements, fullDescription, scrapedAt, salary ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
-    [
-      job.title,
-      job.company,
-      job.location,
-      job.listingUrl,
-      job.postedDate,
-      job.aboutRole,
-      job.requirements,
-      job.fullDescription,
-      job.scrapedAt,
-      job.salary,
-    ]
-  );
-  return result.rows[0];
+const saveJobInDb = async (job: IJob): Promise<IJob> => {
+  console.log("SAVING \n\n\n\n\n", job);
+  try {
+    const result = await pool.query(
+      'INSERT INTO jobs (title, company, location, listingurl, posteddate, aboutrole, requirements, description, salary) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
+      [
+        job.title,
+        job.company,
+        job.location,
+        job.listingUrl,
+        new Date(job.postedDate),  // Convert to proper Date object
+        job.aboutRole,
+        job.requirements,
+        job.description,
+        job.salary,
+      ]
+    );
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error saving job to the database:', error);
+    throw new Error('Failed to save job to the database');
+  }
 };
+
+
 
 async function fetchJobListings(url: string) {
   try {
@@ -111,7 +118,7 @@ const getRecommendedJobs = async (
 export default {
   findAllJobs,
   findJobById,
-  scrapeJobs,
+  saveJobInDb,
   fetchJobListings,
   fetchJobDetails,
   getRecommendedJobs,
