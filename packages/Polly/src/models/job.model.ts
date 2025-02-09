@@ -9,6 +9,7 @@ export interface IJob extends Document {
   aboutRole: string;
   requirements: string;
   description: string;
+  embedding: any;
   scrapedAt: Date;
   salary?: string; // Optional field
 }

@@ -29,7 +29,8 @@ const getJobById = async (req: Request, res: Response): Promise<void> => {
   }
 };
 const getNRecommendedJobs = async (req: any, res: any): Promise<void> => {
-  const { limit } = req.params;
+  console.log('reacheddddd');
+const { limit } = req.params;
   if (!req.user) {
     return res.status(401).json({ error: 'Unauthorized' });
   }

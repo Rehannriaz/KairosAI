@@ -1,7 +1,7 @@
 import { pool } from '../utils/database'; // Use the pool from your database.ts
 import { IJob } from '../models/job.model';
 import axios from 'axios';
-import cheerio from 'cheerio';
+const cheerio = require('cheerio');
 // Fetch all jobs
 const findAllJobs = async (): Promise<IJob[]> => {
   try {
@@ -29,7 +29,7 @@ const saveJobInDb = async (job: IJob): Promise<IJob> => {
   console.log("SAVING \n\n\n\n\n", job);
   try {
     const result = await pool.query(
-      'INSERT INTO jobs (title, company, location, listingurl, posteddate, aboutrole, requirements, description, salary) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
+      'INSERT INTO jobs (title, company, location, listingurl, posteddate, aboutrole, requirements, description, salary, embedding) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
       [
         job.title,
         job.company,
@@ -37,9 +37,10 @@ const saveJobInDb = async (job: IJob): Promise<IJob> => {
         job.listingUrl,
         new Date(job.postedDate),  // Convert to proper Date object
         job.aboutRole,
-        job.requirements,
+        JSON.stringify(job.requirements),
         job.description,
         job.salary,
+        JSON.stringify(job.embedding), // Convert JSON to string for jsonb
       ]
     );
     return result.rows[0];
@@ -100,17 +101,19 @@ const getRecommendedJobs = async (
   limit: number
 ): Promise<IJob[]> => {
   try {
+    console.log("FINAL")
     const result = await pool.query(
       `SELECT job_id, title, company, location, salary, description, 
-              skills_required, listingurl, posteddate, aboutrole
+              skills_required, listingurl, posteddate, aboutrole, requirements
        FROM jobs 
        ORDER BY embedding <-> $1 
        LIMIT $2`,
-      [embeddings, limit]
+      [JSON.stringify(embeddings), limit]
     );
+    console.log("here123", result.rows);
     return result.rows;
   } catch (error: any) {
-    console.error('Error fetching recommended jobs:', error.message);
+    // console.error('Error fetching recommended jobs:', error.message);
     throw error;
   }
 };

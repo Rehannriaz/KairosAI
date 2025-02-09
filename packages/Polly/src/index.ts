@@ -14,7 +14,7 @@ const app: Application = express();
 // Middleware
 app.use(cors())
 app.use(bodyParser.json());
-startJobScraper();
+// startJobScraper();
 // Routes
 app.use('/api/jobs',validateToken(), JobRoutes); // Use the updated UserRoutes class
 
