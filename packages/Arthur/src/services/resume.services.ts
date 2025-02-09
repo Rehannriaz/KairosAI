@@ -82,12 +82,13 @@ const extractResumeData = async (userId: string, file: Express.Multer.File) => {
       messages: [
         {
           role: 'system',
-          content: 'You are a precise resume parser that outputs only valid JSON.'
+          content:
+            'You are a precise resume parser that outputs only valid JSON.',
         },
-        { role: 'user', content: prompt }
+        { role: 'user', content: prompt },
       ],
       temperature: 0,
-      response_format: { type: "json_object" }  // Ensures JSON response
+      response_format: { type: 'json_object' }, // Ensures JSON response
     });
 
     const content = response.choices[0].message.content;
@@ -96,19 +97,25 @@ const extractResumeData = async (userId: string, file: Express.Multer.File) => {
     }
 
     const parsedJson = JSON.parse(content);
-    
+
     // Validate skill_level
-    if (!['beginner', 'intermediate', 'advanced'].includes(parsedJson.skill_level)) {
+    if (
+      !['beginner', 'intermediate', 'advanced'].includes(parsedJson.skill_level)
+    ) {
       parsedJson.skill_level = 'beginner'; // Default to beginner if invalid
     }
 
-    const dbResult = await resumeRepository.uploadUserResume(userId, parsedJson, embeddings);
-    console.log("dbResult", dbResult)
-    const finalResult = { ...parsedJson, "resume_id": dbResult };
+    const dbResult = await resumeRepository.uploadUserResume(
+      userId,
+      parsedJson,
+      embeddings
+    );
+    console.log('dbResult', dbResult);
+    const finalResult = { ...parsedJson, resume_id: dbResult };
     return finalResult;
   } catch (error) {
     console.error('Error extracting resume data:', error);
-    throw new Error('Failed to process resume');  // Better error handling
+    throw new Error('Failed to process resume'); // Better error handling
   }
 };
 
@@ -119,13 +126,18 @@ const getResumeById = async (id: string): Promise<IResume | null> => {
   return await resumeRepository.findResumeById(id); // Fetch a specific resume by ID
 };
 
-
 // Update an existing resume
 const updateResume = async (
   id: string,
   resumeData: Partial<IResume>
 ): Promise<IResume | null> => {
   return await resumeRepository.updateResume(id, resumeData); // Update the resume
+};
+const setPrimary = async (
+  id: string,
+  userId: string
+): Promise<IResume | null> => {
+  return await resumeRepository.setPrimary(id, userId); // Update the resume
 };
 
 // Delete a resume by ID
@@ -136,7 +148,7 @@ const deleteResume = async (id: string): Promise<IResume | null> => {
 const optimizeResumeText = async (text: string, section: string) => {
   try {
     let prompt = '';
-    
+
     switch (section) {
       case 'professional_summary':
         prompt = `
@@ -179,7 +191,6 @@ const optimizeResumeText = async (text: string, section: string) => {
         }`;
         break;
 
-
       default:
         throw new Error('Invalid section specified');
     }
@@ -199,7 +210,7 @@ const optimizeResumeText = async (text: string, section: string) => {
     const optimizedContent = response.choices[0].message.content || '{}';
     const jsonMatch = optimizedContent.match(/```json([\s\S]*?)```/);
     const cleanJson = jsonMatch ? jsonMatch[1].trim() : optimizedContent;
-    
+
     return JSON.parse(cleanJson);
   } catch (error) {
     console.error(`Error optimizing ${section}:`, error);
@@ -207,9 +218,12 @@ const optimizeResumeText = async (text: string, section: string) => {
   }
 };
 
-
-export default { extractResumeData, getUserResumes,
+export default {
+  extractResumeData,
+  getUserResumes,
   getResumeById,
   updateResume,
   deleteResume,
-optimizeResumeText};
+  setPrimary,
+  optimizeResumeText,
+};

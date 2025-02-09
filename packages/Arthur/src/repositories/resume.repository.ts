@@ -5,7 +5,7 @@ const uploadUserResume = async (
   userId: string,
   parsedJson: any,
   embeddings: any[]
-) : Promise<number> => {
+): Promise<number> => {
   try {
     const result = await pool.query(
       `INSERT INTO resumes 
@@ -25,8 +25,7 @@ const uploadUserResume = async (
         JSON.stringify(embeddings), // Convert JSON to string for jsonb
       ]
     );
-        return result.rows[0].id; // Return the inserted resume's ID
-
+    return result.rows[0].id; // Return the inserted resume's ID
   } catch (error: any) {
     console.error('Error uploading resume:', error.message);
     throw new Error('Failed to upload resume.');
@@ -36,13 +35,43 @@ const uploadUserResume = async (
 const getUserResumes = async (userId: string) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM resumes WHERE user_id = $1',
+      `SELECT 
+         r.id, r.user_id, r.name, r.location, r.email, r.phone, 
+         r.professional_summary, r.skills, r.employment_history, 
+         r.education, r.preferences, r.link, r.skill_level, 
+         upr.resume_id AS primary_resume_id
+       FROM resumes r
+       LEFT JOIN user_primary_resume upr 
+       ON r.user_id = upr.user_id
+       WHERE r.user_id = $1`,
       [userId]
     );
+
     return result.rows;
   } catch (error: any) {
     console.error('Error fetching resumes:', error.message);
     throw new Error('Failed to fetch resumes.');
+  }
+};
+const setPrimary = async (id: string, userId: string) => {
+  try {
+    const query = `
+      UPDATE user_primary_resume 
+      SET resume_id = $1 
+      WHERE user_id = $2 
+      RETURNING *;
+    `;
+
+    const result = await pool.query(query, [id, userId]);
+
+    if (result.rows.length === 0) {
+      throw new Error('Resume not found or update failed.');
+    }
+
+    return result.rows[0];
+  } catch (error: any) {
+    console.error('Error updating resume:', error.message);
+    throw new Error('Failed to update resume.');
   }
 };
 
@@ -54,10 +83,11 @@ const updateResume = async (id: string, resumeData: Partial<IResume>) => {
 
     // Convert employment_history to JSON string if it exists
     if (resumeData.employment_history) {
-      resumeData.employment_history = JSON.stringify(resumeData.employment_history);
-
+      resumeData.employment_history = JSON.stringify(
+        resumeData.employment_history
+      );
     }
-      if (resumeData.education) {
+    if (resumeData.education) {
       resumeData.education = JSON.stringify(resumeData.education);
     }
 
@@ -69,7 +99,9 @@ const updateResume = async (id: string, resumeData: Partial<IResume>) => {
       .join(', ');
 
     const result = await pool.query(
-      `UPDATE resumes SET ${setClause} WHERE id = $${fields.length + 1} RETURNING *`,
+      `UPDATE resumes SET ${setClause} WHERE id = $${
+        fields.length + 1
+      } RETURNING *`,
       [...values, id]
     );
 
@@ -83,7 +115,6 @@ const updateResume = async (id: string, resumeData: Partial<IResume>) => {
     throw new Error('Failed to update resume.');
   }
 };
-
 
 const deleteResume = async (id: string) => {
   try {
@@ -105,10 +136,9 @@ const deleteResume = async (id: string) => {
 
 const findResumeById = async (id: string) => {
   try {
-    const result = await pool.query(
-      'SELECT * FROM resumes WHERE id = $1',
-      [id]
-    );
+    const result = await pool.query('SELECT * FROM resumes WHERE id = $1', [
+      id,
+    ]);
 
     if (result.rows.length === 0) {
       throw new Error('Resume not found.');
@@ -126,5 +156,6 @@ export default {
   uploadUserResume,
   updateResume,
   deleteResume,
-  findResumeById
+  findResumeById,
+  setPrimary,
 };

@@ -1,65 +1,79 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ResumeDetailsModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
   resume: {
-    name: string
-    location: string
-    email: string
-    phone: string
-    professional_summary: string
-    skills: string[]
+    name: string;
+    location: string;
+    email: string;
+    phone: string;
+    professional_summary: string;
+    skills: string[];
     employment_history: Array<{
-      company: string
-      end_date: string
-      start_date: string
-      job_title: string
-      description: string
-      achievements: string[]
-    }>
+      company: string;
+      end_date: string;
+      start_date: string;
+      job_title: string;
+      description: string;
+      achievements: string[];
+    }>;
     education: Array<{
-      degree: string
-      institution: string
-      start_date: string
-      end_date: string
-      gpa?: string | null
-      honors: string[]
-    }>
-  }
+      degree: string;
+      institution: string;
+      start_date: string;
+      end_date: string;
+      gpa?: string | null;
+      honors: string[];
+    }>;
+  };
 }
 
-export function ResumeDetailsModal({ isOpen, onClose, resume }: ResumeDetailsModalProps) {
+export function ResumeDetailsModal({
+  isOpen,
+  onClose,
+  resume,
+}: ResumeDetailsModalProps) {
   // Helper function to format text by adding spaces between words
   const formatText = (text: string) => {
-    return text.replace(/([a-z])([A-Z])/g, '$1 $2')
-              .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
-              .replace(/([a-z])([0-9])/g, '$1 $2')
-              .split(/(?=[A-Z])/).join(' ')
-              .trim();
-  }
+    return text
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
+      .replace(/([a-z])([0-9])/g, '$1 $2')
+      .split(/(?=[A-Z])/)
+      .join(' ')
+      .trim();
+  };
 
   const formatDate = (date: string) => {
     if (date === 'present') return 'Present';
     try {
       const [year, month] = date.split('-');
       const dateObj = new Date(parseInt(year), parseInt(month) - 1);
-      return dateObj.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      return dateObj.toLocaleDateString('en-US', {
+        month: 'short',
+        year: 'numeric',
+      });
     } catch {
       return date;
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-  <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
-    <DialogHeader>
-      <DialogTitle>Resume Details</DialogTitle>
-    </DialogHeader>
-    <ScrollArea className="h-full flex-grow overflow-y-auto">
-      <div className="space-y-6 p-6">
+      <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
+        <DialogHeader>
+          <DialogTitle>Resume Details</DialogTitle>
+        </DialogHeader>
+        <ScrollArea className="h-full flex-grow overflow-y-auto">
+          <div className="space-y-6 p-6">
             <section>
               <h3 className="text-lg font-semibold">Personal Information</h3>
               <div className="grid grid-cols-2 gap-4 mt-2">
@@ -85,7 +99,9 @@ export function ResumeDetailsModal({ isOpen, onClose, resume }: ResumeDetailsMod
             {resume.professional_summary && (
               <section>
                 <h3 className="text-lg font-semibold">Professional Summary</h3>
-                <p className="mt-2">{formatText(resume.professional_summary)}</p>
+                <p className="mt-2">
+                  {formatText(resume.professional_summary)}
+                </p>
               </section>
             )}
 
@@ -93,7 +109,10 @@ export function ResumeDetailsModal({ isOpen, onClose, resume }: ResumeDetailsMod
               <h3 className="text-lg font-semibold">Skills</h3>
               <div className="flex flex-wrap gap-2 mt-2">
                 {resume.skills.map((skill, index) => (
-                  <span key={index} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                  <span
+                    key={index}
+                    className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm"
+                  >
                     {skill}
                   </span>
                 ))}
@@ -112,7 +131,9 @@ export function ResumeDetailsModal({ isOpen, onClose, resume }: ResumeDetailsMod
                       {formatDate(job.start_date)} - {formatDate(job.end_date)}
                     </p>
                     {job.description && (
-                      <p className="mt-2 text-sm">{formatText(job.description)}</p>
+                      <p className="mt-2 text-sm">
+                        {formatText(job.description)}
+                      </p>
                     )}
                     {job.achievements.length > 0 && (
                       <div className="mt-2">
@@ -138,7 +159,8 @@ export function ResumeDetailsModal({ isOpen, onClose, resume }: ResumeDetailsMod
                   <div key={index} className="border-b pb-4 last:border-b-0">
                     <h4 className="font-medium">{formatText(edu.degree)}</h4>
                     <p className="text-sm">
-                      {edu.institution}, {formatDate(edu.start_date)} - {formatDate(edu.end_date)}
+                      {edu.institution}, {formatDate(edu.start_date)} -{' '}
+                      {formatDate(edu.end_date)}
                     </p>
                     {edu.gpa && (
                       <p className="text-sm text-muted-foreground mt-1">

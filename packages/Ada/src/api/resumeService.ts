@@ -97,6 +97,32 @@ class ResumeService {
     }
   }
 
+  async setResumeAsPrimary(resumeId: string) {
+    try {
+      const jwtToken = await getJWT();
+
+      const response = await fetch(
+        `${arthurBaseURL}/resumes/primary/${resumeId}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update resume');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating resume:', error);
+      throw error;
+    }
+  }
+
   async deleteResume(id: string) {
     try {
       const jwtToken = await getJWT();

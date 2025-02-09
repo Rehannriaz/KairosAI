@@ -96,7 +96,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
 CREATE TRIGGER after_resume_insert
 AFTER INSERT ON resumes
 FOR EACH ROW
