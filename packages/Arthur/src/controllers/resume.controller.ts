@@ -78,4 +78,23 @@ const deleteResume = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
-export default { processResume, getUserResumes,getResumeById,updateResume,deleteResume };
+const optimizeResumeText = async (req: Request, res: Response): Promise<any> => {
+  try {
+    console.log('Request body:', req.body); // Add this line
+    const { text, section } = req.body;
+    
+    if (!text || !section) {
+      return res.status(400).json({ 
+        error: 'Both text and section (professional_summary, experience, skills, or education) are required' 
+      });
+    }
+
+    const optimizedSection = await ResumeService.optimizeResumeText(text, section);
+    return res.json(optimizedSection);
+  } catch (error) {
+    console.error('Error optimizing resume section:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export default { processResume, getUserResumes,getResumeById,updateResume,deleteResume,optimizeResumeText };

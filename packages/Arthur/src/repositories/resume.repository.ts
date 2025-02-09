@@ -5,12 +5,12 @@ const uploadUserResume = async (
   userId: string,
   parsedJson: any,
   embeddings: any[]
-) => {
+) : Promise<number> => {
   try {
-    await pool.query(
+    const result = await pool.query(
       `INSERT INTO resumes 
       (user_id, name, location, email, phone, professional_summary, skills, employment_history, education, preferences, embedding) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning *;`,
       [
         userId,
         parsedJson.name,
@@ -25,6 +25,8 @@ const uploadUserResume = async (
         JSON.stringify(embeddings), // Convert JSON to string for jsonb
       ]
     );
+        return result.rows[0].id; // Return the inserted resume's ID
+
   } catch (error: any) {
     console.error('Error uploading resume:', error.message);
     throw new Error('Failed to upload resume.');
@@ -53,6 +55,10 @@ const updateResume = async (id: string, resumeData: Partial<IResume>) => {
     // Convert employment_history to JSON string if it exists
     if (resumeData.employment_history) {
       resumeData.employment_history = JSON.stringify(resumeData.employment_history);
+
+    }
+      if (resumeData.education) {
+      resumeData.education = JSON.stringify(resumeData.education);
     }
 
     const fields = Object.keys(resumeData);

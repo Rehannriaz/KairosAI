@@ -13,11 +13,7 @@ export interface IResume extends Document {
   professional_summary: string;
   skills?: string[]; // Optional since it's nullable in NeonDB
   employment_history?: any;
-  education?: {
-    degree: string;
-    field_of_study: string;
-    graduation_year: number;
-  };
+  education?: any;
   preferences?: {
     job_type: string;
     preferred_location: string[];

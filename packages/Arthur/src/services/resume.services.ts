@@ -13,73 +13,102 @@ const openaiClient = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 const extractResumeData = async (userId: string, file: Express.Multer.File) => {
   try {
-    // Extract text from the uploaded resume file
     const text = await fileParser.extractText(file);
     if (!text) {
       throw new Error('Failed to extract text from the resume');
     }
     const embeddingsModel = new OpenAIEmbeddings({ apiKey: OPENAI_API_KEY });
-
-    // Generate embeddings for the given content
     const embeddings = await embeddingsModel.embedQuery(text);
-    // Define the prompt for OpenAI
+
     const prompt = `
-    Extract the following details from the provided resume text and return a well-structured JSON object. Ensure the extracted values are accurate and formatted correctly.
-    
-    Return JSON in this structure:
+    You are a resume parser that extracts structured information from resume text. Analyze the following resume and extract all relevant information into a JSON object.
+
+    Requirements:
+    1. All fields must be present in the response, even if empty
+    2. Follow the exact JSON structure provided
+    3. Skill level must be one of: "beginner", "intermediate", or "advanced"
+    4. Infer skill level based on years of experience and complexity of roles
+    5. Format all dates as "YYYY-MM" or "YYYY" if month is not available
+    6. Convert all text to proper case (capitalize first letter of names, companies, etc.)
+    7. Ensure phone numbers are in E.164 format when possible
+    8. Remove any special characters or formatting from text fields
+
+    Return the data in this exact structure:
     {
-      "name": "Full Name",
-      "location": "City, Country",
-      "email": "email@example.com",
-      "phone": "Phone Number",
-      "professional_summary": "Brief professional summary",
-      "skills": ["Skill1", "Skill2", "Skill3"],
+      "name": "string",
+      "location": "string",
+      "email": "string",
+      "phone": "string",
+      "professional_summary": "string",
+      "skill_level": "beginner" | "intermediate" | "advanced",
+      "skills": ["string"],
       "employment_history": [
         {
-          "job_title": "Job Title",
-          "company": "Company Name",
-          "years": "Start Date - End Date",
-          "description": "Job Description",
+          "job_title": "string",
+          "company": "string",
+          "start_date": "YYYY-MM",
+          "end_date": "YYYY-MM" | "present",
+          "description": "string",
+          "achievements": ["string"]
         }
       ],
       "education": [
         {
-          "degree": "Degree Name",
-          "institution": "Institution Name",
-          "years": "Start Date - End Date"
+          "degree": "string",
+          "institution": "string",
+          "start_date": "YYYY-MM",
+          "end_date": "YYYY-MM" | "present",
+          "gpa": "string | null",
+          "honors": ["string"]
         }
       ],
-      "preferences": {} // Extract any additional relevant details here.
+      "preferences": {
+        "desired_role": "string | null",
+        "desired_location": "string | null",
+        "desired_salary": "string | null",
+        "work_type": "remote" | "hybrid" | "onsite" | null,
+        "available_from": "YYYY-MM | null"
+      }
     }
-    
+
     Resume Text:
     ${text}
+
+    Provide the output as a valid JSON object only, with no additional text or formatting.
     `;
 
-    // Send request to OpenAI
     const response = await openaiClient.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
-          content: 'You are a helpful AI extracting resume details.',
+          content: 'You are a precise resume parser that outputs only valid JSON.'
         },
-        { role: 'user', content: prompt },
+        { role: 'user', content: prompt }
       ],
       temperature: 0,
+      response_format: { type: "json_object" }  // Ensures JSON response
     });
 
-    // Extract JSON response
-    const responseText = response.choices[0].message.content || '{}';
-    const jsonMatch = responseText.match(/```json([\s\S]*?)```/);
-    const cleanJson = jsonMatch ? jsonMatch[1].trim() : responseText;
-    const parsedJson = JSON.parse(cleanJson);
-    await resumeRepository.uploadUserResume(userId, parsedJson, embeddings);
-    // Parse JSON response safely
-    return JSON.parse(cleanJson);
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error('No content received from OpenAI');
+    }
+
+    const parsedJson = JSON.parse(content);
+    
+    // Validate skill_level
+    if (!['beginner', 'intermediate', 'advanced'].includes(parsedJson.skill_level)) {
+      parsedJson.skill_level = 'beginner'; // Default to beginner if invalid
+    }
+
+    const dbResult = await resumeRepository.uploadUserResume(userId, parsedJson, embeddings);
+    console.log("dbResult", dbResult)
+    const finalResult = { ...parsedJson, "resume_id": dbResult };
+    return finalResult;
   } catch (error) {
     console.error('Error extracting resume data:', error);
-    return null; // Return null or handle the error as needed
+    throw new Error('Failed to process resume');  // Better error handling
   }
 };
 
@@ -104,9 +133,83 @@ const deleteResume = async (id: string): Promise<IResume | null> => {
   return await resumeRepository.deleteResume(id); // Delete a resume
 };
 
+const optimizeResumeText = async (text: string, section: string) => {
+  try {
+    let prompt = '';
+    
+    switch (section) {
+      case 'professional_summary':
+        prompt = `
+        Optimize the following professional summary by:
+        1. Adding relevant industry keywords
+        2. Making it more impactful and concise
+        3. Highlighting core competencies
+        4. Using powerful action verbs
+        
+        Original Summary:
+        ${text}
+        
+        Return in this JSON format:
+        {
+          "original": "original text",
+          "optimized": "enhanced text",
+          "added_keywords": ["list", "of", "industry", "specific", "keywords", "added"],
+          "improvements": ["list of specific improvements made"]
+        }`;
+        break;
+
+      case 'experience':
+        prompt = `
+        Optimize the following work experience entry by:
+        1. Quantifying achievements (adding numbers, percentages, scales)
+        2. Using strong action verbs
+        3. Adding relevant technical and industry keywords
+        4. Highlighting measurable impacts
+        
+        Original Experience:
+        ${text}
+        
+        Return in this JSON format:
+        {
+          "original": "original text",
+          "optimized": "enhanced text",
+          "added_keywords": ["list", "of", "industry", "specific", "keywords", "added"],
+          "metrics_added": ["list of quantified metrics added"],
+          "improvements": ["list of specific improvements made"]
+        }`;
+        break;
+
+
+      default:
+        throw new Error('Invalid section specified');
+    }
+
+    const response = await openaiClient.chat.completions.create({
+      model: 'gpt-4',
+      messages: [
+        {
+          role: 'system',
+          content: `You are an expert resume optimizer specializing in ${section} optimization. Focus on making the content more impactful while maintaining authenticity.`,
+        },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.2,
+    });
+
+    const optimizedContent = response.choices[0].message.content || '{}';
+    const jsonMatch = optimizedContent.match(/```json([\s\S]*?)```/);
+    const cleanJson = jsonMatch ? jsonMatch[1].trim() : optimizedContent;
+    
+    return JSON.parse(cleanJson);
+  } catch (error) {
+    console.error(`Error optimizing ${section}:`, error);
+    throw new Error(`Failed to optimize ${section}`);
+  }
+};
 
 
 export default { extractResumeData, getUserResumes,
   getResumeById,
   updateResume,
-  deleteResume };
+  deleteResume,
+optimizeResumeText};

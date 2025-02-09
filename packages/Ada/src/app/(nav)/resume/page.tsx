@@ -1,14 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Download, Eye, FileText, Plus, Search, Calendar } from "lucide-react"
+import { Download, Eye, FileText, Plus, Search, Calendar, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ResumeDetailsModal } from "@/components/resume/ResumeDetailsModal"
+import resumeServiceInstance from "@/api/resumeService"
+import ResumeDashboardSkeleton from "@/components/resume/ResumeDashboardSkeleton"
 
 interface Resume {
   id: string
@@ -38,52 +40,30 @@ export default function ResumeDashboard() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedResume, setSelectedResume] = useState<Resume | null>(null)
+  const [resumes, setResumes] = useState<Resume[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Sample resume data
-  const [resumes, setResumes] = useState<Resume[]>([
-    {
-      id: "1",
-      name: "John Doe",
-      uploadDate: "2024-02-07",
-      isPrimary: true,
-      fileName: "software_engineer_resume.pdf",
-      location: "New York, NY",
-      email: "john.doe@example.com",
-      phone: "(123) 456-7890",
-      professionalSummary: "Experienced software engineer with a focus on web technologies and distributed systems.",
-      skills: ["JavaScript", "React", "Node.js", "Python", "AWS"],
-      employmentHistory: [
-        {
-          company: "Tech Corp",
-          position: "Senior Software Engineer",
-          duration: "Jan 2020 - Present",
-          responsibilities: [
-            "Lead development of microservices architecture",
-            "Mentor junior developers",
-            "Implement CI/CD pipelines",
-          ],
-        },
-        {
-          company: "StartUp Inc",
-          position: "Software Engineer",
-          duration: "Jun 2017 - Dec 2019",
-          responsibilities: [
-            "Developed and maintained web applications",
-            "Collaborated with UX team to improve user experience",
-            "Optimized database queries for better performance",
-          ],
-        },
-      ],
-      education: [
-        {
-          degree: "BS in Computer Science",
-          institution: "University of Technology",
-          year: "2017",
-        },
-      ],
-    },
-    // ... (add more sample resumes with similar structure)
-  ])
+  useEffect(() => {
+    fetchResumes()
+  }, [])
+
+  const fetchResumes = async () => {
+    try {
+      setIsLoading(true)
+      const response = await resumeServiceInstance.getUserResumes()
+      setResumes(response.map((resume: any) => ({
+        ...resume,
+        uploadDate: "2024-02-09" // Static date for now as requested
+      })))
+      setError(null)
+    } catch (err) {
+      setError("Failed to fetch resumes. Please try again later.")
+      console.error("Error fetching resumes:", err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleUploadClick = () => {
     router.push("/resume/upload")
@@ -98,18 +78,62 @@ export default function ResumeDashboard() {
     console.log(`Downloading ${fileName}`)
   }
 
-  const handlePrimaryChange = (id: string, checked: boolean) => {
-    setResumes(
-      resumes.map((resume) => ({
-        ...resume,
-        isPrimary: resume.id === id ? checked : false,
-      })),
-    )
+  const handleEdit = (id: string) => {
+    router.push(`/resume/review/${id}`)
   }
 
-  const filteredResumes = resumes.filter((resume) => resume.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const handlePrimaryChange = async (id: string, checked: boolean) => {
+    try {
+      // Update the UI optimistically
+      setResumes(resumes.map((resume) => ({
+        ...resume,
+        isPrimary: resume.id === id ? checked : false,
+      })))
+
+      // Update in the backend
+      await resumeServiceInstance.updateResume(id, { isPrimary: checked })
+    } catch (err) {
+      // Revert the UI change if the API call fails
+      await fetchResumes()
+      console.error("Error updating primary resume:", err)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+  try {
+    // First update the UI optimistically by removing the resume from local state
+    setResumes(currentResumes => currentResumes.filter(resume => resume.id !== id))
+    
+    // Then make the API call
+    await resumeServiceInstance.deleteResume(id)
+  } catch (err) {
+    // If the API call fails, revert the UI by fetching the current state
+    console.error("Error deleting resume:", err)
+    await fetchResumes()
+    // Optionally show an error message to the user
+    setError("Failed to delete resume. Please try again.")
+  }
+}
+
+  const filteredResumes = resumes.filter((resume) => 
+    resume.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const hasPrimaryResume = resumes.some((resume) => resume.isPrimary)
+
+  if (isLoading) {
+  return <ResumeDashboardSkeleton />
+}
+
+  if (error) {
+    return (
+      <div className="container mx-auto py-10">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-red-500">{error}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto py-10">
@@ -176,9 +200,17 @@ export default function ResumeDashboard() {
                       <Download className="h-4 w-4" />
                       <span className="sr-only">Download</span>
                     </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(resume.id)}>
+                      <Pencil className="h-4 w-4" />
+                      <span className="sr-only">Edit</span>
+                    </Button>
                     <Button variant="ghost" size="sm" onClick={() => handleReviewClick(resume)}>
                       <Eye className="h-4 w-4" />
                       <span className="sr-only">View</span>
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDelete(resume.id)}>
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Delete</span>
                     </Button>
                   </div>
                 </TableCell>
@@ -205,4 +237,3 @@ export default function ResumeDashboard() {
     </div>
   )
 }
-
