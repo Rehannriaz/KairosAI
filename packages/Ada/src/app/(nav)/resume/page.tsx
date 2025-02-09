@@ -31,7 +31,7 @@ import ResumeDashboardSkeleton from '@/components/resume/ResumeDashboardSkeleton
 export interface Resume {
   id: string;
   name: string;
-  uploadDate: string;
+  uploaddate: string;
   isPrimary: boolean;
   fileName: string;
   location: string;
@@ -74,12 +74,7 @@ export default function ResumeDashboard() {
       response[0]
         ? setPrimaryResumeId(response[0].primary_resume_id)
         : setPrimaryResumeId(null);
-      setResumes(
-        response.map((resume: any) => ({
-          ...resume,
-          uploadDate: '2024-02-09', // Static date for now as requested
-        }))
-      );
+      setResumes(response);
       setError(null);
     } catch (err) {
       setError('Failed to fetch resumes. Please try again later.');
@@ -203,7 +198,15 @@ export default function ResumeDashboard() {
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    {new Date(resume.uploadDate).toLocaleDateString()}
+                    {new Date(resume.uploaddate).toLocaleString('en-US', {
+                      timeZone: 'Asia/Karachi', // GMT+5
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true,
+                    })}
                   </div>
                 </TableCell>
                 <TableCell>
