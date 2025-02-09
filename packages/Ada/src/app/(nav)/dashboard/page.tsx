@@ -1,8 +1,10 @@
+'use client';
 import Card from '@/components/Dashboard/Card';
 import LineChart from '@/components/Dashboard/LineChart';
 import { HomeRepairServiceOutlined } from '@mui/icons-material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import DoughnutChart from '@/components/Dashboard/DoughnutChart';
+import jobServiceInstance from '@/api/jobService';
 
 const Page = () => {
   return (
