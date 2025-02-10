@@ -3,8 +3,10 @@
 import React from 'react';
 import Image from 'next/image';
 
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import WorkIcon from '@mui/icons-material/Work';
+import InfoIcon from '@mui/icons-material/Info';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import ContactPageIcon from '@mui/icons-material/ContactPage';
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import {
@@ -81,9 +83,9 @@ const SideNavbar = () => {
             active={activeTab === 'dashboard'}
           />
           <LogoPage
-            title={'Jobs Listing'}
-            llink={'/single-job'}
-            iconn={<SearchOutlinedIcon />}
+            title={'Recommend Jobs'}
+            llink={'/recommendation'}
+            iconn={<WorkIcon />}
             active={activeTab === 'job-listing'}
           />
           {/* <LogoPage
@@ -95,7 +97,7 @@ const SideNavbar = () => {
           <LogoPage
             title={'Resume'}
             llink={'/resume'}
-            iconn={<FlagOutlinedIcon />}
+            iconn={<ContactPageIcon />}
             active={activeTab === 'Resume'}
           />
           <LogoPage
@@ -111,15 +113,15 @@ const SideNavbar = () => {
             active={activeTab === 'Resources'}
           />
           <LogoPage
-            title={'Questionnaire'}
+            title={'Job Trends'}
             llink={'/questionnaire'}
             iconn={<AssessmentOutlined />}
             active={activeTab === 'Questionnaire'}
           />
           <LogoPage
-            title={'Weekly Wellness Workout'}
+            title={'About KairosAI'}
             llink={'/www'}
-            iconn={<SportsGymnasticsOutlined />}
+            iconn={<InfoIcon />}
             active={activeTab === 'Weekly Wellness Workout'}
           />
           <LogoPage
