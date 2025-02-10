@@ -1,14 +1,8 @@
 // components/SideNavbar.tsx
 'use client';
-import React from 'react';
-import Image from 'next/image';
 
-import WorkIcon from '@mui/icons-material/Work';
-import InfoIcon from '@mui/icons-material/Info';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import ContactPageIcon from '@mui/icons-material/ContactPage';
-import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
-import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import LogoPage from './LogoPage';
+import { useSidebar } from '@/contexts/SidebarContext';
 import {
   AssessmentOutlined,
   FavoriteBorderOutlined,
@@ -16,10 +10,16 @@ import {
   SportsGymnasticsOutlined,
   DevicesOutlined,
 } from '@mui/icons-material';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import ContactPageIcon from '@mui/icons-material/ContactPage';
+import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import InfoIcon from '@mui/icons-material/Info';
+import WorkIcon from '@mui/icons-material/Work';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import LogoPage from './LogoPage';
-import { useSidebar } from '@/contexts/SidebarContext';
+import React from 'react';
 
 const SideNavbar = () => {
   const router = useRouter();
@@ -120,7 +120,7 @@ const SideNavbar = () => {
           />
           <LogoPage
             title={'About KairosAI'}
-            llink={'/www'}
+            llink={'/about'}
             iconn={<InfoIcon />}
             active={activeTab === 'Weekly Wellness Workout'}
           />

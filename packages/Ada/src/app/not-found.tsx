@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-b from-black to-purple-900 flex items-center justify-center px-4">
       <div className="text-center">
         <motion.div
           initial={{ scale: 0 }}
@@ -17,10 +17,10 @@ export default function NotFound() {
             damping: 20,
           }}
         >
-          <AlertCircle className="text-black w-24 h-24 mx-auto mb-6" />
+          <AlertCircle className="text-purple-400 w-24 h-24 mx-auto mb-6" />
         </motion.div>
         <motion.h1
-          className="text-6xl font-bold text-black mb-4"
+          className="text-6xl font-bold text-white mb-4"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -28,7 +28,7 @@ export default function NotFound() {
           404
         </motion.h1>
         <motion.p
-          className="text-xl text-gray-700 mb-8"
+          className="text-xl text-purple-300 mb-8"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -42,7 +42,7 @@ export default function NotFound() {
         >
           <Link
             href="/dashboard"
-            className="bg-green-800 hover:bg-green-900 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+            className="bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
           >
             Go Home
           </Link>
@@ -59,7 +59,7 @@ export default function NotFound() {
           repeatType: 'reverse',
         }}
       >
-        <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+        <div className="w-16 h-16 bg-purple-800 rounded-full opacity-30"></div>
       </motion.div>
       <motion.div
         className="absolute top-10 right-10"
@@ -72,7 +72,7 @@ export default function NotFound() {
           repeatType: 'reverse',
         }}
       >
-        <div className="w-20 h-20 bg-green-900 rounded-full opacity-20"></div>
+        <div className="w-20 h-20 bg-purple-600 rounded-full opacity-20"></div>
       </motion.div>
     </div>
   );
