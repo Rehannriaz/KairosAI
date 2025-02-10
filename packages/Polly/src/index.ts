@@ -7,13 +7,14 @@ import { PORT } from './config';
 import validateToken from 'common/src/middlewares/authMiddleware'
 dotenv.config();
 import cors from 'cors';
+import startJobScraper from './utils/crone';
 
 const app: Application = express();
 
 // Middleware
 app.use(cors())
 app.use(bodyParser.json());
-
+// startJobScraper();
 // Routes
 app.use('/api/jobs',validateToken(), JobRoutes); // Use the updated UserRoutes class
 

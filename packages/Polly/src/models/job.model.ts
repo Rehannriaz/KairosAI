@@ -8,7 +8,8 @@ export interface IJob extends Document {
   postedDate: Date;
   aboutRole: string;
   requirements: string;
-  fullDescription: string;
+  description: string;
+  embedding: any;
   scrapedAt: Date;
   salary?: string; // Optional field
 }
@@ -22,7 +23,7 @@ const jobSchema = new Schema<IJob>(
     postedDate: { type: Date, required: true },
     aboutRole: { type: String, required: true },
     requirements: { type: String, required: true },
-    fullDescription: { type: String, required: true },
+    description: { type: String, required: true },
     scrapedAt: { type: Date, required: true },
     salary: { type: String }, // Optional field
   },

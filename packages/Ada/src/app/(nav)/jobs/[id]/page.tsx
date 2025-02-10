@@ -71,7 +71,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
           {job.salary_range && (
             <div className="mt-2">
               <Text strong>Salary Range: </Text>
-              <Text>{job.salary_range}</Text>
+              {/* <Text>{job.salary_range}</Text> */}
             </div>
           )}
         </div>
