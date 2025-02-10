@@ -5,6 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -16,45 +23,39 @@ import { Search, ListFilter, Grid, List } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
 
-export default function RecommendationPage() {
+const JobsPage = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('date');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
 
   useEffect(() => {
-    const abortController = new AbortController();
-
-    const fetchJobs = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await jobServiceInstance.getRecommendedJobs();
-        if (!abortController.signal.aborted) {
-          setJobs(response);
-        }
+        const response = await jobServiceInstance.getAllJobs(currentPage, 9);
+        setJobs(response.jobs || []);
+        setTotalPages(Math.ceil(response.total / 6));
       } catch (error) {
-        if (!abortController.signal.aborted) {
-          console.error('Error fetching jobs:', error);
-        }
+        console.error('Error fetching jobs:', error);
       } finally {
-        if (!abortController.signal.aborted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     };
 
-    fetchJobs();
-    return () => abortController.abort();
-  }, []);
+    fetchData();
+  }, [currentPage]);
 
   const filteredAndSortedJobs = useMemo(() => {
     let filtered = jobs.filter(
-      (job) =>
-        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.location.toLowerCase().includes(searchTerm.toLowerCase())
+      (job: any) =>
+        job.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.location?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return filtered.sort((a, b) => {
@@ -62,13 +63,13 @@ export default function RecommendationPage() {
         return new Date(b.posteddate) - new Date(a.posteddate);
       }
       if (sortBy === 'company') {
-        return a.company.localeCompare(b.company);
+        return a.company?.localeCompare(b.company);
       }
-      return a.title.localeCompare(b.title);
+      return a.title?.localeCompare(b.title);
     });
   }, [jobs, searchTerm, sortBy]);
 
-  const handleJobClick = (jobId) => {
+  const handleJobClick = (jobId: string) => {
     router.push(`/jobs/${jobId}`);
   };
 
@@ -90,7 +91,7 @@ export default function RecommendationPage() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h1 className="text-3xl font-bold text-gray-900">Recommended Jobs</h1>
+        <h1 className="text-3xl font-bold text-gray-900">All Jobs</h1>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <div className="relative flex-1 sm:flex-none">
@@ -138,13 +139,11 @@ export default function RecommendationPage() {
 
       {jobs.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">
-            No job recommendations available.
-          </p>
+          <p className="text-gray-500 text-lg">No jobs available.</p>
         </div>
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAndSortedJobs.map((job) => (
+          {filteredAndSortedJobs.map((job: any) => (
             <Card
               key={job.job_id}
               className="hover:shadow-lg transition-shadow duration-200 cursor-pointer"
@@ -194,7 +193,7 @@ export default function RecommendationPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredAndSortedJobs.map((job) => (
+              {filteredAndSortedJobs.map((job: any) => (
                 <tr
                   key={job.job_id}
                   onClick={() => handleJobClick(job.job_id)}
@@ -222,6 +221,32 @@ export default function RecommendationPage() {
           </Table>
         </div>
       )}
+
+      <Pagination className="mt-6">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+            />
+          </PaginationItem>
+          <PaginationItem>
+            <span className="px-4 py-2">
+              Page {currentPage} of {totalPages}
+            </span>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
+              disabled={currentPage === totalPages}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
-}
+};
+
+export default JobsPage;
