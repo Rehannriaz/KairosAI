@@ -105,7 +105,31 @@ class ChatService {
       throw error; // Propagate the error for further handling
     }
   }
+  async getInterviewsData() {
+    try {
+      const jwtToken = await getJWT();
+      const response = await fetch(
+        `${johnBaseURL}/interview/getInterviewsData`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
 
+      if (!response.ok) {
+        throw new Error(`Something went wrong.`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error getting Interview Data from server: ', error);
+      throw error; // Propagate the error for further handling
+    }
+  }
   async deleteChatForSpecificJob(chatID: string) {
     try {
       const jwtToken = await getJWT();

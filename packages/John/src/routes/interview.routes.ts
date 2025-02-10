@@ -15,6 +15,10 @@ class InterviewRoutes {
       '/initiateInterview',
       interviewController.initiateInterview
     );
+    this.router.get(
+      '/getInterviewsData',
+      interviewController.getInterviewsData
+    );
     this.router.get('/:jobID', interviewController.getAllChatsForJob);
     this.router.get('/:jobID/:chatID', interviewController.getChatForJob);
     this.router.delete('/:chatID', interviewController.deleteChatForJob);

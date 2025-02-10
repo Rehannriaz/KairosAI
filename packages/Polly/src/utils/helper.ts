@@ -1,5 +1,5 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
+const cheerio = require('cheerio');
 export async function getJobDetails(url:string) {
     try {
       const response = await axios.get(url, {

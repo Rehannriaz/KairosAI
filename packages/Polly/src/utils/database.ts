@@ -10,6 +10,9 @@ const pool = new Pool({
   database: DB,
   password: PASSWORD,
   port: DB_PORT,
+  ssl: {
+    rejectUnauthorized: false, // Use `true` for production with proper CA
+  },
 });
 
 const connectToDatabase = async (): Promise<void> => {

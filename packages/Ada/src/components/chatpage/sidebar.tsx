@@ -2,6 +2,7 @@
 import chatServiceInstance from '@/api/chatService';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import { PlusCircle, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -37,7 +38,6 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
         const chatData = await chatServiceInstance.getAllChatsForSpecificJob(
           jobID
         );
-        // Process the chat data into the format for chatHistory
         const processedChats: ChatHistory[] = chatData.map((chat: any) => ({
           id: chat.interview_id,
           company: chat.company,
@@ -76,13 +76,25 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
 
   const handleDeleteChat = async (chatId: string) => {
     try {
-      await chatServiceInstance.deleteChatForSpecificJob(chatId); // Implement delete function in your API
-      // Remove the deleted chat from the state
+      await chatServiceInstance.deleteChatForSpecificJob(chatId);
       setChatHistory(chatHistory.filter((chat) => chat.id !== chatId));
     } catch (error) {
       console.error('Error deleting chat:', error);
     }
   };
+
+  const SkeletonItem = () => (
+    <div className="w-full p-4 rounded-lg border">
+      <div className="flex justify-between items-center">
+        <div className="space-y-2 w-full">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-3 w-32" />
+          <Skeleton className="h-3 w-40 mt-2" />
+        </div>
+        <Skeleton className="h-8 w-8 rounded-md" />
+      </div>
+    </div>
+  );
 
   return (
     <div className="w-80 border-r bg-muted/10">
@@ -98,59 +110,67 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
       </div>
       <ScrollArea className="h-[calc(100vh-5rem)]">
         <div className="p-4 space-y-4">
-          {chatHistory.map((chat) => (
-            <div
-              onClick={() => {
-                router.push(`/mock-interviews/${jobID}/${chat.id}`);
-              }}
-              key={chat.id}
-              className={`cursor-pointer w-full text-left p-4 rounded-lg hover:bg-muted transition-colors border ${
-                chatID === chat.id ? 'border-black' : 'bg-transparent'
-              }`}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="font-semibold">{chat.company}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {chat.position}
+          {loading ? (
+            <>
+              <SkeletonItem />
+              <SkeletonItem />
+              <SkeletonItem />
+            </>
+          ) : (
+            chatHistory.map((chat) => (
+              <div
+                onClick={() => {
+                  router.push(`/mock-interviews/${jobID}/${chat.id}`);
+                }}
+                key={chat.id}
+                className={`cursor-pointer w-full text-left p-4 rounded-lg hover:bg-muted transition-colors border ${
+                  chatID === chat.id ? 'border-black' : 'bg-transparent'
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="font-semibold">{chat.company}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {chat.position}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2 truncate">
+                      {chat?.lastMessage || 'No messages'}
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-2 truncate">
-                    {chat?.lastMessage || 'No messages'}
-                  </div>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <Trash className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your interview history and remove your data
+                          from our servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteChat(chat.id);
+                          }}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <Trash className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your interview history and remove your data from
-                        our servers.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering the click for navigation
-                          handleDeleteChat(chat.id);
-                        }}
-                      >
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </ScrollArea>
     </div>

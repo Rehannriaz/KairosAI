@@ -1,12 +1,32 @@
 import { pool } from '../utils/database'; // Use the pool from your database.ts
 import { IJob } from '../models/job.model';
 import axios from 'axios';
-import cheerio from 'cheerio';
+const cheerio = require('cheerio');
 // Fetch all jobs
-const findAllJobs = async (): Promise<IJob[]> => {
+const findAllJobs = async (
+  page: number,
+  limit: number
+): Promise<{ jobs: IJob[]; total: number }> => {
   try {
-    const result = await pool.query('SELECT * FROM jobs;');
-    return result.rows;
+    const offset = (page - 1) * limit;
+
+    // Get paginated jobs
+    const jobsResult = await pool.query(
+      `
+      SELECT job_id, title, company, location, salary, description, 
+             skills_required, listingurl, posteddate, aboutrole, requirements 
+      FROM jobs
+      ORDER BY posteddate DESC
+      LIMIT $1 OFFSET $2;
+      `,
+      [limit, offset]
+    );
+
+    // Get total job count
+    const countResult = await pool.query(`SELECT COUNT(*) FROM jobs;`);
+    const total = parseInt(countResult.rows[0].count, 10);
+
+    return { jobs: jobsResult.rows, total };
   } catch (error: any) {
     console.error('Error fetching jobs:', error.message);
     throw error;
@@ -25,23 +45,29 @@ const findJobById = async (id: string): Promise<IJob | null> => {
   }
 };
 
-const scrapeJobs = async (job: IJob): Promise<IJob> => {
-  const result = await pool.query(
-    'INSERT INTO jobs (title, company, location, listingUrl, postedDate, aboutRole, requirements, fullDescription, scrapedAt, salary ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
-    [
-      job.title,
-      job.company,
-      job.location,
-      job.listingUrl,
-      job.postedDate,
-      job.aboutRole,
-      job.requirements,
-      job.fullDescription,
-      job.scrapedAt,
-      job.salary,
-    ]
-  );
-  return result.rows[0];
+const saveJobInDb = async (job: IJob): Promise<IJob> => {
+  console.log('SAVING \n\n\n\n\n', job);
+  try {
+    const result = await pool.query(
+      'INSERT INTO jobs (title, company, location, listingurl, posteddate, aboutrole, requirements, description, salary, embedding) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
+      [
+        job.title,
+        job.company,
+        job.location,
+        job.listingUrl,
+        new Date(job.postedDate), // Convert to proper Date object
+        job.aboutRole,
+        JSON.stringify(job.requirements),
+        job.description,
+        job.salary,
+        JSON.stringify(job.embedding), // Convert JSON to string for jsonb
+      ]
+    );
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error saving job to the database:', error);
+    throw new Error('Failed to save job to the database');
+  }
 };
 
 async function fetchJobListings(url: string) {
@@ -93,17 +119,19 @@ const getRecommendedJobs = async (
   limit: number
 ): Promise<IJob[]> => {
   try {
+    console.log('FINAL');
     const result = await pool.query(
       `SELECT job_id, title, company, location, salary, description, 
-              skills_required, listingurl, posteddate, aboutrole
+              skills_required, listingurl, posteddate, aboutrole, requirements
        FROM jobs 
        ORDER BY embedding <-> $1 
        LIMIT $2`,
-      [embeddings, limit]
+      [JSON.stringify(embeddings), limit]
     );
+    console.log('here123', result.rows);
     return result.rows;
   } catch (error: any) {
-    console.error('Error fetching recommended jobs:', error.message);
+    // console.error('Error fetching recommended jobs:', error.message);
     throw error;
   }
 };
@@ -111,7 +139,7 @@ const getRecommendedJobs = async (
 export default {
   findAllJobs,
   findJobById,
-  scrapeJobs,
+  saveJobInDb,
   fetchJobListings,
   fetchJobDetails,
   getRecommendedJobs,

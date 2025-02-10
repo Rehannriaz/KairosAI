@@ -12,10 +12,11 @@
     "john:dev": "cd packages/John && yarn dev",
     "auth:dev": "cd packages/auth && yarn dev",
     "polly:dev": "cd packages/Polly && yarn dev"
-
   },
   "private": true,
   "dependencies": {
+    "@types/express": "^5.0.0",
+    "@types/express-serve-static-core": "^5.0.6",
     "antd": "^5.20.6",
     "chart.js": "^4.4.4",
     "next": "14.2.3",
