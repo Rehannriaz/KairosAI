@@ -18,21 +18,23 @@ const getJobEmbedding = async (text: string) => {
     const embeddings = await embeddingsModel.embedQuery(text);
     return embeddings;
   } catch (error) {
-    console.error("Error generating job embedding:", error);
+    console.error('Error generating job embedding:', error);
     return null;
   }
 };
-const getAllJobs = async (): Promise<IJob[]> => {
-  return await jobRepository.findAllJobs();
-};
 
+const getAllJobs = async (
+  page: number,
+  limit: number
+): Promise<{ jobs: IJob[]; total: number }> => {
+  return await jobRepository.findAllJobs(page, limit);
+};
 const getJobById = async (id: string): Promise<IJob | null> => {
   return await jobRepository.findJobById(id);
 };
 
-
 const formatJobs = async (job: IJob) => {
-  console.log("job-----",JSON.stringify(job));
+  console.log('job-----', JSON.stringify(job));
   try {
     const prompt = `Given the following job details, generate structured data in JSON format following this schema:
     {
@@ -57,13 +59,14 @@ const formatJobs = async (job: IJob) => {
     - Company: ${job.company}
     - Location: ${job.location}
     - Description: ${job.description}
-    `;    
-    
+    `;
 
-    const response:any = await openaiClient.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "system", content: "You are a job data formatter." },
-                 { role: "user", content: prompt }],
+    const response: any = await openaiClient.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: 'You are a job data formatter.' },
+        { role: 'user', content: prompt },
+      ],
     });
 
     const responseText = response.choices[0].message.content || '{}';
@@ -74,11 +77,10 @@ const formatJobs = async (job: IJob) => {
       ...parsedJson,
     };
   } catch (error: any) {
-    console.error("Error formatting jobs:", error.message);
+    console.error('Error formatting jobs:', error.message);
     throw error;
   }
 };
-
 
 const scrapeJobs = async (): Promise<void> => {
   let currentPage = 0;
@@ -95,28 +97,29 @@ const scrapeJobs = async (): Promise<void> => {
     const $ = await jobRepository.fetchJobListings(url);
     const jobListings: any[] = [];
 
-    $(".jobs-search__results-list li").each((index:any, element:any) => {
+    $('.jobs-search__results-list li').each((index: any, element: any) => {
       const $element = $(element);
-      const listingUrl = $element.find("a.base-card__full-link").attr("href");
-      const title = $element.find(".base-search-card__title").text().trim();
+      const listingUrl = $element.find('a.base-card__full-link').attr('href');
+      const title = $element.find('.base-search-card__title').text().trim();
 
       // Skip job if title contains "*"
-      if (title.includes("*")) {
+      if (title.includes('*')) {
         return;
       }
 
       const company = $element
-        .find(".base-search-card__subtitle")
+        .find('.base-search-card__subtitle')
         .text()
         .trim();
       const location = $element
-        .find(".job-search-card__location")
+        .find('.job-search-card__location')
         .text()
         .trim();
-      // const postedDate = $element.find("time").text().trim(); 
-      const postedDate = Date.now(); 
+      // const postedDate = $element.find("time").text().trim();
+      const postedDate = Date.now();
       const salary =
-        $element.find(".job-search-card__salary-info").text().trim() || parseInt("0");
+        $element.find('.job-search-card__salary-info').text().trim() ||
+        parseInt('0');
 
       if (listingUrl) {
         jobListings.push({
@@ -136,27 +139,25 @@ const scrapeJobs = async (): Promise<void> => {
 
       if ($details) {
         job.aboutRole =
-          $details(".show-more-less-html__markup").html() || "Not specified";
+          $details('.show-more-less-html__markup').html() || 'Not specified';
         job.description =
-          $details(".show-more-less-html__markup").text().trim() ||
-          "No description available.";
-        job.skills_required = $details(".job-criteria__list li")
-          .map((_:any, el:any) => $(el).text().trim())
+          $details('.show-more-less-html__markup').text().trim() ||
+          'No description available.';
+        job.skills_required = $details('.job-criteria__list li')
+          .map((_: any, el: any) => $(el).text().trim())
           .get()
-          .join(", ");
+          .join(', ');
       } else {
-        job.aboutRole = "Failed to fetch";
-        job.description = "Failed to fetch";
-        job.skills_required = "Failed to fetch";
+        job.aboutRole = 'Failed to fetch';
+        job.description = 'Failed to fetch';
+        job.skills_required = 'Failed to fetch';
       }
       const formattedJobs = await formatJobs(job);
-      console.log("formattedJobs",formattedJobs);
+      console.log('formattedJobs', formattedJobs);
       const descriptionEmbedding = await getJobEmbedding(job.description);
 
-
-
       if (descriptionEmbedding) {
-        job.embedding = descriptionEmbedding;  // Store the embeddings in the job object
+        job.embedding = descriptionEmbedding; // Store the embeddings in the job object
       }
 
       job.description = formattedJobs.description;
@@ -164,11 +165,10 @@ const scrapeJobs = async (): Promise<void> => {
       job.requirements = formattedJobs.requirements;
       job.skills_required = formattedJobs.skills_required;
 
-
       allJobs.push(job);
 
       // Save job to DB only if it didn't contain "*"
-      await jobRepository.saveJobInDb(job); 
+      await jobRepository.saveJobInDb(job);
     }
 
     currentPage++;
@@ -181,7 +181,9 @@ const scrapeJobs = async (): Promise<void> => {
     }
   } while (true);
 
-  console.log(`Scraped ${allJobs.length} jobs and stored them in the database.`);
+  console.log(
+    `Scraped ${allJobs.length} jobs and stored them in the database.`
+  );
 };
 
 const getNRecommendedJobs = async (
