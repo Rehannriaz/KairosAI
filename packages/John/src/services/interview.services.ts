@@ -175,6 +175,15 @@ const fetchChatsForJob = async (
     throw new Error('Failed to fetch chats.');
   }
 };
+const getInterviewsData = async (userObj: UserJWT): Promise<any[]> => {
+  try {
+    // Fetch all chats for the given job ID (Replace with actual database call)
+    return await interviewRepository.fetchInterviewsData(userObj.userId);
+  } catch (error: any) {
+    console.error('Error fetching chats:', error.message);
+    throw new Error('Failed to fetch chats.');
+  }
+};
 
 const fetchChatForJob = async (
   jobID: string,
@@ -221,4 +230,5 @@ export default {
   fetchChatForJob,
   initiateInterview,
   deleteChatForJob,
+  getInterviewsData,
 };

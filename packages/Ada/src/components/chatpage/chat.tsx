@@ -91,10 +91,10 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
     };
 
     // Instantly add user message without any delay or loading animation
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...(prev || []), userMessage]);
     setInput('');
     setLoading(true);
-
+    setLoadingMessageId(userMessage.id);
     try {
       const data = await chatServiceInstance.postChat(input, chatID, jobID);
       if (data.res) {
@@ -103,12 +103,13 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
           role: msg.role,
           content: msg.content,
         }));
-        setMessages((prev) => [...prev, ...newMessages]); // Append AI messages
+        setMessages(newMessages);
       }
     } catch (error) {
       console.error('Error fetching response:', error);
     } finally {
       setLoading(false);
+      setLoadingMessageId(null);
     }
   };
 

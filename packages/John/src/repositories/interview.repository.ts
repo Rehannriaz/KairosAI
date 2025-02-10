@@ -52,6 +52,30 @@ const getAllChatsForJob = async (
     throw new Error('Failed to fetch chats.');
   }
 };
+const fetchInterviewsData = async (userId: string): Promise<any> => {
+  try {
+    const result = await pool.query(
+      `SELECT 
+        mi.user_id,
+        mi.job_id,
+        j.title AS job_title, 
+        j.company AS job_company, 
+        array_agg(mi.date) AS interview_dates, 
+        array_agg(mi.interview_id) AS interview_ids, 
+        array_agg(mi.status) AS statuses
+      FROM mock_interview mi
+      JOIN jobs j ON mi.job_id = j.job_id
+      WHERE mi.user_id = $1
+      GROUP BY mi.user_id, mi.job_id, j.title, j.company;`,
+      [userId]
+    );
+
+    return result.rows.length ? result.rows : null;
+  } catch (error: any) {
+    console.error('Error fetching interviews:', error.message);
+    throw new Error('Failed to fetch interview data.');
+  }
+};
 
 const getChatForJob = async (
   jobId: string,
@@ -150,4 +174,5 @@ export default {
   updateInterviewData,
   getInterviewData,
   deleteChatForJob,
+  fetchInterviewsData,
 };

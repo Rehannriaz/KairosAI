@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import chatServiceInstance from '@/api/chatService';
+import jobServiceInstance from '@/api/jobService';
 import { InterviewsTable } from '@/components/Mockinterviews/interviews-table';
 import { JobCard } from '@/components/Mockinterviews/job-card';
 import { Pagination } from '@/components/Mockinterviews/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
-import jobServiceInstance from '@/api/jobService';
+import { useEffect, useState } from 'react';
 
 const ITEMS_PER_PAGE = 6;
 interface Interview {
@@ -13,66 +14,66 @@ interface Interview {
   jobTitle: string;
   company: string;
   date: string;
-  status: 'Completed' | 'Ongoing' | 'Scheduled';
+  status: 'Completed' | 'Ongoing';
   result?: 'Passed' | 'Failed' | 'Pending';
   children?: Interview[];
 }
 
 // Updated dummy data for interviews
-const interviews: Interview[] = [
-  {
-    id: 1,
-    jobTitle: 'Frontend Developer',
-    company: 'TechCorp',
-    date: '2023-05-15',
-    status: 'Completed' as const,
-    result: 'Passed',
-    children: [
-      {
-        id: 11,
-        jobTitle: 'React Developer',
-        company: 'TechCorp',
-        date: '2023-05-16',
-        status: 'Completed' as const,
-        result: 'Passed',
-      },
-      {
-        id: 12,
-        jobTitle: 'Vue.js Developer',
-        company: 'TechCorp',
-        date: '2023-05-17',
-        status: 'Scheduled' as const,
-        result: 'Pending',
-      },
-    ],
-  },
-  {
-    id: 2,
-    jobTitle: 'Backend Engineer',
-    company: 'DataSystems Inc.',
-    date: '2023-05-18',
-    status: 'Ongoing' as const,
-    result: 'Pending',
-  },
-  {
-    id: 3,
-    jobTitle: 'Full Stack Developer',
-    company: 'WebSolutions',
-    date: '2023-05-20',
-    status: 'Completed' as const,
-    result: 'Failed',
-    children: [
-      {
-        id: 31,
-        jobTitle: 'Node.js Developer',
-        company: 'WebSolutions',
-        date: '2023-05-21',
-        status: 'Scheduled' as const,
-        result: 'Pending',
-      },
-    ],
-  },
-];
+// const interviews: Interview[] = [
+//   {
+//     id: 1,
+//     jobTitle: 'Frontend Developer',
+//     company: 'TechCorp',
+//     date: '2023-05-15',
+//     status: 'Completed' as const,
+//     result: 'Passed',
+//     children: [
+//       {
+//         id: 11,
+//         jobTitle: 'React Developer',
+//         company: 'TechCorp',
+//         date: '2023-05-16',
+//         status: 'Completed' as const,
+//         result: 'Passed',
+//       },
+//       {
+//         id: 12,
+//         jobTitle: 'Vue.js Developer',
+//         company: 'TechCorp',
+//         date: '2023-05-17',
+//         status: 'Completed' as const,
+//         result: 'Pending',
+//       },
+//     ],
+//   },
+//   {
+//     id: 2,
+//     jobTitle: 'Backend Engineer',
+//     company: 'DataSystems Inc.',
+//     date: '2023-05-18',
+//     status: 'Ongoing' as const,
+//     result: 'Pending',
+//   },
+//   {
+//     id: 3,
+//     jobTitle: 'Full Stack Developer',
+//     company: 'WebSolutions',
+//     date: '2023-05-20',
+//     status: 'Completed' as const,
+//     result: 'Failed',
+//     children: [
+//       {
+//         id: 31,
+//         jobTitle: 'Node.js Developer',
+//         company: 'WebSolutions',
+//         date: '2023-05-21',
+//         status: 'Completed' as const,
+//         result: 'Pending',
+//       },
+//     ],
+//   },
+// ];
 const TableSkeleton = () => (
   <div className="w-full space-y-3">
     {/* Header row */}
@@ -111,13 +112,28 @@ export default function JobListingsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [interviews, setInterviews] = useState<Interview[]>([]);
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true);
       setError(null);
-
       try {
+        const result = await chatServiceInstance.getInterviewsData();
+        // Transform API response to fit the table format
+        const formattedInterviews = result.map((job: any) => ({
+          id: job.job_id, // Unique ID for job row
+          jobTitle: job.job_title,
+          company: job.job_company,
+          status: job.statuses[0], // Just for parent row display
+          children: job.interview_dates.map((date: any, index: number) => ({
+            id: `${job.interview_ids[index]}`, // Unique ID for child row
+            jobTitle: job.job_title,
+            company: job.job_company,
+            date,
+            status: job.statuses[index], // Map status to each interview
+          })),
+        }));
+        setInterviews(formattedInterviews);
         const { jobs: fetchedJobs, total } =
           await jobServiceInstance.getAllJobs(currentPage, ITEMS_PER_PAGE);
         setJobs(fetchedJobs);
@@ -162,7 +178,7 @@ export default function JobListingsPage() {
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {jobs.map((job: any) => (
-                <JobCard key={job.id} {...job} />
+                <JobCard key={job.job_id} {...job} />
               ))}
             </div>
           )}

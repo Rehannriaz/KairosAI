@@ -1,4 +1,5 @@
-import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -7,17 +8,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import moment from 'moment';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 interface Interview {
-  id: number;
+  id: string | number;
   jobTitle: string;
   company: string;
-  date: string;
+  date?: string;
   status?: 'Completed' | 'Ongoing' | 'Scheduled';
-  children?: Omit<Interview, 'status' | 'children'>[];
+  children?: Interview[];
 }
 
 interface InterviewsTableProps {
@@ -25,77 +27,11 @@ interface InterviewsTableProps {
 }
 
 export function InterviewsTable({ interviews }: InterviewsTableProps) {
-  const [expandedRows, setExpandedRows] = React.useState<number[]>([]);
-
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
+  const router = useRouter();
   const toggleRow = (id: number) => {
     setExpandedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
-    );
-  };
-
-  const renderInterviewRow = (
-    interview: Interview,
-    depth = 0,
-    isChild = false
-  ) => {
-    const hasChildren = interview.children && interview.children.length > 0;
-    const isExpanded = expandedRows.includes(interview.id);
-
-    return (
-      <React.Fragment key={interview.id}>
-        <TableRow>
-          <TableCell className="font-medium">
-            <div className="flex items-center">
-              {hasChildren && (
-                <button
-                  onClick={() => toggleRow(interview.id)}
-                  className="mr-2"
-                >
-                  {isExpanded ? (
-                    <ChevronDown size={16} />
-                  ) : (
-                    <ChevronRight size={16} />
-                  )}
-                </button>
-              )}
-              <span style={{ marginLeft: `${depth * 20}px` }}>
-                {interview.jobTitle}
-              </span>
-            </div>
-          </TableCell>
-          <TableCell>{interview.company}</TableCell>
-          <TableCell>{interview.date}</TableCell>
-          <TableCell>
-            {isChild ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  console.log(`Starting interview ${interview.id}`)
-                }
-              >
-                Start Now
-              </Button>
-            ) : interview.status ? (
-              <Badge
-                variant={
-                  interview.status === 'Completed'
-                    ? 'default'
-                    : interview.status === 'Ongoing'
-                    ? 'secondary'
-                    : 'destructive'
-                }
-              >
-                {interview.status}
-              </Badge>
-            ) : null}
-          </TableCell>
-        </TableRow>
-        {isExpanded &&
-          interview.children?.map((child) =>
-            renderInterviewRow(child, depth + 1, true)
-          )}
-      </React.Fragment>
     );
   };
 
@@ -106,11 +42,64 @@ export function InterviewsTable({ interviews }: InterviewsTableProps) {
           <TableHead>Job Title</TableHead>
           <TableHead>Company</TableHead>
           <TableHead>Date</TableHead>
-          <TableHead>Status / Action</TableHead>
+          <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {interviews.map((interview) => renderInterviewRow(interview))}
+        {interviews.map((job) => (
+          <React.Fragment key={job.id}>
+            <TableRow>
+              <TableCell>
+                {job.children && job.children.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => toggleRow(job.id as number)}
+                  >
+                    {expandedRows.includes(job.id as number) ? (
+                      <ChevronDown size={16} />
+                    ) : (
+                      <ChevronRight size={16} />
+                    )}
+                  </Button>
+                )}
+                {job.jobTitle}
+              </TableCell>
+              <TableCell>{job.company}</TableCell>
+              <TableCell>-</TableCell>
+              <TableCell>
+                <Badge>{job.status}</Badge>
+              </TableCell>
+            </TableRow>
+
+            {expandedRows.includes(job.id as number) &&
+              job.children?.map((interview, index) => (
+                <TableRow key={interview.id} className="bg-gray-50">
+                  <TableCell className="pl-6">
+                    {interview.jobTitle} Interview-{index + 1}
+                  </TableCell>
+                  <TableCell>{interview.company}</TableCell>
+                  <TableCell>
+                    {moment(interview.date).format('YYYY-MM-DD HH:mm')}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={'outline'}
+                      className="cursor-pointer"
+                      onClick={() => {
+                        console.log('interview', interview.id, job.id);
+                        router.push(
+                          `/mock-interviews/${job.id}/${interview.id}`
+                        );
+                      }}
+                    >
+                      Start Now
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </React.Fragment>
+        ))}
       </TableBody>
     </Table>
   );

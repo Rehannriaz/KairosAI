@@ -1,20 +1,21 @@
 // components/Header.tsx
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import SearchIcon from '@mui/icons-material/Search';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MailIcon from '@mui/icons-material/Mail';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import ActionSearchBar from './actionSearchBar';
+import authServiceInstance from '@/api/authService';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import authServiceInstance from '@/api/authService';
-import { useRouter } from 'next/navigation';
 import { getUsername } from '@/lib';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import MailIcon from '@mui/icons-material/Mail';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import SearchIcon from '@mui/icons-material/Search';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 const BaseHeader = () => {
   const router = useRouter();
@@ -56,6 +57,9 @@ const BaseHeader = () => {
 
       {/* Icons on the Right */}
       <div className="flex items-center space-x-4">
+        <div className="w-80">
+          <ActionSearchBar />
+        </div>
         <NotificationsIcon className="text-xl cursor-pointer" />
         <MailIcon className="text-xl cursor-pointer" />
         <FavoriteIcon className="text-xl cursor-pointer" />
@@ -64,9 +68,9 @@ const BaseHeader = () => {
         <Popover>
           <PopoverTrigger>
             {' '}
-            <span className="block w-10 h-10 overflow-hidden rounded-full border-[0.5px] border-black">
+            <span className="block w-8 h-8 overflow-hidden rounded-full border-[0.5px] border-black">
               <Image
-                src="/logo_black.png"
+                src="/profile_picture.png"
                 alt="Profile"
                 width={40}
                 height={40}

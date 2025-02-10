@@ -35,6 +35,18 @@ const getAllChatsForJob = async (req: any, res: any) => {
     res.status(500).json({ error: error.message });
   }
 };
+const getInterviewsData = async (req: any, res: any) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const chats = await interviewServices.getInterviewsData(req.user);
+    res.status(200).json(chats);
+  } catch (error: any) {
+    console.error('Error fetching chats:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const initiateInterview = async (req: any, res: any) => {
   const { jobID } = req.body;
@@ -88,4 +100,5 @@ export default {
   getChatForJob,
   initiateInterview,
   deleteChatForJob,
+  getInterviewsData,
 };
