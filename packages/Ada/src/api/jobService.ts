@@ -33,7 +33,7 @@ class JobService {
     try {
       const jwtToken = await getJWT();
 
-      const response = await fetch(`${pollyBaseURL}/jobs/recommended-jobs/5`, {
+      const response = await fetch(`${pollyBaseURL}/jobs/recommended-jobs/6`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

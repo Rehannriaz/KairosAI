@@ -75,7 +75,7 @@ export default function LoginPage() {
                 Welcome Back
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Log in to your ResearchAI account to continue your journey.
+                Log in to your KairosAI account to continue your journey.
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -195,7 +195,7 @@ const getNRecommendedJobs = async (
     if (limit <= 0) {
       throw new Error('Invalid limit');
     }
-    if (limit > 5) {
+    if (limit > 10) {
       limitReached = true;
     }
     const resumeEmbeddings = await resumeRepository.getUserResumesEmbeddings(

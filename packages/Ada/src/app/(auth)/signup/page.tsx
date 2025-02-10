@@ -100,8 +100,7 @@ export default function SignUpPage() {
                 Create an Account
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Join ResearchAI and start transforming your research papers
-                today.
+                Join KaroisAI and start today.
               </CardDescription>
             </CardHeader>
             <CardContent>
