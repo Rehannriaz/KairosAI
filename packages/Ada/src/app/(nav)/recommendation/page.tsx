@@ -1,92 +1,41 @@
-"use client";
-import { useEffect, useState } from "react";
-import { Table } from "antd";
-import { useRouter } from "next/navigation";
-import jobServiceInstance from "@/api/jobService";
-
-interface Job {
-  job_id: string;
-  title: string;
-  location: string;
-  posted_date: string;
-  listing_url: string;
-  company: string; // Added this since it's in your response
-}
+'use client';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import jobServiceInstance from '@/api/jobService'
+import { Card } from '@shadcn/ui';  // Ensure this is correct
 
 export default function RecommendationPage() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    async function fetchJobs() {
+    const fetchJobs = async () => {
       try {
-        const response = await jobServiceInstance.getAllJobs();
-        console.log("Response: ", response);
-        
-        // Since response is already an array of jobs, we can map it directly
-        const mappedJobs = response.map((job: Job) => ({
-          job_id: job.job_id,
-          title: job.title,
-          location: job.location,
-          posted_date: job.posted_date || '', // Add fallback in case it's undefined
-          listing_url: job.listing_url,
-          company: job.company,
-        }));
-        
-        setJobs(mappedJobs);
+        const response = await jobServiceInstance.getRecommendedJobs();
+        setJobs(response);
+        console.log("jobs:", response);
       } catch (error) {
-        console.error("Failed to fetch jobs:", error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching jobs:', error);
       }
-    }
+    };
+
     fetchJobs();
   }, []);
 
-  const handleRowClick = (record: Job) => {
-    router.push(`/jobs/${record.job_id}`);
-  };
-
-  const columns = [
-    { title: "Job Title", 
-      dataIndex: "title", 
-      key: "title",
-      render: (text: string, record: Job) => `${text} at ${record.company}`
-    },
-    { title: "Location", dataIndex: "location", key: "location" },
-    { 
-      title: "Posted", 
-      dataIndex: "posted_date", 
-      key: "posted_date",
-      render: (date: string) => {
-        if (!date) return '';
-        return new Date(date).toLocaleDateString();
-      }
-    },
-    {
-      title: "Details",
-      dataIndex: "listing_url",
-      key: "listing_url",
-      render: (url: string) => (
-        <a href={url} target="_blank" rel="noopener noreferrer">
-          View
-        </a>
-      ),
-    },
-  ];
-
   return (
-    <Table 
-      columns={columns} 
-      dataSource={jobs} 
-      loading={loading} 
-      rowKey="job_id"
-      pagination={{ pageSize: 10 }}
-      onRow={(record) => ({
-        onClick: () => handleRowClick(record),
-        style: { cursor: 'pointer' }
-      })}
-    />
+    <div className="space-y-4">
+      <h1 className="text-2xl font-semibold">Recommended Jobs</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {jobs.map((job, index) => (
+          <Link key={index} href={`/jobs/${job.id}`} passHref>
+            <Card className="shadow-md p-4">
+              <h3 className="text-xl font-semibold">{job.title}</h3>
+              <p className="text-gray-600">{job.company}</p>
+              <p className="text-gray-500">{job.location}</p>
+              <p className="text-sm text-gray-400">{new Date(job.postedDate).toLocaleDateString()}</p>
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }

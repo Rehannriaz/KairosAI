@@ -33,7 +33,10 @@ const getUserResumes = async (userId: string): Promise<any> => {
 const getUserResumesEmbeddings = async (userId: string): Promise<any> => {
   try {
     const result = await pool.query(
-      'SELECT embedding FROM resumes where user_id=$1;',
+      `SELECT r.embedding 
+       FROM resumes r
+       JOIN user_primary_resume upr ON r.id = upr.resume_id
+       WHERE upr.user_id = $1;`,
       [userId]
     );
     return result.rows;
