@@ -93,7 +93,7 @@ const scrapeJobs = async (): Promise<void> => {
       currentPage * scrapingConfig.pagination.itemsPerPage
     }`;
     console.log(`Scraping page ${currentPage + 1}...`);
-
+    console.log('url', url);
     const $ = await jobRepository.fetchJobListings(url);
     const jobListings: any[] = [];
 
@@ -201,8 +201,10 @@ const getNRecommendedJobs = async (
     const resumeEmbeddings = await resumeRepository.getUserResumesEmbeddings(
       userObj.userId
     );
+    console.log('TEST');
+
     const recommendedJobs = await jobRepository.getRecommendedJobs(
-      resumeEmbeddings.embedding,
+      JSON.stringify(resumeEmbeddings[0].embedding),
       limitReached ? 5 : limit
     );
     return recommendedJobs;

@@ -1,4 +1,6 @@
-import { pool } from '../utils/database'; // Use the pool from your database.ts
+import { pool } from '../utils/database';
+
+// Use the pool from your database.ts
 
 const getUserPrimaryResume = async (userId: string): Promise<any> => {
   try {

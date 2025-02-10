@@ -1,6 +1,8 @@
-import { pool } from '../utils/database'; // Use the pool from your database.ts
+// Use the pool from your database.ts
 import { IJob } from '../models/job.model';
+import { pool } from '../utils/database';
 import axios from 'axios';
+
 const cheerio = require('cheerio');
 // Fetch all jobs
 const findAllJobs = async (
@@ -119,16 +121,17 @@ const getRecommendedJobs = async (
   limit: number
 ): Promise<IJob[]> => {
   try {
-    console.log('FINAL');
+    console.log('FINAL', JSON.parse(embeddings));
+
     const result = await pool.query(
       `SELECT job_id, title, company, location, salary, description, 
               skills_required, listingurl, posteddate, aboutrole, requirements
        FROM jobs 
        ORDER BY embedding <-> $1 
        LIMIT $2`,
-      [JSON.stringify(embeddings), limit]
+      [JSON.parse(embeddings), limit]
     );
-    console.log('here123', result.rows);
+    // console.log('here123', result.rows);
     return result.rows;
   } catch (error: any) {
     // console.error('Error fetching recommended jobs:', error.message);

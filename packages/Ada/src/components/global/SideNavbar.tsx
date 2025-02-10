@@ -10,6 +10,7 @@ import {
   SportsGymnasticsOutlined,
   DevicesOutlined,
 } from '@mui/icons-material';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
@@ -35,6 +36,9 @@ const SideNavbar = () => {
       return 'job-listing';
     } else if (pathname.includes('/recommendation')) {
       return 'job-recommendations';
+    } else if (pathname.includes('/resume')) {
+    } else if (pathname.includes('/jobs')) {
+      return 'jobs';
     } else if (pathname.includes('/resume')) {
       return 'Resume';
     } else if (pathname.includes('/goals')) {
@@ -83,9 +87,15 @@ const SideNavbar = () => {
             active={activeTab === 'dashboard'}
           />
           <LogoPage
+            title={'View Jobs'}
+            llink={'/jobs'}
+            iconn={<WorkOutlineIcon />}
+            active={activeTab === 'jobs'}
+          />
+          <LogoPage
             title={'Recommend Jobs'}
             llink={'/recommendation'}
-            iconn={<WorkIcon />}
+            iconn={<AutoAwesomeIcon />}
             active={activeTab === 'job-listing'}
           />
           {/* <LogoPage

@@ -12,14 +12,14 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 export { USERNAME, PASSWORD, HOST, DB, PORT, DB_PORT, OPENAI_API_KEY };
 
 export const scrapingConfig = {
-    baseUrl: "https://www.linkedin.com/jobs/search",
-    outputFile: "linkedin_jobs_detailed.json",
-    searchQuery: "software developer",
-    location: "remote",
-    pagination: {
-      enabled: true,
-      pageParam: "start",
-      maxPages: 3,
-      itemsPerPage: 25,
-    },
-  };
+  baseUrl: 'https://www.linkedin.com/jobs/search',
+  outputFile: 'linkedin_jobs_detailed.json',
+  searchQuery: 'mechanical',
+  location: 'remote',
+  pagination: {
+    enabled: true,
+    pageParam: 'start',
+    maxPages: 3,
+    itemsPerPage: 25,
+  },
+};
