@@ -1,13 +1,13 @@
-import jobRepository from '../repositories/job.repository';
-import { IJob } from '../models/job.model';
 import { scrapingConfig } from '../config';
-import { ErrorProps } from 'next/error';
-import { UserJWT } from 'common/src/types/UserTypes';
+import { OPENAI_API_KEY } from '../config';
+import { IJob } from '../models/job.model';
+import jobRepository from '../repositories/job.repository';
 import resumeRepository from '../repositories/resume.repository';
 import { OpenAIEmbeddings } from '@langchain/openai';
-import { OPENAI_API_KEY } from '../config';
-import OpenAI from 'openai';
 import { json } from 'body-parser';
+import { UserJWT } from 'common/src/types/UserTypes';
+import { ErrorProps } from 'next/error';
+import OpenAI from 'openai';
 
 const openaiClient = new OpenAI({ apiKey: OPENAI_API_KEY });
 

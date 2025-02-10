@@ -29,6 +29,7 @@ interface InterviewsTableProps {
 export function InterviewsTable({ interviews }: InterviewsTableProps) {
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
   const router = useRouter();
+
   const toggleRow = (id: number) => {
     setExpandedRows((prev) =>
       prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]
@@ -46,60 +47,67 @@ export function InterviewsTable({ interviews }: InterviewsTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {interviews.map((job) => (
-          <React.Fragment key={job.id}>
-            <TableRow>
-              <TableCell>
-                {job.children && job.children.length > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => toggleRow(job.id as number)}
-                  >
-                    {expandedRows.includes(job.id as number) ? (
-                      <ChevronDown size={16} />
-                    ) : (
-                      <ChevronRight size={16} />
-                    )}
-                  </Button>
-                )}
-                {job.jobTitle}
-              </TableCell>
-              <TableCell>{job.company}</TableCell>
-              <TableCell>-</TableCell>
-              <TableCell>
-                <Badge>{job.status}</Badge>
-              </TableCell>
-            </TableRow>
-
-            {expandedRows.includes(job.id as number) &&
-              job.children?.map((interview, index) => (
-                <TableRow key={interview.id} className="bg-gray-50">
-                  <TableCell className="pl-6">
-                    {interview.jobTitle} Interview-{index + 1}
-                  </TableCell>
-                  <TableCell>{interview.company}</TableCell>
-                  <TableCell>
-                    {moment(interview.date).format('YYYY-MM-DD HH:mm')}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={'outline'}
-                      className="cursor-pointer"
-                      onClick={() => {
-                        console.log('interview', interview.id, job.id);
-                        router.push(
-                          `/mock-interviews/${job.id}/${interview.id}`
-                        );
-                      }}
+        {interviews.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={4} className="text-center py-4 text-gray-500">
+              No interviews intiated yet!
+            </TableCell>
+          </TableRow>
+        ) : (
+          interviews.map((job) => (
+            <React.Fragment key={job.id}>
+              <TableRow>
+                <TableCell>
+                  {job.children && job.children.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => toggleRow(job.id as number)}
                     >
-                      Start Now
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </React.Fragment>
-        ))}
+                      {expandedRows.includes(job.id as number) ? (
+                        <ChevronDown size={16} />
+                      ) : (
+                        <ChevronRight size={16} />
+                      )}
+                    </Button>
+                  )}
+                  {job.jobTitle}
+                </TableCell>
+                <TableCell>{job.company}</TableCell>
+                <TableCell>-</TableCell>
+                <TableCell>
+                  <Badge>{job.status}</Badge>
+                </TableCell>
+              </TableRow>
+
+              {expandedRows.includes(job.id as number) &&
+                job.children?.map((interview, index) => (
+                  <TableRow key={interview.id} className="bg-gray-50">
+                    <TableCell className="pl-6">
+                      {interview.jobTitle} Interview-{index + 1}
+                    </TableCell>
+                    <TableCell>{interview.company}</TableCell>
+                    <TableCell>
+                      {moment(interview.date).format('YYYY-MM-DD HH:mm')}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={'outline'}
+                        className="cursor-pointer"
+                        onClick={() => {
+                          router.push(
+                            `/mock-interviews/${job.id}/${interview.id}`
+                          );
+                        }}
+                      >
+                        Start Now
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </React.Fragment>
+          ))
+        )}
       </TableBody>
     </Table>
   );

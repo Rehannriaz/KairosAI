@@ -120,23 +120,26 @@ export default function JobListingsPage() {
       try {
         const result = await chatServiceInstance.getInterviewsData();
         // Transform API response to fit the table format
-        const formattedInterviews = result.map((job: any) => ({
-          id: job.job_id, // Unique ID for job row
-          jobTitle: job.job_title,
-          company: job.job_company,
-          status: job.statuses[0], // Just for parent row display
-          children: job.interview_dates.map((date: any, index: number) => ({
-            id: `${job.interview_ids[index]}`, // Unique ID for child row
-            jobTitle: job.job_title,
-            company: job.job_company,
-            date,
-            status: job.statuses[index], // Map status to each interview
-          })),
-        }));
-        setInterviews(formattedInterviews);
         const { jobs: fetchedJobs, total } =
           await jobServiceInstance.getAllJobs(currentPage, ITEMS_PER_PAGE);
+        console.log('Fetchedjobs', fetchedJobs);
         setJobs(fetchedJobs);
+        const formattedInterviews =
+          result?.map((job: any) => ({
+            id: job.job_id, // Unique ID for job row
+            jobTitle: job.job_title,
+            company: job.job_company,
+            status: job.statuses[0], // Just for parent row display
+            children: job.interview_dates.map((date: any, index: number) => ({
+              id: `${job.interview_ids[index]}`, // Unique ID for child row
+              jobTitle: job.job_title,
+              company: job.job_company,
+              date,
+              status: job.statuses[index], // Map status to each interview
+            })),
+          })) || [];
+        setInterviews(formattedInterviews);
+
         setTotalPages(Math.ceil(total / ITEMS_PER_PAGE));
       } catch (err) {
         setError('Failed to load job listings.');
@@ -163,7 +166,7 @@ export default function JobListingsPage() {
         {loading ? (
           <TableSkeleton />
         ) : (
-          <InterviewsTable interviews={interviews} />
+          <InterviewsTable interviews={interviews ? interviews : []} />
         )}
       </div>
 

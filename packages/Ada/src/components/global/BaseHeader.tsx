@@ -43,18 +43,6 @@ const BaseHeader = () => {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="hidden lg:flex flex-1 mx-4 ">
-        <div className="relative w-full max-w-md">
-          <input
-            type="text"
-            placeholder="What service are you looking for today?"
-            className="w-full pl-4 pr-10 py-2 border rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
-          />
-          <SearchIcon className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400" />
-        </div>
-      </div>
-
       {/* Icons on the Right */}
       <div className="flex items-center space-x-4">
         <div className="w-80">
