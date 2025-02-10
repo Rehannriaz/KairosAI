@@ -3,8 +3,10 @@
 import React from 'react';
 import Image from 'next/image';
 
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import WorkIcon from '@mui/icons-material/Work';
+import InfoIcon from '@mui/icons-material/Info';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import ContactPageIcon from '@mui/icons-material/ContactPage';
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import {
@@ -12,6 +14,7 @@ import {
   FavoriteBorderOutlined,
   SettingsOutlined,
   SportsGymnasticsOutlined,
+  DevicesOutlined,
 } from '@mui/icons-material';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import { useRouter, usePathname } from 'next/navigation';
@@ -25,14 +28,15 @@ const SideNavbar = () => {
   const { isOpen, toggleSidebar } = useSidebar(); // Use the context
 
   const getActiveTab = () => {
+    if (!pathname) return '';
     if (pathname === '/dashboard') {
       return 'dashboard';
     } else if (pathname.includes('/single-job')) {
       return 'job-listing';
-    } else if (pathname.includes('/key-metrics')) {
-      return 'key-metrics';
-    } else if (pathname.includes('/target')) {
-      return 'Target';
+    } else if (pathname.includes('/recommendation')) {
+      return 'job-recommendations';
+    } else if (pathname.includes('/resume')) {
+      return 'Resume';
     } else if (pathname.includes('/goals')) {
       return 'Goals';
     } else if (pathname.includes('/resources')) {
@@ -43,6 +47,8 @@ const SideNavbar = () => {
       return 'Weekly Wellness Workout';
     } else if (pathname.includes('/settings')) {
       return 'Settings';
+    } else if (pathname.includes('mock-interviews')) {
+      return 'mock-interviews';
     } else {
       return '';
     }
@@ -63,10 +69,10 @@ const SideNavbar = () => {
           <div
             className="flex flex-col pt-12 mb-20 items-center cursor-pointer"
             onClick={() => {
-              router.push('/');
+              router.push('/dashboard');
             }}
           >
-            <Image src={'/next.svg'} width={109} height={66} alt="logo" />
+            <Image src={'/logo_black.png'} width={109} height={66} alt="logo" />
           </div>
 
           {/* Sidebar Links */}
@@ -77,28 +83,28 @@ const SideNavbar = () => {
             active={activeTab === 'dashboard'}
           />
           <LogoPage
-            title={'Jobs Listing'}
-            llink={'/single-job'}
-            iconn={<SearchOutlinedIcon />}
+            title={'Recommend Jobs'}
+            llink={'/recommendation'}
+            iconn={<WorkIcon />}
             active={activeTab === 'job-listing'}
           />
-          <LogoPage
-            title={'Key Metrics'}
-            llink={'/key-metrics'}
+          {/* <LogoPage
+            title={'Recommend Jobs'}
+            llink={'/recommendation'}
             iconn={<WorkOutlineIcon />}
             active={activeTab === 'key-metrics'}
+          /> */}
+          <LogoPage
+            title={'Resume'}
+            llink={'/resume'}
+            iconn={<ContactPageIcon />}
+            active={activeTab === 'Resume'}
           />
           <LogoPage
-            title={'Targets'}
-            llink={'/target'}
-            iconn={<FlagOutlinedIcon />}
-            active={activeTab === 'Target'}
-          />
-          <LogoPage
-            title={'Goals'}
-            llink={'/goals'}
-            iconn={<FavoriteBorderOutlined />}
-            active={activeTab === 'Goals'}
+            title={'Interview'}
+            llink={'/mock-interviews'}
+            iconn={<DevicesOutlined />}
+            active={activeTab === 'mock-interviews'}
           />
           <LogoPage
             title={'Resources'}
@@ -107,15 +113,15 @@ const SideNavbar = () => {
             active={activeTab === 'Resources'}
           />
           <LogoPage
-            title={'Questionnaire'}
+            title={'Job Trends'}
             llink={'/questionnaire'}
             iconn={<AssessmentOutlined />}
             active={activeTab === 'Questionnaire'}
           />
           <LogoPage
-            title={'Weekly Wellness Workout'}
+            title={'About KairosAI'}
             llink={'/www'}
-            iconn={<SportsGymnasticsOutlined />}
+            iconn={<InfoIcon />}
             active={activeTab === 'Weekly Wellness Workout'}
           />
           <LogoPage

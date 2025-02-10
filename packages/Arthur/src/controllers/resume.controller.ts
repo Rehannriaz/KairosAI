@@ -1,23 +1,42 @@
 import { Request, Response } from 'express';
-import Resume from '../models/resume.model';
-import {pool} from '../utils/database'
-// Get all resumes
-export const getAllResumes = async (req: Request, res: Response): Promise<any> => {
+import ResumeService from '../services/resume.services';
+import { AuthenticatedRequest } from '../types/authTypes';
+
+const processResume = async (req: any, res: any) => {
   try {
-    console.log("reached here")
-    const resumes = await pool.query('SELECT * FROM resumes');
-    console.log("resumes",resumes);
-    return res.status(200).json(resumes);
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const extractedData = await ResumeService.extractResumeData(
+      req.user.userId,
+      req.file
+    );
+    return res.json(extractedData);
   } catch (error) {
-    return res.status(500).json({ message: 'Error fetching resumes', error });
+    console.error('Error processing resume:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-// Get a specific resume by ID
-export const getResumeById = async (req: Request, res: Response): Promise<any> => {
+const getUserResumes = async (req: any, res: any) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const resumes = await ResumeService.getUserResumes(req.user.userId);
+    return res.json(resumes);
+  } catch (error) {
+    console.error('Error fetching resumes:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+const getResumeById = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
-    const resume = await Resume.findById(id); // Fetch a resume by ID
+    const resume = await ResumeService.getResumeById(id); // Fetch a resume by ID
     if (!resume) {
       return res.status(404).json({ message: 'Resume not found' });
     }
@@ -27,24 +46,27 @@ export const getResumeById = async (req: Request, res: Response): Promise<any> =
   }
 };
 
-// Create a new parsed resume
-export const createResume = async (req: Request, res: Response): Promise<any> => {
-  try {
-    const resumeData = req.body; // Get resume data from the request body
-    const newResume = new Resume(resumeData); // Create a new resume document
-    await newResume.save();
-    return res.status(201).json(newResume);
-  } catch (error) {
-    return res.status(500).json({ message: 'Error creating resume', error });
-  }
-};
-
 // Update an existing resume
-export const updateResume = async (req: Request, res: Response): Promise<any> => {
+const updateResume = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
     const resumeData = req.body; // Get updated resume data
-    const updatedResume = await Resume.findByIdAndUpdate(id, resumeData, { new: true });
+    const updatedResume = await ResumeService.updateResume(id, resumeData);
+    if (!updatedResume) {
+      return res.status(404).json({ message: 'Resume not found' });
+    }
+    return res.status(200).json(updatedResume);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error updating resume', error });
+  }
+};
+const setPrimary = async (req: any, res: any): Promise<any> => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  try {
+    const { id } = req.params;
+    const updatedResume = await ResumeService.setPrimary(id, req.user.userId);
     if (!updatedResume) {
       return res.status(404).json({ message: 'Resume not found' });
     }
@@ -55,10 +77,10 @@ export const updateResume = async (req: Request, res: Response): Promise<any> =>
 };
 
 // Delete a resume
-export const deleteResume = async (req: Request, res: Response): Promise<any> => {
+const deleteResume = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
-    const deletedResume = await Resume.findByIdAndDelete(id);
+    const deletedResume = await ResumeService.deleteResume(id);
     if (!deletedResume) {
       return res.status(404).json({ message: 'Resume not found' });
     }
@@ -66,4 +88,39 @@ export const deleteResume = async (req: Request, res: Response): Promise<any> =>
   } catch (error) {
     return res.status(500).json({ message: 'Error deleting resume', error });
   }
+};
+
+const optimizeResumeText = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const { text, section } = req.body;
+
+    if (!text || !section) {
+      return res.status(400).json({
+        error:
+          'Both text and section (professional_summary, experience, skills, or education) are required',
+      });
+    }
+
+    const optimizedSection = await ResumeService.optimizeResumeText(
+      text,
+      section
+    );
+    return res.json(optimizedSection);
+  } catch (error) {
+    console.error('Error optimizing resume section:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export default {
+  processResume,
+  getUserResumes,
+  getResumeById,
+  updateResume,
+  deleteResume,
+  optimizeResumeText,
+  setPrimary,
 };
