@@ -55,15 +55,17 @@ export default function ResumeUpload() {
     // Simulate file upload and parsing
     try {
       const response = await resumeServiceInstance.uploadResume(file);
+
       console.log('result', response);
+    router.push(`/resume/review/${response.resume_id}`);
+
     } catch (error) {
       console.error('Error uploading resume:', error);
       throw error;
+    } finally {
+      setIsUploading(false);
+      
     }
-    setIsUploading(false);
-
-    // Navigate to the review page
-    // router.push('/resume/review');
   };
 
   const handleCancel = () => {
