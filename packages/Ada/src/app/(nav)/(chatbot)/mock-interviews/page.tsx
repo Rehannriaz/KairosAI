@@ -1,5 +1,6 @@
 'use client';
 
+import { InterviewsTable } from '@/components/Mockinterviews/interviews-table';
 import { JobCard } from '@/components/Mockinterviews/job-card';
 import { Pagination } from '@/components/Mockinterviews/pagination';
 import { useState } from 'react';
@@ -90,7 +91,71 @@ const jobListings = [
     salary: '$100,000 - $160,000',
   },
 ];
+interface Interview {
+  id: number;
+  jobTitle: string;
+  company: string;
+  date: string;
+  status: 'Completed' | 'Ongoing' | 'Scheduled';
+  result?: 'Passed' | 'Failed' | 'Pending';
+  children?: Interview[];
+}
 
+// Updated dummy data for interviews
+const interviews: Interview[] = [
+  {
+    id: 1,
+    jobTitle: 'Frontend Developer',
+    company: 'TechCorp',
+    date: '2023-05-15',
+    status: 'Completed' as const,
+    result: 'Passed',
+    children: [
+      {
+        id: 11,
+        jobTitle: 'React Developer',
+        company: 'TechCorp',
+        date: '2023-05-16',
+        status: 'Completed' as const,
+        result: 'Passed',
+      },
+      {
+        id: 12,
+        jobTitle: 'Vue.js Developer',
+        company: 'TechCorp',
+        date: '2023-05-17',
+        status: 'Scheduled' as const,
+        result: 'Pending',
+      },
+    ],
+  },
+  {
+    id: 2,
+    jobTitle: 'Backend Engineer',
+    company: 'DataSystems Inc.',
+    date: '2023-05-18',
+    status: 'Ongoing' as const,
+    result: 'Pending',
+  },
+  {
+    id: 3,
+    jobTitle: 'Full Stack Developer',
+    company: 'WebSolutions',
+    date: '2023-05-20',
+    status: 'Completed' as const,
+    result: 'Failed',
+    children: [
+      {
+        id: 31,
+        jobTitle: 'Node.js Developer',
+        company: 'WebSolutions',
+        date: '2023-05-21',
+        status: 'Scheduled' as const,
+        result: 'Pending',
+      },
+    ],
+  },
+];
 const ITEMS_PER_PAGE = 6;
 
 export default function JobListingsPage() {
@@ -107,7 +172,14 @@ export default function JobListingsPage() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Job Listings</h1>
+      <h1 className="text-3xl font-bold">Give a mock interview now!</h1>
+      <p className="text-xl text-gray-600 max-w-2xl mt-2">
+        You need to have a resume uploaded and set as primary. Select a job
+        below and get started with the interview.
+      </p>
+      <h2 className="text-2xl font-semibold my-8">Your Interviews</h2>
+      <InterviewsTable interviews={interviews} />
+      <h1 className="text-3xl font-semibold my-8 text-center">Job Listings</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {currentJobs.map((job) => (
           <JobCard

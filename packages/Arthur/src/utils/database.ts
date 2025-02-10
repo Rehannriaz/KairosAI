@@ -16,12 +16,26 @@ const pool = new Pool({
 });
 
 const connectToDatabase = async (): Promise<void> => {
-  try {
-    await pool.connect();
-    console.log('Connected to the PostgreSQL database');
-  } catch (error) {
-    console.error('Database connection failed:', error);
-    process.exit(1);
+  const maxRetries = 3;
+  let attempt = 0;
+
+  while (attempt < maxRetries) {
+    try {
+      await pool.connect();
+      console.log('Connected to the PostgreSQL database');
+      return;
+    } catch (error) {
+      attempt++;
+      console.error(`Database connection attempt ${attempt} failed:`, error);
+
+      if (attempt >= maxRetries) {
+        console.error('Max retries reached. Exiting...');
+        process.exit(1);
+      }
+
+      // Wait for a short delay before retrying (e.g., 2 seconds)
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
   }
 };
 
