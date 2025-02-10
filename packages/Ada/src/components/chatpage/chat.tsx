@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import chatServiceInstance from '@/api/chatService';
 
 interface Message {
@@ -13,26 +14,67 @@ interface Message {
   content: string;
 }
 
+interface JobDetails {
+  title: string;
+  company: string;
+  location: string;
+  salary: string;
+}
+
+// Skeleton components
+const ChatHeaderSkeleton = () => (
+  <div className="border-b p-4 space-y-2">
+    <Skeleton className="h-6 w-48" /> {/* Title */}
+    <Skeleton className="h-4 w-36" /> {/* Subtitle */}
+  </div>
+);
+
+const MessageSkeleton = ({ isUser = false }: { isUser?: boolean }) => (
+  <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <Skeleton
+      className={`rounded-lg h-[40px] w-[60%] ${
+        isUser ? 'ml-auto' : 'mr-auto'
+      }`}
+    />
+  </div>
+);
+
+const ChatInputSkeleton = () => (
+  <div className="border-t p-4 flex gap-4">
+    <Skeleton className="h-10 flex-1" /> {/* Input field */}
+    <Skeleton className="h-10 w-10" /> {/* Send button */}
+  </div>
+);
+
 export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMessageId, setLoadingMessageId] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null); // Reference for auto-scrolling
+  const [jobDetails, setJobDetails] = useState<JobDetails | null>(null);
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchChat = async () => {
       try {
-        setLoading(true);
+        setInitialLoading(true);
         const chat = await chatServiceInstance.getChatForSpecificJob(
           jobID,
           chatID
         );
         setMessages(chat.interview_data);
+        setJobDetails({
+          title: chat.title,
+          company: chat.company,
+          location: chat.location,
+          salary: chat.salary,
+        });
       } catch (error) {
         console.error('Error fetching chat:', error);
       } finally {
-        setLoading(false);
+        setInitialLoading(false);
       }
     };
     fetchChat();
@@ -48,43 +90,58 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
       content: input,
     };
 
-    setMessages((prev) => [...(prev || []), userMessage]);
-
+    // Instantly add user message without any delay or loading animation
+    setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setLoading(true);
-    setLoadingMessageId(userMessage.id);
 
     try {
       const data = await chatServiceInstance.postChat(input, chatID, jobID);
-      console.log('data', data);
       if (data.res) {
         const newMessages = data.res.map((msg: any, index: number) => ({
           id: `${Date.now()}-${index}`,
           role: msg.role,
           content: msg.content,
         }));
-
-        setMessages(newMessages);
+        setMessages((prev) => [...prev, ...newMessages]); // Append AI messages
       }
     } catch (error) {
       console.error('Error fetching response:', error);
     } finally {
       setLoading(false);
-      setLoadingMessageId(null);
     }
   };
 
-  // Auto-scroll to the latest message whenever the messages array changes
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
+  if (initialLoading) {
+    return (
+      <div className="flex-1 flex flex-col">
+        <ChatHeaderSkeleton />
+        <ScrollArea className="flex-1 p-4">
+          <div className="space-y-4">
+            <MessageSkeleton />
+            <MessageSkeleton isUser />
+            <MessageSkeleton />
+            <MessageSkeleton isUser />
+            <MessageSkeleton />
+          </div>
+        </ScrollArea>
+        <ChatInputSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 flex flex-col">
       <div className="border-b p-4">
-        <h1 className="text-xl font-semibold">Tech Corp - Mock Interview</h1>
+        <h1 className="text-xl font-semibold">
+          {jobDetails?.title} role at {jobDetails?.company}{' '}
+        </h1>
         <p className="text-sm text-muted-foreground">AI Interview Assistant</p>
       </div>
       <ScrollArea className="flex-1 p-4">
@@ -104,8 +161,8 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
                 }`}
               >
                 {loadingMessageId === message.id ? (
-                  <div className="flex justify-center items-center">
-                    <div className="w-5 h-5 border-t-2 border-primary border-solid rounded-full animate-spin" />
+                  <div className="flex justify-center items-center p-2">
+                    <Skeleton className="h-4 w-[200px]" />
                   </div>
                 ) : (
                   message.content
@@ -113,9 +170,11 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
               </div>
             </div>
           ))}
+          {loading && loadingMessageId === null && (
+            <MessageSkeleton /> // Show typing indicator for AI response
+          )}
         </div>
-        <div ref={messagesEndRef} />{' '}
-        {/* Invisible div to help scroll to the bottom */}
+        <div ref={messagesEndRef} />
       </ScrollArea>
       <form onSubmit={handleSubmit} className="border-t p-4 flex gap-4">
         <Input
@@ -126,7 +185,11 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
           disabled={loading}
         />
         <Button type="submit" disabled={loading}>
-          {loading ? '...' : <Send className="h-4 w-4" />}
+          {loading ? (
+            <Skeleton className="h-2 w-2" />
+          ) : (
+            <Send className="h-4 w-4" />
+          )}
         </Button>
       </form>
     </div>

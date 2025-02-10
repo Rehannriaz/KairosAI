@@ -9,12 +9,12 @@ const openai = new OpenAI({
 
 const getChatCompletion = async (messages: any[]): Promise<string> => {
   try {
-    return 'testing';
-    // const completion = await openai.chat.completions.create({
-    //   model: 'gpt-3.5-turbo',
-    //   messages,
-    // });
-    // return completion.choices[0]?.message?.content || 'No response from AI.';
+    // return 'testing';
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages,
+    });
+    return completion.choices[0]?.message?.content || 'No response from AI.';
   } catch (error: any) {
     // Log error details
     console.error(
@@ -61,7 +61,7 @@ const getChatForJob = async (
   try {
     // Fetch a specific chat based on jobId and chatId (Replace with actual database call)
     const result = await pool.query(
-      'SELECT * FROM mock_interview WHERE job_id = $1 AND interview_id = $2 and user_id = $3',
+      'SELECT  mi.*,  j.title,  j.company,  j.location,  j.salary FROM mock_interview mi JOIN jobs j ON mi.job_id = j.job_id WHERE mi.job_id = $1  AND mi.interview_id = $2  AND mi.user_id = $3;',
       [jobId, chatId, userId]
     );
     return result.rows.length ? result.rows[0] : null;

@@ -3,13 +3,16 @@ import { Request, Response } from 'express';
 
 const startInterview = async (req: any, res: any) => {
   const { userResponse, interviewID, jobID } = req.body;
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
   try {
     console.log('Received user response:', userResponse);
     const response = await interviewServices.processInterview(
-      userResponse,
-      interviewID,
       req.user,
-      jobID
+      jobID,
+      userResponse,
+      interviewID
     );
     console.log('Response sent to client:', response);
     res.status(200).json({ res: response });

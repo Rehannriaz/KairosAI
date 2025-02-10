@@ -23,7 +23,10 @@ const getJobEmbedding = async (text: string) => {
   }
 };
 
-const getAllJobs = async (page: number, limit: number): Promise<IJob[]> => {
+const getAllJobs = async (
+  page: number,
+  limit: number
+): Promise<{ jobs: IJob[]; total: number }> => {
   return await jobRepository.findAllJobs(page, limit);
 };
 const getJobById = async (id: string): Promise<IJob | null> => {
