@@ -3,8 +3,10 @@ import jobServices from '../services/job.services';
 
 const getAllJobs = async (req: Request, res: Response): Promise<void> => {
   try {
-    const jobs = await jobServices.getAllJobs();
-    console.log('reached here', jobs);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const jobs = await jobServices.getAllJobs(page, limit);
     res.status(200).json(jobs);
   } catch (error: Error | any) {
     res.status(500).json({ error: error.message });

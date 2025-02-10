@@ -97,8 +97,7 @@ interface Interview {
   company: string;
   date: string;
   status: 'Completed' | 'Ongoing' | 'Scheduled';
-  result?: 'Passed' | 'Failed' | 'Pending';
-  children?: Interview[];
+  children?: Omit<Interview, 'status' | 'children'>[];
 }
 
 // Updated dummy data for interviews
@@ -108,24 +107,19 @@ const interviews: Interview[] = [
     jobTitle: 'Frontend Developer',
     company: 'TechCorp',
     date: '2023-05-15',
-    status: 'Completed' as const,
-    result: 'Passed',
+    status: 'Completed',
     children: [
       {
         id: 11,
         jobTitle: 'React Developer',
         company: 'TechCorp',
         date: '2023-05-16',
-        status: 'Completed' as const,
-        result: 'Passed',
       },
       {
         id: 12,
         jobTitle: 'Vue.js Developer',
         company: 'TechCorp',
         date: '2023-05-17',
-        status: 'Scheduled' as const,
-        result: 'Pending',
       },
     ],
   },
@@ -134,24 +128,20 @@ const interviews: Interview[] = [
     jobTitle: 'Backend Engineer',
     company: 'DataSystems Inc.',
     date: '2023-05-18',
-    status: 'Ongoing' as const,
-    result: 'Pending',
+    status: 'Ongoing',
   },
   {
     id: 3,
     jobTitle: 'Full Stack Developer',
     company: 'WebSolutions',
     date: '2023-05-20',
-    status: 'Completed' as const,
-    result: 'Failed',
+    status: 'Completed',
     children: [
       {
         id: 31,
         jobTitle: 'Node.js Developer',
         company: 'WebSolutions',
         date: '2023-05-21',
-        status: 'Scheduled' as const,
-        result: 'Pending',
       },
     ],
   },

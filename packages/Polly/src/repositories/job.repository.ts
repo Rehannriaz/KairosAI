@@ -3,9 +3,19 @@ import { IJob } from '../models/job.model';
 import axios from 'axios';
 const cheerio = require('cheerio');
 // Fetch all jobs
-const findAllJobs = async (): Promise<IJob[]> => {
+const findAllJobs = async (page: number, limit: number): Promise<IJob[]> => {
   try {
-    const result = await pool.query('SELECT * FROM jobs;');
+    const offset = (page - 1) * limit;
+    const result = await pool.query(
+      `
+      SELECT job_id, title, company, location, salary, description, 
+             skills_required, listingurl, posteddate, aboutrole, requirements 
+      FROM jobs
+      ORDER BY posteddate DESC
+      LIMIT $1 OFFSET $2;
+      `,
+      [limit, offset]
+    );
     return result.rows;
   } catch (error: any) {
     console.error('Error fetching jobs:', error.message);

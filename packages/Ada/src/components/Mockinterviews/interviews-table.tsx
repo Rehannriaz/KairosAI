@@ -8,6 +8,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
 interface Interview {
@@ -15,8 +16,8 @@ interface Interview {
   jobTitle: string;
   company: string;
   date: string;
-  status: 'Completed' | 'Ongoing' | 'Scheduled';
-  children?: Interview[];
+  status?: 'Completed' | 'Ongoing' | 'Scheduled';
+  children?: Omit<Interview, 'status' | 'children'>[];
 }
 
 interface InterviewsTableProps {
@@ -32,7 +33,11 @@ export function InterviewsTable({ interviews }: InterviewsTableProps) {
     );
   };
 
-  const renderInterviewRow = (interview: Interview, depth = 0) => {
+  const renderInterviewRow = (
+    interview: Interview,
+    depth = 0,
+    isChild = false
+  ) => {
     const hasChildren = interview.children && interview.children.length > 0;
     const isExpanded = expandedRows.includes(interview.id);
 
@@ -61,22 +66,34 @@ export function InterviewsTable({ interviews }: InterviewsTableProps) {
           <TableCell>{interview.company}</TableCell>
           <TableCell>{interview.date}</TableCell>
           <TableCell>
-            <Badge
-              variant={
-                interview.status === 'Completed'
-                  ? 'default'
-                  : interview.status === 'Ongoing'
-                  ? 'secondary'
-                  : 'destructive'
-              }
-            >
-              {interview.status}
-            </Badge>
+            {isChild ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  console.log(`Starting interview ${interview.id}`)
+                }
+              >
+                Start Now
+              </Button>
+            ) : interview.status ? (
+              <Badge
+                variant={
+                  interview.status === 'Completed'
+                    ? 'default'
+                    : interview.status === 'Ongoing'
+                    ? 'secondary'
+                    : 'destructive'
+                }
+              >
+                {interview.status}
+              </Badge>
+            ) : null}
           </TableCell>
         </TableRow>
         {isExpanded &&
           interview.children?.map((child) =>
-            renderInterviewRow(child, depth + 1)
+            renderInterviewRow(child, depth + 1, true)
           )}
       </React.Fragment>
     );
@@ -89,7 +106,7 @@ export function InterviewsTable({ interviews }: InterviewsTableProps) {
           <TableHead>Job Title</TableHead>
           <TableHead>Company</TableHead>
           <TableHead>Date</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead>Status / Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
