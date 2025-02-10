@@ -1,14 +1,8 @@
 // components/SideNavbar.tsx
 'use client';
-import React from 'react';
-import Image from 'next/image';
 
-import WorkIcon from '@mui/icons-material/Work';
-import InfoIcon from '@mui/icons-material/Info';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import ContactPageIcon from '@mui/icons-material/ContactPage';
-import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
-import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import LogoPage from './LogoPage';
+import { useSidebar } from '@/contexts/SidebarContext';
 import {
   AssessmentOutlined,
   FavoriteBorderOutlined,
@@ -16,10 +10,17 @@ import {
   SportsGymnasticsOutlined,
   DevicesOutlined,
 } from '@mui/icons-material';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import ContactPageIcon from '@mui/icons-material/ContactPage';
+import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import InfoIcon from '@mui/icons-material/Info';
+import WorkIcon from '@mui/icons-material/Work';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
-import LogoPage from './LogoPage';
-import { useSidebar } from '@/contexts/SidebarContext';
+import React from 'react';
 
 const SideNavbar = () => {
   const router = useRouter();
@@ -35,6 +36,9 @@ const SideNavbar = () => {
       return 'job-listing';
     } else if (pathname.includes('/recommendation')) {
       return 'job-recommendations';
+    } else if (pathname.includes('/resume')) {
+    } else if (pathname.includes('/jobs')) {
+      return 'jobs';
     } else if (pathname.includes('/resume')) {
       return 'Resume';
     } else if (pathname.includes('/goals')) {
@@ -83,9 +87,15 @@ const SideNavbar = () => {
             active={activeTab === 'dashboard'}
           />
           <LogoPage
+            title={'View Jobs'}
+            llink={'/jobs'}
+            iconn={<WorkOutlineIcon />}
+            active={activeTab === 'jobs'}
+          />
+          <LogoPage
             title={'Recommend Jobs'}
             llink={'/recommendation'}
-            iconn={<WorkIcon />}
+            iconn={<AutoAwesomeIcon />}
             active={activeTab === 'job-listing'}
           />
           {/* <LogoPage
@@ -120,7 +130,7 @@ const SideNavbar = () => {
           />
           <LogoPage
             title={'About KairosAI'}
-            llink={'/www'}
+            llink={'/about'}
             iconn={<InfoIcon />}
             active={activeTab === 'Weekly Wellness Workout'}
           />
