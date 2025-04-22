@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Upload, File, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import resumeServiceInstance from '@/api/resumeService';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import resumeServiceInstance from '@/api/resumeService';
+import { Upload, File, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function ResumeUpload() {
   const [file, setFile] = useState<File | null>(null);
@@ -57,14 +57,12 @@ export default function ResumeUpload() {
       const response = await resumeServiceInstance.uploadResume(file);
 
       console.log('result', response);
-    router.push(`/resume/review/${response.resume_id}`);
-
+      router.push(`/resume/review/${response.resume_id}`);
     } catch (error) {
       console.error('Error uploading resume:', error);
       throw error;
     } finally {
       setIsUploading(false);
-      
     }
   };
 
@@ -84,8 +82,8 @@ export default function ResumeUpload() {
           className={`
             border-2 border-dashed rounded-lg p-10 text-center
             transition-colors duration-200
-            ${isDragging ? 'border-primary bg-primary/5' : 'border-gray-200'}
-            ${file ? 'bg-green-50 border-green-500' : ''}
+            ${isDragging ? 'border-primary bg-primary/5' : 'border-accent'}
+            ${file ? '' : ''}
           `}
         >
           {!file ? (
@@ -97,7 +95,7 @@ export default function ResumeUpload() {
                 <p className="text-lg">Drag and drop your resume here</p>
                 <p className="text-sm mb-3 text-muted-foreground">or</p>
                 <label className="mt-2 cursor-pointer text-primary hover:text-primary/80">
-                  <span className="bg-black hover:bg-slate-800 px-8 py-2 rounded-md text-white">
+                  <span className="hover:bg-accent px-8 py-2 rounded-md">
                     Browse files
                   </span>
                   <input

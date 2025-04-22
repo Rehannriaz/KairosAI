@@ -5,8 +5,6 @@ import '../globals.css';
 import { Sidebar } from '@/components/global/SideNavbar';
 import { Header } from '@/components/header';
 
-const inter = Inter({ subsets: ['latin'] });
-
 export default function NavLayout({
   children,
 }: Readonly<{
