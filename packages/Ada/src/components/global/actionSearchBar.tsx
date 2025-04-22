@@ -1,23 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Search,
-  Send,
-  BarChart2,
-  Globe,
-  Video,
-  PlaneTakeoff,
-  AudioLines,
-} from 'lucide-react';
 import useDebounce from '@/hooks/use-debounce';
-import DescriptionIcon from '@mui/icons-material/Description';
-import { DevicesOutlined } from '@mui/icons-material';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import {
+  DevicesOutlined,
+  AccountBox,
+  Description,
+  HomeOutlined,
+} from '@mui/icons-material';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Send, Globe } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
 interface Action {
   id: string;
   label: string;
@@ -36,36 +31,35 @@ const defaultActions: Action[] = [
   {
     id: '1',
     label: 'Go to Dashboard',
-    icon: <HomeOutlinedIcon className="h-4 w-4 text-purple-500" />,
+    icon: <HomeOutlined className="h-4 w-4 text-primary" />,
     end: 'Home',
     route: '/dashboard',
   },
   {
     id: '2',
     label: 'Check your Resumes',
-    icon: <DescriptionIcon className="h-4 w-4 text-blue-500" />,
+    icon: <Description className="h-4 w-4 text-chart-2" />,
     end: 'Resumes',
     route: '/resume',
   },
   {
     id: '3',
     label: 'Mock Interviews',
-    icon: <DevicesOutlined className="h-4 w-4 text-orange-500" />,
+    icon: <DevicesOutlined className="h-4 w-4 text-chart-5" />,
     end: 'Interviews',
     route: '/mock-interviews',
   },
-
   {
     id: '4',
     label: 'View Profile',
-    icon: <AccountBoxIcon className="h-4 w-4 text-green-500" />,
+    icon: <AccountBox className="h-4 w-4 text-chart-8" />,
     end: 'Profile',
     route: '/profile',
   },
   {
     id: '5',
     label: 'Settings',
-    icon: <Globe className="h-4 w-4 text-blue-500" />,
+    icon: <Globe className="h-4 w-4 text-chart-1" />,
     end: 'Settings',
     route: '/settings',
   },
@@ -80,28 +74,15 @@ function ActionSearchBar({ actions = defaultActions }: { actions?: Action[] }) {
   const debouncedQuery = useDebounce(query, 200);
 
   useEffect(() => {
-    if (!isFocused) {
-      setResult(null);
-      return;
-    }
+    if (!isFocused) return setResult(null);
+    if (!debouncedQuery) return setResult({ actions });
 
-    if (!debouncedQuery) {
-      setResult({ actions });
-      return;
-    }
-
-    const normalizedQuery = debouncedQuery.toLowerCase().trim();
-    const filteredActions = actions.filter((action) => {
-      const searchableText = action.label.toLowerCase();
-      return searchableText.includes(normalizedQuery);
-    });
-
-    setResult({ actions: filteredActions });
+    const normalized = debouncedQuery.toLowerCase().trim();
+    const filtered = actions.filter((a) =>
+      a.label.toLowerCase().includes(normalized)
+    );
+    setResult({ actions: filtered });
   }, [debouncedQuery, isFocused, actions]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-  };
 
   const handleActionClick = (action: Action) => {
     setSelectedAction(action);
@@ -114,9 +95,7 @@ function ActionSearchBar({ actions = defaultActions }: { actions?: Action[] }) {
       opacity: 1,
       height: 'auto',
       transition: {
-        height: {
-          duration: 0.4,
-        },
+        height: { duration: 0.4 },
         staggerChildren: 0.1,
       },
     },
@@ -124,37 +103,16 @@ function ActionSearchBar({ actions = defaultActions }: { actions?: Action[] }) {
       opacity: 0,
       height: 0,
       transition: {
-        height: {
-          duration: 0.3,
-        },
-        opacity: {
-          duration: 0.2,
-        },
+        height: { duration: 0.3 },
+        opacity: { duration: 0.2 },
       },
     },
   };
 
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.3,
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: -10,
-      transition: {
-        duration: 0.2,
-      },
-    },
-  };
-
-  const handleFocus = () => {
-    setSelectedAction(null);
-    setIsFocused(true);
+    show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
   };
 
   return (
@@ -164,8 +122,11 @@ function ActionSearchBar({ actions = defaultActions }: { actions?: Action[] }) {
           type="text"
           placeholder="Search commands..."
           value={query}
-          onChange={handleInputChange}
-          onFocus={handleFocus}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => {
+            setSelectedAction(null);
+            setIsFocused(true);
+          }}
           onBlur={() => setTimeout(() => setIsFocused(false), 200)}
           className="pl-8 pr-3 py-1.5 h-9 text-sm rounded-lg focus-visible:ring-offset-0"
         />
@@ -179,7 +140,7 @@ function ActionSearchBar({ actions = defaultActions }: { actions?: Action[] }) {
                 exit={{ y: 20, opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <Send className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                <Send className="w-4 h-4 text-accent" />
               </motion.div>
             ) : (
               <motion.div
@@ -189,7 +150,7 @@ function ActionSearchBar({ actions = defaultActions }: { actions?: Action[] }) {
                 exit={{ y: 20, opacity: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <Search className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                <Search className="w-4 h-4 text-muted-foreground" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -199,7 +160,7 @@ function ActionSearchBar({ actions = defaultActions }: { actions?: Action[] }) {
       <AnimatePresence>
         {isFocused && result && !selectedAction && (
           <motion.div
-            className="absolute z-10 w-full mt-1 border rounded-md shadow-lg overflow-hidden dark:border-gray-700 bg-white dark:bg-gray-800"
+            className="absolute z-10 w-full mt-1 rounded-md border bg-popover text-foreground border-border shadow-md"
             variants={container}
             initial="hidden"
             animate="show"
@@ -209,37 +170,31 @@ function ActionSearchBar({ actions = defaultActions }: { actions?: Action[] }) {
               {result.actions.map((action) => (
                 <motion.li
                   key={action.id}
-                  className="px-3 py-2 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                  className="px-3 py-2 flex items-center justify-between hover:bg-accent/20 cursor-pointer transition-colors"
                   variants={item}
                   layout
                   onClick={() => handleActionClick(action)}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-500">{action.icon}</span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <span className="text-muted-foreground">{action.icon}</span>
+                    <span className="text-sm font-medium text-foreground">
                       {action.label}
                     </span>
-                    <span className="text-xs text-gray-400">
-                      {action.description}
-                    </span>
+                    {action.description && (
+                      <span className="text-xs text-muted-foreground">
+                        {action.description}
+                      </span>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400">
-                      {action.short}
-                    </span>
-                    <span className="text-xs text-gray-400 text-right">
-                      {action.end}
-                    </span>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    {action.short && <span>{action.short}</span>}
+                    {action.end && (
+                      <span className="text-right">{action.end}</span>
+                    )}
                   </div>
                 </motion.li>
               ))}
             </motion.ul>
-            <div className="mt-2 px-3 py-2 border-t border-gray-100 dark:border-gray-700">
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                {/* <span>Press ⌘K to open commands</span>
-                <span>ESC to cancel</span> */}
-              </div>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>

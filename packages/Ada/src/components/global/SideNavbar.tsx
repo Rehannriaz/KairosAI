@@ -1,149 +1,113 @@
-// components/SideNavbar.tsx
 'use client';
 
-import LogoPage from './LogoPage';
-import { useSidebar } from '@/contexts/SidebarContext';
+import { cn } from '@/lib/utils';
 import {
-  AssessmentOutlined,
-  FavoriteBorderOutlined,
-  SettingsOutlined,
-  SportsGymnasticsOutlined,
-  DevicesOutlined,
-} from '@mui/icons-material';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
-import ContactPageIcon from '@mui/icons-material/ContactPage';
-import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import InfoIcon from '@mui/icons-material/Info';
-import WorkIcon from '@mui/icons-material/Work';
-import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+  LayoutDashboard,
+  Briefcase,
+  ThumbsUp,
+  FileText,
+  Video,
+  Info,
+  Settings,
+} from 'lucide-react';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
-import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import type React from 'react';
 
-const SideNavbar = () => {
-  const router = useRouter();
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string;
+}
+
+export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();
-
-  const { isOpen, toggleSidebar } = useSidebar(); // Use the context
-
-  const getActiveTab = () => {
-    if (!pathname) return '';
-    if (pathname === '/dashboard') {
-      return 'dashboard';
-    } else if (pathname.includes('/single-job')) {
-      return 'job-listing';
-    } else if (pathname.includes('/recommendation')) {
-      return 'job-recommendations';
-    } else if (pathname.includes('/resume')) {
-    } else if (pathname.includes('/jobs')) {
-      return 'jobs';
-    } else if (pathname.includes('/resume')) {
-      return 'Resume';
-    } else if (pathname.includes('/goals')) {
-      return 'Goals';
-    } else if (pathname.includes('/resources')) {
-      return 'Resources';
-    } else if (pathname.includes('/questionnaire')) {
-      return 'Questionnaire';
-    } else if (pathname.includes('/www')) {
-      return 'Weekly Wellness Workout';
-    } else if (pathname.includes('/settings')) {
-      return 'Settings';
-    } else if (pathname.includes('mock-interviews')) {
-      return 'mock-interviews';
-    } else {
-      return '';
-    }
-  };
-
-  const activeTab = getActiveTab();
+  const activeRoute = `/${pathname.split('/')[1]}`; // e.g., /jobs from /jobs/123
 
   return (
-    <div className="">
-      {/* Sidebar */}
-      <div
-        className={`fixed lg:relative z-40 transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } w-fit h-screen shadow-lg border-e-2 rounded-b-lg overflow-y-auto bg-white`}
-      >
-        <div className="flex flex-col justify-center">
-          {/* Logo */}
-          <div
-            className="flex flex-col pt-12 mb-20 items-center cursor-pointer"
-            onClick={() => {
-              router.push('/dashboard');
-            }}
-          >
-            <Image src={'/logo_black.png'} width={109} height={66} alt="logo" />
+    <div className={cn('pb-12 border-r border-border/40 h-screen', className)}>
+      <div className="space-y-4 py-4">
+        <div className="px-6 py-2">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="relative w-8 h-8">
+              <Image
+                src="/logo_white_notext.png"
+                alt="Kairos AI Logo"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <span className="font-bold text-lg tracking-tight">KAIROS AI</span>
+          </Link>
+        </div>
+        <div className="px-3 py-2">
+          <div className="space-y-1">
+            <SidebarItem
+              href="/dashboard"
+              icon={<LayoutDashboard size={20} />}
+              title="Dashboard"
+              active={activeRoute === '/dashboard'}
+            />
+            <SidebarItem
+              href="/jobs"
+              icon={<Briefcase size={20} />}
+              title="View Jobs"
+              active={activeRoute === '/jobs'}
+            />
+            <SidebarItem
+              href="/recommendation"
+              icon={<ThumbsUp size={20} />}
+              title="Recommend Jobs"
+              active={activeRoute === '/recommendation'}
+            />
+            <SidebarItem
+              href="/resume"
+              icon={<FileText size={20} />}
+              title="Resume"
+              active={activeRoute === '/resume'}
+            />
+            <SidebarItem
+              href="/mock-interviews"
+              icon={<Video size={20} />}
+              title="Interview"
+              active={activeRoute === '/mock-interviews'}
+            />
+            <SidebarItem
+              href="/about"
+              icon={<Info size={20} />}
+              title="About KairosAI"
+              active={activeRoute === '/about'}
+            />
+            <SidebarItem
+              href="/settings"
+              icon={<Settings size={20} />}
+              title="Settings"
+              active={activeRoute === '/settings'}
+            />
           </div>
-
-          {/* Sidebar Links */}
-          <LogoPage
-            title={'Dashboard'}
-            llink={'/dashboard'}
-            iconn={<HomeOutlinedIcon />}
-            active={activeTab === 'dashboard'}
-          />
-          <LogoPage
-            title={'View Jobs'}
-            llink={'/jobs'}
-            iconn={<WorkOutlineIcon />}
-            active={activeTab === 'jobs'}
-          />
-          <LogoPage
-            title={'Recommend Jobs'}
-            llink={'/recommendation'}
-            iconn={<AutoAwesomeIcon />}
-            active={activeTab === 'job-listing'}
-          />
-          {/* <LogoPage
-            title={'Recommend Jobs'}
-            llink={'/recommendation'}
-            iconn={<WorkOutlineIcon />}
-            active={activeTab === 'key-metrics'}
-          /> */}
-          <LogoPage
-            title={'Resume'}
-            llink={'/resume'}
-            iconn={<ContactPageIcon />}
-            active={activeTab === 'Resume'}
-          />
-          <LogoPage
-            title={'Interview'}
-            llink={'/mock-interviews'}
-            iconn={<DevicesOutlined />}
-            active={activeTab === 'mock-interviews'}
-          />
-          <LogoPage
-            title={'Resources'}
-            llink={'/resources'}
-            iconn={<BookmarkBorderOutlinedIcon />}
-            active={activeTab === 'Resources'}
-          />
-          <LogoPage
-            title={'Job Trends'}
-            llink={'/questionnaire'}
-            iconn={<AssessmentOutlined />}
-            active={activeTab === 'Questionnaire'}
-          />
-          <LogoPage
-            title={'About KairosAI'}
-            llink={'/about'}
-            iconn={<InfoIcon />}
-            active={activeTab === 'Weekly Wellness Workout'}
-          />
-          <LogoPage
-            title={'Settings'}
-            llink={'/settings'}
-            iconn={<SettingsOutlined />}
-            active={activeTab === 'Settings'}
-          />
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default SideNavbar;
+interface SidebarItemProps {
+  href: string;
+  icon: React.ReactNode;
+  title: string;
+  active?: boolean;
+}
+
+function SidebarItem({ href, icon, title, active }: SidebarItemProps) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:text-primary',
+        active ? 'bg-secondary text-primary' : 'text-muted-foreground'
+      )}
+    >
+      {icon}
+      <span>{title}</span>
+    </Link>
+  );
+}
