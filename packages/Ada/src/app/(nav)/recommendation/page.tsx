@@ -90,7 +90,7 @@ export default function RecommendationPage() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h1 className="text-3xl font-bold text-gray-900">Recommended Jobs</h1>
+        <h1 className="text-3xl font-bold">Recommended Jobs</h1>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <div className="relative flex-1 sm:flex-none">

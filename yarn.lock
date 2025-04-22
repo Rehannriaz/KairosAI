@@ -4626,7 +4626,7 @@ arrify@^1.0.1:
   resolved "https://registry.npmjs.org/arrify/-/arrify-1.0.1.tgz"
   integrity sha512-3CYzex9M9FGQjCGMGyi6/31c8GJbgb0qGyrx5HWxPd0aCwh4cB2YjMb2Xf9UuoogrMrlO9cTqnB5rI5GHZTcUA==
 
-"arthur@file:/home/zaid/FYP/KairosAI/packages/Arthur":
+"arthur@file:/home/rehan/FYP/KairosAI/packages/Arthur":
   version "1.0.0"
   resolved "file:packages/Arthur"
   dependencies:
@@ -4682,7 +4682,7 @@ async@^3.2.3:
 asynckit@^0.4.0:
   version "0.4.0"
 
-"authmicroservice@file:/home/zaid/FYP/KairosAI/packages/auth":
+"authmicroservice@file:/home/rehan/FYP/KairosAI/packages/auth":
   version "1.0.0"
   resolved "file:packages/auth"
   dependencies:
@@ -4877,7 +4877,7 @@ babel-preset-jest@^29.6.3:
     babel-plugin-jest-hoist "^29.6.3"
     babel-preset-current-node-syntax "^1.0.0"
 
-"backendexample@file:/home/zaid/FYP/KairosAI/packages/backendExample":
+"backendexample@file:/home/rehan/FYP/KairosAI/packages/backendExample":
   version "1.0.0"
   resolved "file:packages/backendExample"
   dependencies:
@@ -5541,7 +5541,7 @@ common-path-prefix@^3.0.0:
   resolved "https://registry.npmjs.org/common-path-prefix/-/common-path-prefix-3.0.0.tgz"
   integrity sha512-QE33hToZseCH3jS0qN96O/bSh3kaw/h+Tq7ngyY9eWDUnTlTNUyqfqvCXioLe5Na5jFsL78ra/wuBU4iuEgd4w==
 
-"common@file:/home/zaid/FYP/KairosAI/packages/common":
+"common@file:/home/rehan/FYP/KairosAI/packages/common":
   version "1.0.0"
   resolved "file:packages/common"
   dependencies:
@@ -9002,7 +9002,7 @@ jju@^1.4.0:
   resolved "https://registry.npmjs.org/jju/-/jju-1.4.0.tgz"
   integrity sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==
 
-"john@file:/home/zaid/FYP/KairosAI/packages/John":
+"john@file:/home/rehan/FYP/KairosAI/packages/John":
   version "1.0.0"
   resolved "file:packages/John"
   dependencies:
@@ -9225,7 +9225,7 @@ jws@^3.2.2:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
 
-"kairos-ai@file:/home/zaid/FYP/KairosAI/packages/Ada":
+"kairos-ai@file:/home/rehan/FYP/KairosAI/packages/Ada":
   version "0.1.0"
   resolved "file:packages/Ada"
   dependencies:
@@ -10191,6 +10191,11 @@ neo-async@^2.6.2:
 
 netmask@^2.0.2:
   version "2.0.2"
+
+next-themes@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.npmjs.org/next-themes/-/next-themes-0.4.6.tgz"
+  integrity sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==
 
 next@>=14.0.0, next@14.2.3:
   version "14.2.3"
@@ -11161,7 +11166,7 @@ pkg-dir@^7.0.0:
   dependencies:
     find-up "^6.3.0"
 
-"polly@file:/home/zaid/FYP/KairosAI/packages/Polly":
+"polly@file:/home/rehan/FYP/KairosAI/packages/Polly":
   version "1.0.0"
   resolved "file:packages/Polly"
   dependencies:
@@ -12061,7 +12066,7 @@ rc@^1.2.8, rc@1.2.8:
 react-chartjs-2@^5.2.0, react-chartjs-2@^5.3.0:
   version "5.3.0"
 
-react-dom@*, "react-dom@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react-dom@^17.0.0 || ^18.0.0 || ^19.0.0", react-dom@^18, "react-dom@^18.0.0 || ^19.0.0", react-dom@^18.2.0, react-dom@>=16.0.0, react-dom@>=16.11.0, react-dom@>=16.6.0, react-dom@>=16.8.0, react-dom@>=16.9.0, react-dom@18.3.1:
+react-dom@*, "react-dom@^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc", "react-dom@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react-dom@^17.0.0 || ^18.0.0 || ^19.0.0", react-dom@^18, "react-dom@^18.0.0 || ^19.0.0", react-dom@^18.2.0, react-dom@>=16.0.0, react-dom@>=16.11.0, react-dom@>=16.6.0, react-dom@>=16.8.0, react-dom@>=16.9.0, react-dom@18.3.1:
   version "18.3.1"
   dependencies:
     loose-envify "^1.1.0"
@@ -12115,7 +12120,7 @@ react-transition-group@^4.4.5:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@*, "react@^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^17.0.0 || ^18.0.0 || ^19.0.0", react@^18, "react@^18.0.0 || ^19.0.0", react@^18.2.0, react@^18.3.1, "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.0.0, react@>=16.11.0, react@>=16.6.0, react@>=16.8.0, react@>=16.9.0, react@18.3.1:
+react@*, "react@^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc", "react@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^17.0.0 || ^18.0.0 || ^19.0.0", react@^18, "react@^18.0.0 || ^19.0.0", react@^18.2.0, react@^18.3.1, "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.0.0, react@>=16.11.0, react@>=16.6.0, react@>=16.8.0, react@>=16.9.0, react@18.3.1:
   version "18.3.1"
   dependencies:
     loose-envify "^1.1.0"
