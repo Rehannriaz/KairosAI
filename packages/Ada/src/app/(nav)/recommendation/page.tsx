@@ -11,13 +11,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Table } from '@/components/ui/table';
 import { Search, ListFilter, Grid, List } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
 
+type Job = {
+  job_id: string;
+  title: string;
+  company: string;
+  location: string;
+  posteddate: string;
+};
+
 export default function RecommendationPage() {
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('grid');
@@ -59,7 +68,9 @@ export default function RecommendationPage() {
 
     return filtered.sort((a, b) => {
       if (sortBy === 'date') {
-        return new Date(b.posteddate) - new Date(a.posteddate);
+        return (
+          new Date(b.posteddate).getTime() - new Date(a.posteddate).getTime()
+        );
       }
       if (sortBy === 'company') {
         return a.company.localeCompare(b.company);
@@ -68,21 +79,71 @@ export default function RecommendationPage() {
     });
   }, [jobs, searchTerm, sortBy]);
 
-  const handleJobClick = (jobId) => {
+  const handleJobClick = (jobId: string) => {
     router.push(`/jobs/${jobId}`);
   };
 
   if (loading) {
     return (
-      <div className="w-full h-96 flex items-center justify-center">
-        <div className="space-y-4 w-full max-w-md">
-          <div className="h-8 bg-gray-200 rounded animate-pulse" />
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded animate-pulse" />
-            ))}
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-8 w-40" />
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-10 rounded" />
+            <Skeleton className="h-10 w-10 rounded" />
           </div>
         </div>
+
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="p-6 space-y-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+                <Skeleton className="h-4 w-1/3" />
+                <div className="flex justify-between">
+                  <Skeleton className="h-6 w-20" />
+                  <Skeleton className="h-6 w-24" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-lg shadow">
+            <Table>
+              <thead>
+                <tr>
+                  <th className="px-6 py-3">Job Title</th>
+                  <th className="px-6 py-3">Company</th>
+                  <th className="px-6 py-3">Location</th>
+                  <th className="px-6 py-3">Posted Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <tr key={i} className="hover:bg-accent">
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-32" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-24" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-20" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-16" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        )}
       </div>
     );
   }
@@ -94,7 +155,7 @@ export default function RecommendationPage() {
 
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <div className="relative flex-1 sm:flex-none">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" />
             <Input
               placeholder="Search jobs..."
               className="pl-10 w-full"
@@ -119,7 +180,7 @@ export default function RecommendationPage() {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded ${
-                viewMode === 'grid' ? 'bg-gray-200' : 'hover:bg-gray-100'
+                viewMode === 'grid' ? 'bg-accent' : 'hover:bg-accent'
               }`}
             >
               <Grid className="w-5 h-5" />
@@ -127,7 +188,7 @@ export default function RecommendationPage() {
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded ${
-                viewMode === 'list' ? 'bg-gray-200' : 'hover:bg-gray-100'
+                viewMode === 'list' ? 'bg-accent' : 'hover:bg-accent'
               }`}
             >
               <List className="w-5 h-5" />
@@ -138,27 +199,25 @@ export default function RecommendationPage() {
 
       {jobs.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">
-            No job recommendations available.
-          </p>
+          <p className=" text-lg">No job recommendations available.</p>
         </div>
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAndSortedJobs.map((job) => (
             <Card
               key={job.job_id}
-              className="hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+              className="hover:shadow-white transition-shadow duration-200 cursor-pointer"
               onClick={() => handleJobClick(job.job_id)}
             >
               <div className="p-6 space-y-4">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">
+                  <h3 className="text-xl font-semibold line-clamp-2">
                     {job.title}
                   </h3>
-                  <p className="text-gray-600 font-medium">{job.company}</p>
+                  <p className=" font-medium">{job.company}</p>
                 </div>
 
-                <div className="flex items-center gap-2 text-gray-500">
+                <div className="flex items-center gap-2 ">
                   <span>{job.location}</span>
                 </div>
 
@@ -166,7 +225,7 @@ export default function RecommendationPage() {
                   <Badge variant="secondary">
                     {new Date(job.posteddate).toLocaleDateString()}
                   </Badge>
-                  <Badge variant="outline" className="bg-blue-50">
+                  <Badge variant="outline" className="cursor-pointer">
                     View Details
                   </Badge>
                 </div>
@@ -175,20 +234,20 @@ export default function RecommendationPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow">
+        <div className="rounded-lg shadow">
           <Table>
             <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Job Title
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Company
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Location
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Posted Date
                 </th>
               </tr>
@@ -198,21 +257,19 @@ export default function RecommendationPage() {
                 <tr
                   key={job.job_id}
                   onClick={() => handleJobClick(job.job_id)}
-                  className="hover:bg-gray-50 cursor-pointer"
+                  className="hover:bg-accent cursor-pointer"
                 >
                   <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">
-                      {job.title}
-                    </div>
+                    <div className="text-sm font-medium ">{job.title}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-500">{job.company}</div>
+                    <div className="text-sm">{job.company}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-500">{job.location}</div>
+                    <div className="text-sm">{job.location}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm">
                       {new Date(job.posteddate).toLocaleDateString()}
                     </div>
                   </td>
