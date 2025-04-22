@@ -49,7 +49,7 @@ export function InterviewsTable({ interviews }: InterviewsTableProps) {
       <TableBody>
         {interviews.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={4} className="text-center py-4 text-gray-500">
+            <TableCell colSpan={4} className="text-center py-4 ">
               No interviews intiated yet!
             </TableCell>
           </TableRow>
@@ -82,7 +82,7 @@ export function InterviewsTable({ interviews }: InterviewsTableProps) {
 
               {expandedRows.includes(job.id as number) &&
                 job.children?.map((interview, index) => (
-                  <TableRow key={interview.id} className="bg-gray-50">
+                  <TableRow key={interview.id} className="bg-accent">
                     <TableCell className="pl-6">
                       {interview.jobTitle} Interview-{index + 1}
                     </TableCell>

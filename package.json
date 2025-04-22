@@ -15,7 +15,6 @@
   },
   "private": true,
   "dependencies": {
-    "@types/express": "^5.0.0",
     "@types/express-serve-static-core": "^5.0.6",
     "antd": "^5.20.6",
     "chart.js": "^4.4.4",
@@ -37,6 +36,7 @@
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
+    "@types/express": "^5.0.1",
     "@types/jest": "^29.4.0",
     "@types/node": "18.16.9",
     "@types/react": "18.3.1",

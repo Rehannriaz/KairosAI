@@ -77,7 +77,7 @@ interface Interview {
 const TableSkeleton = () => (
   <div className="w-full space-y-3">
     {/* Header row */}
-    <div className="flex w-full gap-4 p-4 bg-gray-50 rounded-t-lg">
+    <div className="flex w-full gap-4 p-4 bg-accent rounded-t-lg">
       <Skeleton className="h-5 w-[30%]" /> {/* Job Title */}
       <Skeleton className="h-5 w-[25%]" /> {/* Company */}
       <Skeleton className="h-5 w-[20%]" /> {/* Date */}
@@ -155,7 +155,7 @@ export default function JobListingsPage() {
     <div className="container mx-auto py-8">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Give a mock interview now!</h1>
-        <p className="text-xl text-gray-600 max-w-2xl">
+        <p className="text-lg max-w-2xl">
           You need to have a resume uploaded and set as primary. Select a job
           below and get started with the interview.
         </p>

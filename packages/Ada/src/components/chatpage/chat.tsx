@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Input } from '@/components/ui/input';
-import { Send } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
 import chatServiceInstance from '@/api/chatService';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Send } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
 
 interface Message {
   id: string;
@@ -36,6 +36,17 @@ const MessageSkeleton = ({ isUser = false }: { isUser?: boolean }) => (
         isUser ? 'ml-auto' : 'mr-auto'
       }`}
     />
+  </div>
+);
+const TypingIndicator = () => (
+  <div className="flex justify-start">
+    <div className="bg-muted rounded-lg px-4 py-2 max-w-[80%]">
+      <div className="flex space-x-1">
+        <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0s]" />
+        <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.15s]" />
+        <span className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce [animation-delay:0.3s]" />
+      </div>
+    </div>
   </div>
 );
 
@@ -171,9 +182,7 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
               </div>
             </div>
           ))}
-          {loading && loadingMessageId === null && (
-            <MessageSkeleton /> // Show typing indicator for AI response
-          )}
+          {loading && loadingMessageId === null && <TypingIndicator />}
         </div>
         <div ref={messagesEndRef} />
       </ScrollArea>

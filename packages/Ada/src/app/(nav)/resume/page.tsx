@@ -1,7 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import resumeServiceInstance from '@/api/resumeService';
+import ResumeDashboardSkeleton from '@/components/resume/ResumeDashboardSkeleton';
+import { ResumeDetailsModal } from '@/components/resume/ResumeDetailsModal';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import {
   Download,
   Eye,
@@ -12,21 +25,8 @@ import {
   Pencil,
   Trash2,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { ResumeDetailsModal } from '@/components/resume/ResumeDetailsModal';
-import resumeServiceInstance from '@/api/resumeService';
-import ResumeDashboardSkeleton from '@/components/resume/ResumeDashboardSkeleton';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export interface Resume {
   id: string;
@@ -37,18 +37,23 @@ export interface Resume {
   location: string;
   email: string;
   phone: string;
-  professionalSummary: string;
+  professional_summary: string;
   skills: string[];
-  employmentHistory: Array<{
+  employment_history: Array<{
     company: string;
-    position: string;
-    duration: string;
-    responsibilities: string[];
+    end_date: string;
+    start_date: string;
+    job_title: string;
+    description: string;
+    achievements: string[];
   }>;
   education: Array<{
     degree: string;
     institution: string;
-    year: string;
+    start_date: string;
+    end_date: string;
+    gpa?: string | null;
+    honors: string[];
   }>;
   primary_resume_id?: string;
 }
@@ -75,6 +80,7 @@ export default function ResumeDashboard() {
         ? setPrimaryResumeId(response[0].primary_resume_id)
         : setPrimaryResumeId(null);
       setResumes(response);
+      console.log('response', response);
       setError(null);
     } catch (err) {
       setError('Failed to fetch resumes. Please try again later.');
