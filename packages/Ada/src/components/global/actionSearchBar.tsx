@@ -52,7 +52,7 @@ const defaultActions: Action[] = [
   {
     id: '4',
     label: 'View Profile',
-    icon: <AccountBox className="h-4 w-4 text-chart-3" />,
+    icon: <AccountBox className="h-4 w-4 text-chart-8" />,
     end: 'Profile',
     route: '/profile',
   },

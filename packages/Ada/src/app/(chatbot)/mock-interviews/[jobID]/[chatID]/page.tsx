@@ -12,14 +12,12 @@ interface PageProps {
 
 export default function Page({ params }: PageProps) {
   return (
-    <>
-      <div className="bg-background flex-1">
-        <Header />
-      </div>
+    <div className="star-bg bg-background">
+      <Header />
       <div className="flex justify-center align-top bg-background">
         <Sidebar jobID={params.jobID} chatID={params.chatID} />
         <Chat jobID={params.jobID} chatID={params.chatID} />
       </div>
-    </>
+    </div>
   );
 }
