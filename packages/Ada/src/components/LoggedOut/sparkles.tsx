@@ -54,8 +54,8 @@ export const SparklesCore = ({
       speedY: number;
 
       constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
+        this.x = Math.random() * canvas!.width;
+        this.y = Math.random() * canvas!.height;
         this.size = Math.random() * (maxSize - minSize) + minSize;
         this.speedX = Math.random() * 0.5 - 0.25;
         this.speedY = Math.random() * 0.5 - 0.25;
@@ -65,10 +65,10 @@ export const SparklesCore = ({
         this.x += this.speedX;
         this.y += this.speedY;
 
-        if (this.x > canvas.width) this.x = 0;
-        if (this.x < 0) this.x = canvas.width;
-        if (this.y > canvas.height) this.y = 0;
-        if (this.y < 0) this.y = canvas.height;
+        if (this.x > canvas!.width) this.x = 0;
+        if (this.x < 0) this.x = canvas!.width;
+        if (this.y > canvas!.height) this.y = 0;
+        if (this.y < 0) this.y = canvas!.height;
 
         // Mouse interaction
         const dx = mousePosition.x - this.x;
@@ -82,11 +82,10 @@ export const SparklesCore = ({
       }
 
       draw() {
-        if (!ctx) return;
-        ctx.fillStyle = particleColor;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx!.fillStyle = particleColor;
+        ctx!.beginPath();
+        ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx!.fill();
       }
     }
 
@@ -98,8 +97,7 @@ export const SparklesCore = ({
     };
 
     const animate = () => {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
 
       particles.forEach((particle) => {
         particle.update();
@@ -115,8 +113,8 @@ export const SparklesCore = ({
     const handleResize = () => {
       if (typeof window === 'undefined') return;
 
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas!.width = window.innerWidth;
+      canvas!.height = window.innerHeight;
       setDimensions({
         width: window.innerWidth,
         height: window.innerHeight,
