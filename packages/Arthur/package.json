@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "nodemon ./src/index.ts",
     "live": "ts-node ./src/index.ts",
+    "build": "tsc",
+    "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "sync": "ts-node ./src/initialize_db.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -27,6 +29,7 @@
     "openai": "^4.83.0",
     "pdf-parse": "^1.1.1",
     "pg": "^8.13.1",
+    "tsconfig-paths": "^4.2.0",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
