@@ -74,7 +74,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
         role: user.role,
       }, // Payload
       JWT_SECRET as string, // Secret key (ensure you have this in your environment)
-      { expiresIn: '1h' } // Token expiration time
+      { expiresIn: '24h' } // Token expiration time
     );
 
     // Set the token as an HTTP-only cookie

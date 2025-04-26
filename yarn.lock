@@ -4919,8 +4919,10 @@ available-typed-arrays@^1.0.7:
 axe-core@^4.6.2:
   version "4.9.1"
 
-axios@*, axios@^1.6.0, axios@^1.7.9:
-  version "1.7.9"
+axios@*, axios@^1.6.0, axios@^1.7.9, axios@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.npmjs.org/axios/-/axios-1.9.0.tgz"
+  integrity sha512-re4CqKTJaURpzbLHtIi6XpDv20/CnpXOtjRY5/CU32L8gU8ek9UIivcfvSWvmKEngmVbrUtPpdDwWDWL7DNHvg==
   dependencies:
     follow-redirects "^1.15.6"
     form-data "^4.0.0"
@@ -6065,7 +6067,9 @@ cross-spawn@^5.1.0:
     which "^1.2.9"
 
 cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
-  version "7.0.3"
+  version "7.0.6"
+  resolved "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz"
+  integrity sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==
   dependencies:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
@@ -9721,6 +9725,7 @@ jws@^3.2.2:
     "@radix-ui/react-slot" "^1.1.2"
     "@radix-ui/react-tabs" "^1.1.2"
     "@radix-ui/react-toast" "^1.2.4"
+    "@supabase/supabase-js" "^2.49.4"
     antd "^5.23.4"
     axios "^1.7.9"
     chart.js "^4.4.7"
@@ -11716,6 +11721,7 @@ pkg-dir@^7.0.0:
   version "1.0.0"
   resolved "file:packages/Polly"
   dependencies:
+    axios "^1.9.0"
     body-parser "^1.20.3"
     dotenv "^16.4.5"
     express "^4.21.1"
