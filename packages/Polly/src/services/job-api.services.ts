@@ -1,8 +1,9 @@
-import axios from 'axios';
+import { ADZUNA_APP_ID, ADZUNA_API_KEY, GITHUB_JOBS_TOKEN } from '../config';
 import { IJob } from '../models/job.model';
 import jobRepository from '../repositories/job.repository';
 import { getJobEmbedding, formatJobs } from './job.services';
-import { ADZUNA_APP_ID, ADZUNA_API_KEY, GITHUB_JOBS_TOKEN } from '../config';
+import axios from 'axios';
+import https from 'https';
 
 /**
  * Fetches jobs from the Adzuna API
@@ -28,23 +29,33 @@ const fetchAdzunaJobs = async (
     };
 
     const url = `https://api.adzuna.com/v1/api/jobs/us/search/${page}`;
-    
+
     console.log(`Fetching Adzuna jobs for query: ${query}, page: ${page}`);
     console.log('Adzuna URL:', url);
     console.log('Query Parameters:', queryParams);
+    const httpsAgent = new https.Agent({
+      family: 4,
+      rejectUnauthorized: true, // Keep SSL verification
+    });
 
     // Make the API call with query parameters
-    const response = await axios.get(url, { params: queryParams });
-
+    const response = await axios.get(url, {
+      params: queryParams,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      httpsAgent: httpsAgent,
+      timeout: 10000,
+    });
     const data = response.data;
-    console.log('Adzuna response:', data);
-
     console.log('Adzuna response:', data);
 
     if (data && data.results) {
       const jobs = data.results;
 
       for (const job of jobs) {
+        const avgSalary = (job.salary_min + job.salary_max) / 2;
         const formattedJob: Partial<IJob> = {
           title: job.title,
           company: job.company.display_name,
@@ -52,14 +63,14 @@ const fetchAdzunaJobs = async (
           listingUrl: job.redirect_url,
           postedDate: new Date(job.created),
           description: job.description,
-          salary: job.salary_min && job.salary_max
-            ? `${job.salary_min} - ${job.salary_max} ${job.salary_is_predicted ? '(estimated)' : ''}`
-            : 'Not specified'
+          salary: avgSalary ? avgSalary : 0,
         };
 
         const enhancedJob = await formatJobs(formattedJob as IJob);
 
-        const descriptionEmbedding = await getJobEmbedding(formattedJob.description || '');
+        const descriptionEmbedding = await getJobEmbedding(
+          formattedJob.description || ''
+        );
 
         if (descriptionEmbedding) {
           formattedJob.embedding = descriptionEmbedding;
@@ -93,19 +104,23 @@ const fetchGithubJobs = async (
   page: number = 1
 ): Promise<void> => {
   try {
-    const locationParam = location ? `&location=${encodeURIComponent(location)}` : '';
-    const url = `https://jobs.github.com/positions.json?page=${page}&search=${encodeURIComponent(query)}${locationParam}`;
-    
+    const locationParam = location
+      ? `&location=${encodeURIComponent(location)}`
+      : '';
+    const url = `https://jobs.github.com/positions.json?page=${page}&search=${encodeURIComponent(
+      query
+    )}${locationParam}`;
+
     console.log(`Fetching GitHub jobs for query: ${query}, page: ${page}`);
     const response = await axios.get(url, {
       headers: {
-        Authorization: `token ${GITHUB_JOBS_TOKEN}`
-      }
+        Authorization: `token ${GITHUB_JOBS_TOKEN}`,
+      },
     });
-    
+
     if (response.data && Array.isArray(response.data)) {
       const jobs = response.data;
-      
+
       for (const job of jobs) {
         // Transform GitHub job to match our schema
         const formattedJob: Partial<IJob> = {
@@ -115,29 +130,31 @@ const fetchGithubJobs = async (
           listingUrl: job.url,
           postedDate: new Date(job.created_at),
           description: job.description,
-          salary: 'Not specified'
+          salary: 0,
         };
 
         // Format the job to extract standardized fields
         const enhancedJob = await formatJobs(formattedJob as IJob);
-        
+
         // Generate embedding for job
-        const descriptionEmbedding = await getJobEmbedding(formattedJob.description || '');
-        
+        const descriptionEmbedding = await getJobEmbedding(
+          formattedJob.description || ''
+        );
+
         if (descriptionEmbedding) {
           formattedJob.embedding = descriptionEmbedding;
         }
-        
+
         // Apply formatted fields
         formattedJob.description = enhancedJob.description;
         formattedJob.aboutRole = enhancedJob.aboutrole;
         formattedJob.requirements = enhancedJob.requirements;
         // formattedJob.skills_required = enhancedJob.skills_required;
-        
+
         // Save to database
         await jobRepository.saveJobInDb(formattedJob as IJob);
       }
-      
+
       console.log(`Saved ${jobs.length} GitHub jobs to database`);
     }
   } catch (error: any) {
@@ -158,22 +175,27 @@ const fetchReedJobs = async (
   page: number = 1
 ): Promise<void> => {
   try {
-    const locationParam = location ? `&locationName=${encodeURIComponent(location)}` : '';
-    const url = `https://www.reed.co.uk/api/1.0/search?keywords=${encodeURIComponent(keywords)}${locationParam}&resultsToTake=100&resultsToSkip=${(page - 1) * 100}`;
+    const locationParam = location
+      ? `&locationName=${encodeURIComponent(location)}`
+      : '';
+    const url = `https://www.reed.co.uk/api/1.0/search?keywords=${encodeURIComponent(
+      keywords
+    )}${locationParam}&resultsToTake=100&resultsToSkip=${(page - 1) * 100}`;
 
     console.log(`Fetching Reed jobs for keywords: ${keywords}, page: ${page}`);
     const response = await axios.get(url, {
       auth: {
         username: process.env.REED_API_KEY || '',
-        password: ''
-      }
+        password: '',
+      },
     });
 
     if (response.data && response.data.results) {
       const jobs = response.data.results;
-      
+
       for (const job of jobs) {
         // Transform Reed job to match our schema
+        const avgSalary = (job.salary_min + job.salary_max) / 2;
         const formattedJob: Partial<IJob> = {
           title: job.jobTitle,
           company: job.employerName,
@@ -181,31 +203,31 @@ const fetchReedJobs = async (
           listingUrl: job.jobUrl,
           postedDate: new Date(job.datePosted),
           description: job.jobDescription,
-          salary: job.minimumSalary && job.maximumSalary 
-            ? `${job.minimumSalary} - ${job.maximumSalary} ${job.currency} ${job.expirationDate ? '(expires ' + new Date(job.expirationDate).toLocaleDateString() + ')' : ''}`
-            : 'Not specified'
+          salary: avgSalary ? avgSalary : 0,
         };
 
         // Format the job to extract standardized fields
         const enhancedJob = await formatJobs(formattedJob as IJob);
-        
+
         // Generate embedding for job
-        const descriptionEmbedding = await getJobEmbedding(formattedJob.description || '');
-        
+        const descriptionEmbedding = await getJobEmbedding(
+          formattedJob.description || ''
+        );
+
         if (descriptionEmbedding) {
           formattedJob.embedding = descriptionEmbedding;
         }
-        
+
         // Apply formatted fields
         formattedJob.description = enhancedJob.description;
         formattedJob.aboutRole = enhancedJob.aboutrole;
         formattedJob.requirements = enhancedJob.requirements;
         // formattedJob.skills_required = enhancedJob.skills_required;
-        
+
         // Save to database
         await jobRepository.saveJobInDb(formattedJob as IJob);
       }
-      
+
       console.log(`Saved ${jobs.length} Reed jobs to database`);
     }
   } catch (error: any) {
@@ -226,7 +248,9 @@ const fetchJobsFromAllSources = async (
   maxPages: number = 1
 ): Promise<void> => {
   try {
-    console.log(`Fetching jobs from all sources for query: ${query}, location: ${location}`);
+    console.log(
+      `Fetching jobs from all sources for query: ${query}, location: ${location}`
+    );
 
     // Fetch jobs from multiple sources in parallel
     const fetchPromises = [];
@@ -260,5 +284,5 @@ export default {
   fetchAdzunaJobs,
   fetchGithubJobs,
   fetchReedJobs,
-  fetchJobsFromAllSources
+  fetchJobsFromAllSources,
 };

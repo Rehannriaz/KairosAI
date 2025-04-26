@@ -4,10 +4,10 @@ import { IJob } from '../models/job.model';
 import jobRepository from '../repositories/job.repository';
 import resumeRepository from '../repositories/resume.repository';
 import jobApiService from './job-api.services';
+import jobApiServices from './job-api.services';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { UserJWT } from 'common/src/types/UserTypes';
 import OpenAI from 'openai';
-import jobApiServices from './job-api.services';
 
 const openaiClient = new OpenAI({ apiKey: OPENAI_API_KEY });
 
@@ -189,12 +189,12 @@ const scrapeJobs = async (): Promise<void> => {
 const fetchJobsFromAPIs = async (
   query: string = scrapingConfig.searchQuery,
   location: string = scrapingConfig.location,
-  maxPages: number = 1
+  maxPages: number = 2
 ): Promise<void> => {
-  try{
+  try {
     await jobApiServices.fetchAdzunaJobs(query, location, maxPages);
     // return await jobApiService.fetchJobsFromAllSources(query, location, maxPages);
-  }catch(error){
+  } catch (error) {
     console.error('Error fetching jobs from APIs:', error);
     throw error;
   }
@@ -208,9 +208,9 @@ const fetchAllJobSources = async (
   // Run LinkedIn scraping and API fetches in parallel
   await Promise.all([
     scrapeJobs(),
-    fetchJobsFromAPIs(query, location, maxPages)
+    fetchJobsFromAPIs(query, location, maxPages),
   ]);
-  
+
   console.log('All job sources fetched successfully');
 };
 
@@ -263,5 +263,5 @@ export default {
   getNRecommendedJobs,
   fetchJobsFromAPIs,
   fetchAllJobSources,
-  searchJobs
+  searchJobs,
 };
