@@ -16,8 +16,9 @@ const fetchAdzunaJobs = async (
   query: string,
   location: string = '',
   page: number = 1,
+  country: string = 'au',
   resultsPerPage: number = 50
-): Promise<void> => {
+): Promise<boolean> => {
   try {
     const queryParams = {
       app_id: ADZUNA_APP_ID,
@@ -28,7 +29,7 @@ const fetchAdzunaJobs = async (
       where: location ? encodeURIComponent(location) : '',
     };
 
-    const url = `https://api.adzuna.com/v1/api/jobs/us/search/${page}`;
+    const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/${page}`;
 
     console.log(`Fetching Adzuna jobs for query: ${query}, page: ${page}`);
     console.log('Adzuna URL:', url);
@@ -82,10 +83,12 @@ const fetchAdzunaJobs = async (
         // formattedJob.skills_required = enhancedJob.skills_required;
 
         await jobRepository.saveJobInDb(formattedJob as IJob);
+        return true;
       }
 
       console.log(`Saved ${jobs.length} Adzuna jobs to database`);
     }
+    return false; // Return false if no jobs are processed
   } catch (error: any) {
     console.error('Error fetching Adzuna jobs:', error);
     throw new Error('Error fetching Adzuna jobs');

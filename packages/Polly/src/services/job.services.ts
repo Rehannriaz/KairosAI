@@ -1,4 +1,4 @@
-import { scrapingConfig } from '../config';
+import { adzunaConfig, scrapingConfig } from '../config';
 import { OPENAI_API_KEY } from '../config';
 import { IJob } from '../models/job.model';
 import jobRepository from '../repositories/job.repository';
@@ -187,12 +187,12 @@ const scrapeJobs = async (): Promise<void> => {
 };
 
 const fetchJobsFromAPIs = async (
-  query: string = scrapingConfig.searchQuery,
-  location: string = scrapingConfig.location,
-  maxPages: number = 2
-): Promise<void> => {
+  query: string = adzunaConfig.queries[0],
+  location: string = adzunaConfig.locations[0],
+  maxPages: number = adzunaConfig.maxPages
+): Promise<boolean> => {
   try {
-    await jobApiServices.fetchAdzunaJobs(query, location, maxPages);
+    return await jobApiServices.fetchAdzunaJobs(query, location, maxPages);
     // return await jobApiService.fetchJobsFromAllSources(query, location, maxPages);
   } catch (error) {
     console.error('Error fetching jobs from APIs:', error);
