@@ -5,27 +5,127 @@ import axios from 'axios';
 
 const cheerio = require('cheerio');
 // Fetch all jobs
+// const findAllJobs = async (
+//   page: number,
+//   limit: number,
+//   filters: {
+//     locations?: string[];
+//     isRemote?: boolean | null;
+//     minSalary?: number | null;
+//     maxSalary?: number | null;
+//     categories?: string[];
+//   }
+// ): Promise<{ jobs: IJob[]; total: number }> => {
+//   console.log('filters in job.repository.ts in polly', filters);
+//   try {
+//     const offset = (page - 1) * limit;
+
+//     // Get paginated jobs
+//     const jobsResult = await pool.query(
+//       `
+//       SELECT job_id, title, company, location, salary, description, 
+//              skills_required, listingurl, posteddate, aboutrole, requirements 
+//       FROM jobs
+//       ORDER BY posteddate DESC
+//       LIMIT $1 OFFSET $2;
+//       `,
+//       [limit, offset]
+//     );
+
+//     // Get total job count
+//     const countResult = await pool.query(`SELECT COUNT(*) FROM jobs;`);
+//     const total = parseInt(countResult.rows[0].count, 10);
+
+//     return { jobs: jobsResult.rows, total };
+//   } catch (error: any) {
+//     console.error('Error fetching jobs:', error.message);
+//     throw error;
+//   }
+// };
+
 const findAllJobs = async (
   page: number,
-  limit: number
+  limit: number,
+  filters: {
+    locations?: string[];
+    isRemote?: boolean | null;
+    minSalary?: number | null;
+    maxSalary?: number | null;
+    categories?: string[];
+  }
 ): Promise<{ jobs: IJob[]; total: number }> => {
+  console.log('filters in job.repository.ts', filters);
+  
   try {
     const offset = (page - 1) * limit;
+    const queryParams: (number | string)[] = [];
+    let paramCounter = 1; // Start from $1
 
-    // Get paginated jobs
-    const jobsResult = await pool.query(
-      `
+    let whereConditions: string[] = [];
+
+    // Location filter
+    if (filters.locations && filters.locations.length > 0) {
+      const placeholders = filters.locations.map(() => `$${paramCounter++}`).join(', ');
+      whereConditions.push(`location IN (${placeholders})`);
+      queryParams.push(...filters.locations);
+    }
+
+    // Remote filter
+    if (filters.isRemote === true) {
+      whereConditions.push(`location ILIKE '%Remote%'`);
+    } else if (filters.isRemote === false) {
+      whereConditions.push(`location NOT ILIKE '%Remote%'`);
+    }
+
+    // Salary filters
+    if (filters.minSalary !== undefined && filters.minSalary !== null) {
+      whereConditions.push(`salary >= $${paramCounter++}`);
+      queryParams.push(Number(filters.minSalary)); // Force to number
+    }
+    if (filters.maxSalary !== undefined && filters.maxSalary !== null) {
+      whereConditions.push(`salary <= $${paramCounter++}`);
+      queryParams.push(Number(filters.maxSalary)); // Force to number
+    }
+
+    // Categories filter
+    if (filters.categories && filters.categories.length > 0) {
+      const categorySubConditions: string[] = [];
+      for (const category of filters.categories) {
+        categorySubConditions.push(`description ILIKE $${paramCounter} OR skills_required ILIKE $${paramCounter + 1}`);
+        queryParams.push(`%${category}%`, `%${category}%`);
+        paramCounter += 2;
+      }
+      whereConditions.push(`(${categorySubConditions.join(' OR ')})`);
+    }
+
+    // Build the final query
+    let baseQuery = `
       SELECT job_id, title, company, location, salary, description, 
              skills_required, listingurl, posteddate, aboutrole, requirements 
       FROM jobs
-      ORDER BY posteddate DESC
-      LIMIT $1 OFFSET $2;
-      `,
-      [limit, offset]
-    );
+    `;
+    
+    if (whereConditions.length > 0) {
+      baseQuery += ` WHERE ${whereConditions.join(' AND ')}`;
+    }
 
-    // Get total job count
-    const countResult = await pool.query(`SELECT COUNT(*) FROM jobs;`);
+    const finalQuery = `
+      ${baseQuery}
+      ORDER BY posteddate DESC
+      LIMIT $${paramCounter} OFFSET $${paramCounter + 1};
+    `;
+
+    queryParams.push(limit, offset);
+
+    const jobsResult = await pool.query(finalQuery, queryParams);
+
+    // Count query
+    const countQuery = `
+      SELECT COUNT(*) FROM jobs
+      ${whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : ''}
+    `;
+
+    const countResult = await pool.query(countQuery, queryParams.slice(0, paramCounter - 1)); // Only filters, not limit/offset
     const total = parseInt(countResult.rows[0].count, 10);
 
     return { jobs: jobsResult.rows, total };
@@ -34,6 +134,7 @@ const findAllJobs = async (
     throw error;
   }
 };
+
 
 const findJobById = async (id: string): Promise<IJob | null> => {
   try {
