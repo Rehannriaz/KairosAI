@@ -18,8 +18,24 @@ export const getUsername = () => {
     const token = localStorage.getItem('authToken');
     if (token) {
       const decodedJWT = decodeToken(token);
+      console.log("reached here",decodedJWT);
       if (decodedJWT) {
         return decodedJWT.userName;
+      }
+    }
+  } else {
+    return null;
+  }
+};
+
+export const getUserId = () => {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      const decodedJWT = decodeToken(token);
+      console.log("reached hereeeee",decodedJWT);
+      if (decodedJWT) {
+        return decodedJWT.userId;
       }
     }
   } else {

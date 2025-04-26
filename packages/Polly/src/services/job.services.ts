@@ -1,17 +1,17 @@
-import { scrapingConfig } from '../config';
+import { adzunaConfig, scrapingConfig } from '../config';
 import { OPENAI_API_KEY } from '../config';
 import { IJob } from '../models/job.model';
 import jobRepository from '../repositories/job.repository';
 import resumeRepository from '../repositories/resume.repository';
+import jobApiService from './job-api.services';
+import jobApiServices from './job-api.services';
 import { OpenAIEmbeddings } from '@langchain/openai';
-import { json } from 'body-parser';
 import { UserJWT } from 'common/src/types/UserTypes';
-import { ErrorProps } from 'next/error';
 import OpenAI from 'openai';
 
 const openaiClient = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-const getJobEmbedding = async (text: string) => {
+export const getJobEmbedding = async (text: string) => {
   try {
     const embeddingsModel = new OpenAIEmbeddings({ apiKey: OPENAI_API_KEY });
     // Generate embeddings for the job description
@@ -23,18 +23,7 @@ const getJobEmbedding = async (text: string) => {
   }
 };
 
-const getAllJobs = async (
-  page: number,
-  limit: number
-): Promise<{ jobs: IJob[]; total: number }> => {
-  return await jobRepository.findAllJobs(page, limit);
-};
-const getJobById = async (id: string): Promise<IJob | null> => {
-  return await jobRepository.findJobById(id);
-};
-
-const formatJobs = async (job: IJob) => {
-  console.log('job-----', JSON.stringify(job));
+export const formatJobs = async (job: IJob) => {
   try {
     const prompt = `Given the following job details, generate structured data in JSON format following this schema:
     {
@@ -80,6 +69,17 @@ const formatJobs = async (job: IJob) => {
     console.error('Error formatting jobs:', error.message);
     throw error;
   }
+};
+
+const getAllJobs = async (
+  page: number,
+  limit: number
+): Promise<{ jobs: IJob[]; total: number }> => {
+  return await jobRepository.findAllJobs(page, limit);
+};
+
+const getJobById = async (id: string): Promise<IJob | null> => {
+  return await jobRepository.findJobById(id);
 };
 
 const scrapeJobs = async (): Promise<void> => {
@@ -186,6 +186,34 @@ const scrapeJobs = async (): Promise<void> => {
   );
 };
 
+const fetchJobsFromAPIs = async (
+  query: string = adzunaConfig.queries[0],
+  location: string = adzunaConfig.locations[0],
+  maxPages: number = adzunaConfig.maxPages
+): Promise<boolean> => {
+  try {
+    return await jobApiServices.fetchAdzunaJobs(query, location, maxPages);
+    // return await jobApiService.fetchJobsFromAllSources(query, location, maxPages);
+  } catch (error) {
+    console.error('Error fetching jobs from APIs:', error);
+    throw error;
+  }
+};
+
+const fetchAllJobSources = async (
+  query: string = scrapingConfig.searchQuery,
+  location: string = scrapingConfig.location,
+  maxPages: number = scrapingConfig.pagination.maxPages
+): Promise<void> => {
+  // Run LinkedIn scraping and API fetches in parallel
+  await Promise.all([
+    scrapeJobs(),
+    fetchJobsFromAPIs(query, location, maxPages),
+  ]);
+
+  console.log('All job sources fetched successfully');
+};
+
 const getNRecommendedJobs = async (
   limit: number,
   userObj: UserJWT
@@ -214,9 +242,26 @@ const getNRecommendedJobs = async (
   }
 };
 
+const searchJobs = async (
+  query: string,
+  location: string = '',
+  page: number = 1,
+  limit: number = 10
+): Promise<{ jobs: IJob[]; total: number }> => {
+  try {
+    return await jobRepository.searchJobs(query, location, page, limit);
+  } catch (error: any) {
+    console.error('Error searching jobs:', error.message);
+    throw new Error('Failed to search jobs');
+  }
+};
+
 export default {
   getAllJobs,
   scrapeJobs,
   getJobById,
   getNRecommendedJobs,
+  fetchJobsFromAPIs,
+  fetchAllJobSources,
+  searchJobs,
 };
