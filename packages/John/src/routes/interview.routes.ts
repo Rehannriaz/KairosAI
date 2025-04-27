@@ -1,5 +1,5 @@
-import { Router } from 'express';
 import interviewController from '../controllers/interview.controller';
+import { Router } from 'express';
 
 class InterviewRoutes {
   public router: Router;
@@ -11,6 +11,8 @@ class InterviewRoutes {
 
   private initializeRoutes(): void {
     this.router.post('/', interviewController.startInterview);
+    this.router.post('/stream', interviewController.streamInterview);
+    this.router.post('/save-stream', interviewController.saveStreamedInterview);
     this.router.post(
       '/initiateInterview',
       interviewController.initiateInterview

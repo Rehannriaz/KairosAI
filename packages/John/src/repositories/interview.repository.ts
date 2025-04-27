@@ -166,6 +166,30 @@ const deleteChatForJob = async (
   }
 };
 
+const streamChatCompletion = async (
+  messages: any[],
+  onChunk: (chunk: string) => void
+): Promise<void> => {
+  try {
+    const stream = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: messages,
+      stream: true,
+    });
+
+    for await (const chunk of stream) {
+      const content = chunk.choices[0]?.delta?.content || '';
+      if (content) {
+        onChunk(content);
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
+  } catch (error) {
+    console.error('Error in streamChatCompletion:', error);
+    throw error;
+  }
+};
+
 export default {
   getChatCompletion,
   getAllChatsForJob,
@@ -175,4 +199,5 @@ export default {
   getInterviewData,
   deleteChatForJob,
   fetchInterviewsData,
+  streamChatCompletion,
 };

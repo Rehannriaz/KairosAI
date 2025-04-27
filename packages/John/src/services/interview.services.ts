@@ -161,6 +161,221 @@ const processInterview = async (
   }
 };
 
+const streamInterview = async (
+  userObj: UserJWT,
+  jobId: string,
+  userResponse: string,
+  interviewId: string,
+  res: any // Express response object for streaming
+): Promise<void> => {
+  try {
+    // Get job and resume details
+    const { jobListingText, resumeText } =
+      await jobAndResumeDetailsRepository.getDetailsForResumeAndJob(
+        jobId,
+        userObj.userId
+      );
+
+    const systemPrompt = `
+      You are a professional mock interviewer conducting a structured job interview. Your goal is to assess the candidate based on their resume and the job description. Tailor your questions to evaluate their technical expertise, problem-solving abilities, communication skills, and cultural fit for the role.
+      
+      ### **Instructions:**
+      1. **Start with a general question** about the candidate's background and their interest in the role.
+      2. **Ask technical questions** focusing on key skills required for the job.
+      3. **Follow up with deeper technical and problem-solving questions** based on the candidate's responses.
+      4. **Include behavioral questions** using the STAR method (Situation, Task, Action, Result) to assess real-world problem-solving.
+      5. **Evaluate cultural fit and career alignment** by discussing teamwork, challenges, and work preferences.
+      6. **Maintain a professional, engaging, and structured tone** throughout the interview.
+      7. **Ensure a clear interview conclusion** by following the "Interview Ending" process.
+      
+      ---
+      
+      ### **Job Description**
+      - **Title**: ${jobListingText.title}  
+      - **Company**: ${jobListingText.company}  
+      - **Location**: ${jobListingText.location}  
+      - **Salary**: ${
+        jobListingText.salary
+          ? `$${jobListingText.salary} per year`
+          : 'Not specified'
+      }  
+      - **Posted Date**: ${jobListingText.posteddate}  
+      - **Role Summary**: ${jobListingText.aboutrole}  
+      - **Key Responsibilities**: ${jobListingText.description}  
+      - **Required Skills**: ${jobListingText.skills_required}  
+      - **Qualifications**: ${jobListingText.requirements}  
+      - **Job Listing**: ${jobListingText.listingurl}  
+      
+      ---
+      
+      ### **Candidate's Resume**
+      - **Name**: ${resumeText.name}  
+      - **Location**: ${resumeText.user_location}  
+      - **Email**: ${resumeText.email}  
+      - **Phone**: ${resumeText.phone}  
+      - **Professional Summary**: ${resumeText.professional_summary}  
+      - **Skills**: ${resumeText.skills.join(', ')}  
+      - **Employment History**:  
+        ${resumeText.employment_history
+          .map(
+            (job) =>
+              `- **${job.role}** at ${job.company} (${job.start_date} - ${job.end_date}): ${job.description}`
+          )
+          .join('\n')}  
+      - **Education**:  
+        ${resumeText.education
+          .map(
+            (edu) => `- **${edu.degree}** from ${edu.institution} (${edu.year})`
+          )
+          .join('\n')}  
+      - **Resume Link**: ${resumeText.link}  
+      
+      ---
+      
+      ### **Interview Flow**
+      1. Begin with a warm introduction and an open-ended question about the candidate’s experience and interest in the role.
+      2. Progress through structured technical, behavioral, and situational questions.
+      3. Provide constructive feedback after key responses.
+      
+      ### **Interview Ending Process**
+      1. When you feel the interview is wrapping up, ask:  
+         _"Before we conclude, do you have any questions for me?"_
+      2. If the candidate asks a question, respond appropriately and ask again:  
+         _"Do you have any other questions?"_
+      3. Once the candidate confirms they have no further questions, respond with:  
+         _"Thank you for your time today! It was great speaking with you. I appreciate your responses and wish you the best of luck."_  
+      4. Finally, **return the exact text:** "INTERVIEW_DONE"
+      
+      This ensures a structured and professional interview experience while clearly signaling when the interview is complete.
+      `;
+
+    // Fetch existing interview history
+    let interviewHistory: { role: string; content: string }[] = [];
+
+    if (interviewId && userObj && jobId) {
+      const interviewData = await interviewRepository.getInterviewData(
+        interviewId,
+        userObj.userId,
+        jobId
+      );
+
+      if (interviewData && interviewData.interview_data) {
+        try {
+          interviewHistory =
+            typeof interviewData.interview_data === 'string'
+              ? JSON.parse(interviewData.interview_data)
+              : interviewData.interview_data;
+        } catch (error: any) {
+          console.error('Error parsing interview data:', error.message);
+          interviewHistory = [];
+        }
+      } else {
+        // Initialize if no history exists
+        interviewHistory.push({ role: 'system', content: systemPrompt });
+      }
+    }
+
+    // Add the user's response
+    interviewHistory.push({ role: 'user', content: userResponse });
+
+    // Set up streaming to client
+    await interviewRepository.streamChatCompletion(
+      interviewHistory,
+      (chunk: string) => {
+        // Send each chunk to the client
+        res.write(chunk);
+      }
+    );
+
+    // Note: We don't save the data here - that's done in a separate endpoint
+    // after streaming completes to avoid blocking the stream
+  } catch (error: any) {
+    console.error('Error in streamInterview:', error.message);
+    throw error;
+  }
+};
+
+const saveStreamedInterview = async (
+  userObj: UserJWT,
+  jobId: string,
+  userResponse: string,
+  interviewId: string
+): Promise<void> => {
+  try {
+    // Get job and resume details
+    const { resumeText } =
+      await jobAndResumeDetailsRepository.getDetailsForResumeAndJob(
+        jobId,
+        userObj.userId
+      );
+
+    // Fetch the current interview data
+    const interviewData = await interviewRepository.getInterviewData(
+      interviewId,
+      userObj.userId,
+      jobId
+    );
+
+    let interviewHistory: { role: string; content: string }[] = [];
+
+    if (interviewData && interviewData.interview_data) {
+      try {
+        interviewHistory =
+          typeof interviewData.interview_data === 'string'
+            ? JSON.parse(interviewData.interview_data)
+            : interviewData.interview_data;
+      } catch (error: any) {
+        console.error('Error parsing interview data:', error.message);
+        interviewHistory = [];
+      }
+    }
+
+    // Add the user's response if it's not already there
+    const userMessageExists = interviewHistory.some(
+      (msg) => msg.role === 'user' && msg.content === userResponse
+    );
+
+    if (!userMessageExists) {
+      interviewHistory.push({ role: 'user', content: userResponse });
+    }
+
+    // Get the latest assistant response from the AI completion
+    // This is a fallback in case streaming failed or was interrupted
+    const botResponse = await interviewRepository.getChatCompletion(
+      interviewHistory
+    );
+
+    // Check if the assistant response is already in the history
+    const assistantResponseExists = interviewHistory.some(
+      (msg) => msg.role === 'assistant' && msg.content === botResponse
+    );
+
+    if (!assistantResponseExists) {
+      interviewHistory.push({ role: 'assistant', content: botResponse });
+    }
+
+    // Filter out system prompt and resume content for final storage
+    const filteredHistory = interviewHistory.filter(
+      (msg) =>
+        msg.role !== 'system' &&
+        (msg.role !== 'user' ||
+          msg.content !==
+            `Candidate's Resume:\n${resumeText.professional_summary}`)
+    );
+
+    // Save the updated interview data
+    const updatedInterviewData = JSON.stringify(filteredHistory);
+    await interviewRepository.updateInterviewData(
+      interviewId,
+      userObj.userId,
+      jobId,
+      updatedInterviewData
+    );
+  } catch (error: any) {
+    console.error('Error in saveStreamedInterview:', error.message);
+    throw error;
+  }
+};
 const fetchChatsForJob = async (
   jobID: string,
   userObj: UserJWT
@@ -229,4 +444,6 @@ export default {
   initiateInterview,
   deleteChatForJob,
   getInterviewsData,
+  streamInterview,
+  saveStreamedInterview,
 };

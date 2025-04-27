@@ -38,6 +38,7 @@ const MessageSkeleton = ({ isUser = false }: { isUser?: boolean }) => (
     />
   </div>
 );
+
 const TypingIndicator = () => (
   <div className="flex justify-start">
     <div className="bg-muted rounded-lg px-4 py-2 max-w-[80%]">
@@ -62,8 +63,8 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [loadingMessageId, setLoadingMessageId] = useState<string | null>(null);
   const [jobDetails, setJobDetails] = useState<JobDetails | null>(null);
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -75,7 +76,16 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
           jobID,
           chatID
         );
-        setMessages(chat.interview_data);
+        const initialWelcomeMessage: Message = {
+          id: '1',
+          role: 'assistant',
+          content: `Hello and Welcome to your AI Mock Interview at ${chat.company} ! I'm here to help you prepare for your actual interview. Please start off by introducing yourself!`,
+        };
+        const loadedMessages = chat?.interview_data?.length
+          ? [initialWelcomeMessage, ...chat.interview_data]
+          : [initialWelcomeMessage];
+
+        setMessages(loadedMessages);
         setJobDetails({
           title: chat.title,
           company: chat.company,
@@ -101,26 +111,57 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
       content: input,
     };
 
-    // Instantly add user message without any delay or loading animation
+    // Add user message to the chat
     setMessages((prev) => [...(prev || []), userMessage]);
     setInput('');
     setLoading(true);
-    setLoadingMessageId(userMessage.id);
+    setIsStreaming(true);
+
+    // Create a placeholder message for the assistant response
+    const assistantMessageId = `assistant-${Date.now()}`;
+    const assistantMessage: Message = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+    };
+
+    setMessages((prev) => [...prev, assistantMessage]);
+
     try {
-      const data = await chatServiceInstance.postChat(input, chatID, jobID);
-      if (data.res) {
-        const newMessages = data.res.map((msg: any, index: number) => ({
-          id: `${Date.now()}-${index}`,
-          role: msg.role,
-          content: msg.content,
-        }));
-        setMessages(newMessages);
-      }
+      // Start streaming the response
+      await chatServiceInstance.streamChat(input, chatID, jobID, (chunk) => {
+        // Update the assistant message with each new chunk
+        setMessages((prevMessages) => {
+          return prevMessages.map((msg) => {
+            if (msg.id === assistantMessageId) {
+              return {
+                ...msg,
+                content: msg.content + chunk,
+              };
+            }
+            return msg;
+          });
+        });
+      });
     } catch (error) {
       console.error('Error fetching response:', error);
+
+      // Handle error in UI
+      setMessages((prevMessages) => {
+        return prevMessages.map((msg) => {
+          if (msg.id === assistantMessageId) {
+            return {
+              ...msg,
+              content:
+                'Sorry, there was an error processing your request. Please try again.',
+            };
+          }
+          return msg;
+        });
+      });
     } finally {
       setLoading(false);
-      setLoadingMessageId(null);
+      setIsStreaming(false);
     }
   };
 
@@ -172,17 +213,16 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
                     : 'bg-muted'
                 }`}
               >
-                {loadingMessageId === message.id ? (
-                  <div className="flex justify-center items-center p-2">
-                    <Skeleton className="h-4 w-[200px]" />
-                  </div>
-                ) : (
-                  message.content
-                )}
+                {message.content}
+                {message.id === messages[messages.length - 1].id &&
+                  message.role === 'assistant' &&
+                  isStreaming && (
+                    <span className="inline-block animate-pulse">▋</span>
+                  )}
               </div>
             </div>
           ))}
-          {loading && loadingMessageId === null && <TypingIndicator />}
+          {loading && !isStreaming && <TypingIndicator />}
         </div>
         <div ref={messagesEndRef} />
       </ScrollArea>
@@ -196,7 +236,7 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
         />
         <Button type="submit" disabled={loading}>
           {loading ? (
-            <Skeleton className="h-2 w-2" />
+            <Skeleton className="h-4 w-4 rounded-full" />
           ) : (
             <Send className="h-4 w-4" />
           )}

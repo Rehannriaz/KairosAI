@@ -47,6 +47,56 @@ const getInterviewsData = async (req: any, res: any) => {
     res.status(500).json({ error: error.message });
   }
 };
+const streamInterview = async (req: any, res: any) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const { userResponse, interviewID, jobID } = req.body;
+    res.setHeader('Content-Type', 'text/plain');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    // Start the streaming process
+    await interviewServices.streamInterview(
+      req.user,
+      jobID,
+      userResponse,
+      interviewID,
+      res // Pass the response object to write chunks
+    );
+
+    // End the response when streaming is complete
+    res.end();
+  } catch (error: any) {
+    if (!res.headersSent) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.end(`Error: ${error.message}`);
+    }
+  }
+};
+const saveStreamedInterview = async (req: any, res: any) => {
+  const { userResponse, interviewID, jobID } = req.body;
+
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    await interviewServices.saveStreamedInterview(
+      req.user,
+      jobID,
+      userResponse,
+      interviewID
+    );
+
+    res.status(200).json({ success: true });
+  } catch (error: any) {
+    console.error('Error saving streamed interview:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const initiateInterview = async (req: any, res: any) => {
   const { jobID } = req.body;
@@ -101,4 +151,6 @@ export default {
   initiateInterview,
   deleteChatForJob,
   getInterviewsData,
+  streamInterview,
+  saveStreamedInterview,
 };
