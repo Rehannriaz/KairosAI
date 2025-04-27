@@ -2,18 +2,6 @@
 # yarn lockfile v1
 
 
-"@abhijithvijayan/eslint-config-airbnb@^1.1.0":
-  version "1.1.0"
-  dependencies:
-    eslint-config-airbnb-base "^15.0.0"
-    eslint-config-airbnb-typescript "^17.1.0"
-
-"@abhijithvijayan/eslint-config-airbnb@^1.1.0":
-  version "1.1.0"
-  dependencies:
-    eslint-config-airbnb-base "^15.0.0"
-    eslint-config-airbnb-typescript "^17.1.0"
-
 "@adobe/css-tools@^4.0.1":
   version "4.4.1"
   resolved "https://registry.npmjs.org/@adobe/css-tools/-/css-tools-4.4.1.tgz"
@@ -4878,7 +4866,7 @@ arrify@^1.0.1:
   resolved "https://registry.npmjs.org/arrify/-/arrify-1.0.1.tgz"
   integrity sha512-3CYzex9M9FGQjCGMGyi6/31c8GJbgb0qGyrx5HWxPd0aCwh4cB2YjMb2Xf9UuoogrMrlO9cTqnB5rI5GHZTcUA==
 
-"arthur@file:/home/zaid/FYP/KairosAI/packages/Arthur":
+"arthur@file:/home/rehan/FYP/KairosAI/packages/Arthur":
   version "1.0.0"
   resolved "file:packages/Arthur"
   dependencies:
@@ -4936,7 +4924,7 @@ async@^3.2.3:
 asynckit@^0.4.0:
   version "0.4.0"
 
-"authmicroservice@file:/home/zaid/FYP/KairosAI/packages/auth":
+"authmicroservice@file:/home/rehan/FYP/KairosAI/packages/auth":
   version "1.0.0"
   resolved "file:packages/auth"
   dependencies:
@@ -5133,7 +5121,7 @@ babel-preset-jest@^29.6.3:
     babel-plugin-jest-hoist "^29.6.3"
     babel-preset-current-node-syntax "^1.0.0"
 
-"backendexample@file:/home/zaid/FYP/KairosAI/packages/backendExample":
+"backendexample@file:/home/rehan/FYP/KairosAI/packages/backendExample":
   version "1.0.0"
   resolved "file:packages/backendExample"
   dependencies:
@@ -5798,12 +5786,6 @@ common-path-prefix@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/common-path-prefix/-/common-path-prefix-3.0.0.tgz"
   integrity sha512-QE33hToZseCH3jS0qN96O/bSh3kaw/h+Tq7ngyY9eWDUnTlTNUyqfqvCXioLe5Na5jFsL78ra/wuBU4iuEgd4w==
-
-"common@file:/home/zaid/FYP/KairosAI/packages/common":
-  version "1.0.0"
-  resolved "file:packages/common"
-  dependencies:
-    jsonwebtoken "^9.0.0"
 
 compare-func@^2.0.0:
   version "2.0.0"
@@ -9265,7 +9247,7 @@ jju@^1.4.0:
   resolved "https://registry.npmjs.org/jju/-/jju-1.4.0.tgz"
   integrity sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==
 
-"john@file:/home/zaid/FYP/KairosAI/packages/John":
+"john@file:/home/rehan/FYP/KairosAI/packages/John":
   version "1.0.0"
   resolved "file:packages/John"
   dependencies:
@@ -9491,7 +9473,7 @@ jws@^3.2.2:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
 
-"kairos-ai@file:/home/zaid/FYP/KairosAI/packages/Ada":
+"kairos-ai@file:/home/rehan/FYP/KairosAI/packages/Ada":
   version "0.1.0"
   resolved "file:packages/Ada"
   dependencies:
@@ -9502,7 +9484,7 @@ jws@^3.2.2:
     "@radix-ui/react-alert-dialog" "^1.1.5"
     "@radix-ui/react-avatar" "^1.1.2"
     "@radix-ui/react-checkbox" "^1.1.4"
-    "@radix-ui/react-dialog" "^1.1.6"
+    "@radix-ui/react-dialog" "^1.1.11"
     "@radix-ui/react-label" "^2.1.1"
     "@radix-ui/react-popover" "^1.1.4"
     "@radix-ui/react-scroll-area" "^1.2.2"
@@ -11438,7 +11420,7 @@ pkg-dir@^7.0.0:
   dependencies:
     find-up "^6.3.0"
 
-"polly@file:/home/zaid/FYP/KairosAI/packages/Polly":
+"polly@file:/home/rehan/FYP/KairosAI/packages/Polly":
   version "1.0.0"
   resolved "file:packages/Polly"
   dependencies:
