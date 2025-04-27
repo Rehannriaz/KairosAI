@@ -73,9 +73,16 @@ export const formatJobs = async (job: IJob) => {
 
 const getAllJobs = async (
   page: number,
-  limit: number
+  limit: number,
+  filters: {
+    locations?: string[];
+    isRemote?: boolean | null;
+    minSalary?: number | null;
+    maxSalary?: number | null;
+    categories?: string[];
+  }
 ): Promise<{ jobs: IJob[]; total: number }> => {
-  return await jobRepository.findAllJobs(page, limit);
+  return await jobRepository.findAllJobs(page, limit, filters);
 };
 
 const getJobById = async (id: string): Promise<IJob | null> => {
@@ -187,7 +194,7 @@ const scrapeJobs = async (): Promise<void> => {
 };
 
 const fetchJobsFromAPIs = async (
-  query: string = adzunaConfig.queries[0],
+  query: string = adzunaConfig.queries[1],
   location: string = adzunaConfig.locations[0],
   maxPages: number = adzunaConfig.maxPages
 ): Promise<boolean> => {
@@ -256,6 +263,25 @@ const searchJobs = async (
   }
 };
 
+const getLocations = async (): Promise<string[]> => {
+  try {
+    const locations = await jobRepository.getLocations();
+    return locations;
+  } catch (error: any) {
+    console.error('Error fetching locations:', error.message);
+    throw new Error('Failed to fetch locations');
+  }
+};
+const getJobCategories = async (): Promise<string[]> => {
+  try {
+    const categories = await jobRepository.getJobCategories();
+    return categories;
+  } catch (error: any) {
+    console.error('Error fetching job categories:', error.message);
+    throw new Error('Failed to fetch job categories');
+  }
+};
+
 export default {
   getAllJobs,
   scrapeJobs,
@@ -264,4 +290,6 @@ export default {
   fetchJobsFromAPIs,
   fetchAllJobSources,
   searchJobs,
+  getLocations,
+  getJobCategories,
 };

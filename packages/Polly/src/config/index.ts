@@ -39,7 +39,7 @@ export const scrapingConfig = {
 };
 
 export const adzunaConfig = {
-  baseUrl: 'https://api.adzuna.com/v1/api/jobs/au/search',
+  baseUrl: 'https://api.adzuna.com/v1/api/jobs/nz/search',
   appId: process.env.ADZUNA_APP_ID,
   appKey: process.env.ADZUNA_API_KEY,
   resultsPerPage: 50,
