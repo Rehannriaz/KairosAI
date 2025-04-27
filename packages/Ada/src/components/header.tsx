@@ -65,7 +65,7 @@ export function Header() {
           </PopoverTrigger>
           <PopoverContent className="">
             <div className="flex flex-col ml-2">
-              <span className="font-bold">{getUsername()}</span>
+              <span className="font-bold text-right">{getUsername()}</span>
               <div className="text-right cursor-pointer mt-5 p-2 w-full rounded-r-md hover:bg-[#222222] hover:text-white transition duration-100 ease-in">
                 View Profile
               </div>

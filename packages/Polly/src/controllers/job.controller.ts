@@ -91,6 +91,30 @@ const getJobCategories = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+export const fetchJobsFromAPIs = async (req: Request, res: Response) => {
+  console.log('fetchJobsFromAPIs called');
+  try {
+    const query = (req.query.query as string) || undefined;
+    const location = (req.query.location as string) || undefined;
+    const maxPages = req.query.maxPages
+      ? parseInt(req.query.maxPages as string)
+      : undefined;
+
+    console.log('query', query);
+    console.log('location', location);
+    console.log('maxPages', maxPages);
+
+    const jobs = await jobServices.fetchJobsFromAPIs(query, location, maxPages);
+
+    res.status(200).json({
+      message: 'Jobs fetched successfully.',
+      jobs,
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export default {
   getAllJobs,
   scrapeJobs,
@@ -98,4 +122,5 @@ export default {
   getNRecommendedJobs,
   getLocations,
   getJobCategories,
+  fetchJobsFromAPIs,
 };

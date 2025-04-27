@@ -3,6 +3,10 @@
 import resumeServiceInstance from '@/api/resumeService';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { getUserId } from '@/lib';
+import { uploadFileToStorage } from '@/utils/constants';
+import { createAdminClient } from '@/utils/supabase/admin';
+import { TrySharp } from '@mui/icons-material';
 import { Upload, File, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -47,15 +51,34 @@ export default function ResumeUpload() {
     ];
     return validTypes.includes(file.type);
   };
-
+  const uploadResumesToBucket = async (file: File) => {
+    try {
+      const client = createAdminClient();
+      const userId = getUserId();
+      console.log('userId', userId);
+      if (!userId) {
+        throw new Error('User ID not found');
+      }
+      const fileUrl = await uploadFileToStorage(
+        client,
+        file,
+        String(userId),
+        'resumes_pdf'
+      );
+      return fileUrl;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      throw error;
+    }
+  };
   const handleSubmit = async () => {
     if (!file) return;
 
     setIsUploading(true);
     // Simulate file upload and parsing
     try {
-      const response = await resumeServiceInstance.uploadResume(file);
-
+      const fileUrl = await uploadResumesToBucket(file);
+      const response = await resumeServiceInstance.uploadResume(file, fileUrl);
       console.log('result', response);
       router.push(`/resume/review/${response.resume_id}`);
     } catch (error) {

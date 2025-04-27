@@ -13,6 +13,7 @@ class JobRoutes {
     this.router.get('/locations', jobController.getLocations);
     this.router.get('/categories', jobController.getJobCategories);
     this.router.get('/', jobController.getAllJobs);
+    this.router.get('/fetch-jobs', jobController.fetchJobsFromAPIs);
     this.router.post('/', jobController.scrapeJobs);
     this.router.get('/:id', jobController.getJobById);
     this.router.get('/recommended-jobs/:limit', jobController.getNRecommendedJobs);

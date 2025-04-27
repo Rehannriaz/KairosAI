@@ -29,6 +29,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 export interface Resume {
+  file_url?: string;
   id: string;
   name: string;
   uploaddate: string;
@@ -97,10 +98,29 @@ export default function ResumeDashboard() {
   const handleReviewClick = (resume: Resume) => {
     setSelectedResume(resume);
   };
+  const handleDownloadFile = async (fileUrl: string) => {
+    try {
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
 
-  const handleDownload = (fileName: string) => {
-    // Implement actual download logic here
-    console.log(`Downloading ${fileName}`);
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'resume'; // Set the download attribute with filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href); // Clean up by revoking the blob URL
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
+  };
+  const handleDownload = async (file_url: string) => {
+    try {
+      handleDownloadFile(file_url);
+    } catch (error) {
+      console.error('Error downloading resume:', error);
+      setError('Failed to download resume. Please try again later.');
+    }
   };
 
   const handleEdit = (id: string) => {
@@ -237,14 +257,18 @@ export default function ResumeDashboard() {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDownload(resume.fileName)}
-                    >
-                      <Download className="h-4 w-4" />
-                      <span className="sr-only">Download</span>
-                    </Button>
+                    {resume.file_url && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          resume.file_url && handleDownload(resume.file_url)
+                        }
+                      >
+                        <Download className="h-4 w-4" />
+                        <span className="sr-only">Download</span>
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"

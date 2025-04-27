@@ -11,7 +11,7 @@ export interface IJob extends Document {
   description: string;
   embedding: any;
   scrapedAt: Date;
-  salary?: string; // Optional field
+  salary?: number; // Optional field
 }
 
 const jobSchema = new Schema<IJob>(
