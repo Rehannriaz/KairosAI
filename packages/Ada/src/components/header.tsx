@@ -7,12 +7,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getUsername } from '@/lib';
-import { Bell, Heart, HomeIcon, Mail, Search } from 'lucide-react';
+import { Bell, Heart, HomeIcon, Mail, Menu, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-export function Header() {
+interface HeaderProps {
+  toggleSidebar?: () => void;
+}
+
+export function Header({ toggleSidebar }: HeaderProps) {
   const router = useRouter();
   const handleLogout = async () => {
     try {
@@ -27,6 +31,11 @@ export function Header() {
 
   return (
     <header className="flex h-16 items-center px-4 border-b border-border/40">
+      <div className="md:hidden mr-2">
+        <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+          <Menu className="h-5 w-5" />
+        </Button>
+      </div>
       <div
         className={`flex-1 ${showHomeIcon ? 'gap-x-4' : ''}  flex items-center`}
       >
