@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node ./src/dev.ts",
+    "dev": "nodemon ./src/dev.ts",
     "live": "ts-node ./src/index.ts",
     "sync": "ts-node ./src/initialize_db.ts",
     "build": "tsc",

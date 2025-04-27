@@ -16,7 +16,7 @@ const fetchAdzunaJobs = async (
   query: string,
   location: string = '',
   page: number = 1,
-  country: string = 'au',
+  country: string = 'nz',
   resultsPerPage: number = 50
 ): Promise<boolean> => {
   try {
@@ -83,10 +83,10 @@ const fetchAdzunaJobs = async (
         // formattedJob.skills_required = enhancedJob.skills_required;
 
         await jobRepository.saveJobInDb(formattedJob as IJob);
-        return true;
       }
 
       console.log(`Saved ${jobs.length} Adzuna jobs to database`);
+      return true;
     }
     return false; // Return false if no jobs are processed
   } catch (error: any) {

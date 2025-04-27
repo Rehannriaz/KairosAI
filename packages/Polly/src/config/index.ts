@@ -43,10 +43,10 @@ export const adzunaConfig = {
   appId: process.env.ADZUNA_APP_ID,
   appKey: process.env.ADZUNA_API_KEY,
   resultsPerPage: 50,
-  maxPages: 3,
+  pageNumber: 1,
   queries: [
-    'software engineer',
     'data scientist',
+    'software engineer',
     'product manager',
     'ux designer',
     'full stack developer',

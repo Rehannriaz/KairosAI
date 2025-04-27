@@ -196,10 +196,10 @@ const scrapeJobs = async (): Promise<void> => {
 const fetchJobsFromAPIs = async (
   query: string = adzunaConfig.queries[1],
   location: string = adzunaConfig.locations[0],
-  maxPages: number = adzunaConfig.maxPages
+  pageNumber: number = adzunaConfig.pageNumber
 ): Promise<boolean> => {
   try {
-    return await jobApiServices.fetchAdzunaJobs(query, location, maxPages);
+    return await jobApiServices.fetchAdzunaJobs(query, location, pageNumber);
     // return await jobApiService.fetchJobsFromAllSources(query, location, maxPages);
   } catch (error) {
     console.error('Error fetching jobs from APIs:', error);
