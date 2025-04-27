@@ -5370,6 +5370,8 @@ cheerio@*, cheerio@^0.22.0:
 
 cheerio@^1.0.0:
   version "1.0.0"
+  resolved "https://registry.npmjs.org/cheerio/-/cheerio-1.0.0.tgz"
+  integrity sha512-quS9HgjQpdaXOvsZz82Oz7uxtXiy6UIsIQcpBj7HRw2M63Skasm9qlDocAM7jNuaxdhpPU7c4kJN+gA5MCu4ww==
   dependencies:
     cheerio-select "^2.1.0"
     dom-serializer "^2.0.0"
@@ -6566,6 +6568,11 @@ entities@^1.1.1:
 
 entities@^4.2.0, entities@^4.4.0, entities@^4.5.0:
   version "4.5.0"
+
+entities@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.npmjs.org/entities/-/entities-6.0.0.tgz"
+  integrity sha512-aKstq2TDOndCn4diEyp9Uq/Flu2i1GlLkc6XIDQSDMuaFE3OPW5OphLCyQ5SpSJZTb4reN+kTcYru5yIfXoRPw==
 
 entities@~1.1.1:
   version "1.1.2"
@@ -8031,6 +8038,8 @@ htmlparser2@^3.9.1, htmlparser2@^3.9.2:
 
 htmlparser2@^9.1.0:
   version "9.1.0"
+  resolved "https://registry.npmjs.org/htmlparser2/-/htmlparser2-9.1.0.tgz"
+  integrity sha512-5zfg6mHUoaer/97TxnGpxmbR7zJtPwIYFMZ/H5ucTlPZhKvtum05yiPK3Mgai3a0DyVxv7qYqoweaEd2nrYQzQ==
   dependencies:
     domelementtype "^2.3.0"
     domhandler "^5.0.3"
@@ -11053,6 +11062,8 @@ parse5-htmlparser2-tree-adapter@^6.0.0:
 
 parse5-htmlparser2-tree-adapter@^7.0.0:
   version "7.1.0"
+  resolved "https://registry.npmjs.org/parse5-htmlparser2-tree-adapter/-/parse5-htmlparser2-tree-adapter-7.1.0.tgz"
+  integrity sha512-ruw5xyKs6lrpo9x9rCZqZZnIUntICjQAd0Wsmp396Ul9lN/h+ifgVV1x1gZHi8euej6wTfpqX8j+BFQxF0NS/g==
   dependencies:
     domhandler "^5.0.3"
     parse5 "^7.0.0"
@@ -11247,10 +11258,14 @@ pkg-dir@^7.0.0:
   dependencies:
     axios "^1.9.0"
     body-parser "^1.20.3"
+    cheerio "^1.0.0"
+    cors "^2.8.5"
     dotenv "^16.4.5"
     express "^4.21.1"
     jsonwebtoken "^9.0.2"
+    langchain "^0.3.15"
     node-cron "^3.0.3"
+    openai "^4.83.0"
     pg "^8.13.1"
     typeorm "^0.3.20"
 
@@ -14593,6 +14608,8 @@ whatwg-mimetype@^3.0.0:
 
 whatwg-mimetype@^4.0.0:
   version "4.0.0"
+  resolved "https://registry.npmjs.org/whatwg-mimetype/-/whatwg-mimetype-4.0.0.tgz"
+  integrity sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==
 
 whatwg-url@^11.0.0:
   version "11.0.0"
