@@ -1,19 +1,6 @@
 import jobServices from '../services/job.services';
 import { Request, Response } from 'express';
 
-// const getAllJobs = async (req: Request, res: Response): Promise<void> => {
-//   try {
-//     const page = parseInt(req.query.page as string) || 1;
-//     const limit = parseInt(req.query.limit as string) || 10;
-//     console.log('page', page, limit);
-//     const { jobs, total } = await jobServices.getAllJobs(page, limit);
-//     console.log('jobs', jobs);
-//     res.status(200).json({ jobs, total });
-//   } catch (error: Error | any) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
 const getAllJobs = async (req: Request, res: Response): Promise<void> => {
   try {
     console.log('req.query in job.controller.ts in polly', req.query);
@@ -86,9 +73,29 @@ const getNRecommendedJobs = async (req: any, res: any): Promise<void> => {
   }
 };
 
+const getLocations = async (req: Request, res: Response): Promise<void> => {
+  try {
+    console.log('reached getLocations in job.controller.ts');
+    const locations = await jobServices.getLocations();
+    res.status(200).json(locations);
+  } catch (error: Error | any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const getJobCategories = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const categories = await jobServices.getJobCategories();
+    res.status(200).json(categories);
+  } catch (error: Error | any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export default {
   getAllJobs,
   scrapeJobs,
   getJobById,
   getNRecommendedJobs,
+  getLocations,
+  getJobCategories,
 };

@@ -10,6 +10,8 @@ class JobRoutes {
   }
 
   private initializeRoutes(): void {
+    this.router.get('/locations', jobController.getLocations);
+    this.router.get('/categories', jobController.getJobCategories);
     this.router.get('/', jobController.getAllJobs);
     this.router.post('/', jobController.scrapeJobs);
     this.router.get('/:id', jobController.getJobById);

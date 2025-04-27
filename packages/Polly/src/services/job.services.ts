@@ -221,9 +221,30 @@ const getNRecommendedJobs = async (
   }
 };
 
+const getLocations = async (): Promise<string[]> => {
+  try {
+    const locations = await jobRepository.getLocations();
+    return locations;
+  } catch (error: any) {
+    console.error('Error fetching locations:', error.message);
+    throw new Error('Failed to fetch locations');
+  }
+};
+const getJobCategories = async (): Promise<string[]> => {
+  try {
+    const categories = await jobRepository.getJobCategories();
+    return categories;
+  } catch (error: any) {
+    console.error('Error fetching job categories:', error.message);
+    throw new Error('Failed to fetch job categories');
+  }
+};
+
 export default {
   getAllJobs,
   scrapeJobs,
   getJobById,
   getNRecommendedJobs,
+  getLocations,
+  getJobCategories,
 };
