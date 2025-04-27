@@ -18,6 +18,7 @@
     "@types/express-serve-static-core": "^5.0.6",
     "antd": "^5.20.6",
     "chart.js": "^4.4.4",
+    "jsonwebtoken": "^9.0.2",
     "next": "14.2.3",
     "openai": "^4.73.0",
     "pg": "^8.13.1",
