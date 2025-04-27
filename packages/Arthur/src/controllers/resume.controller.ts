@@ -1,18 +1,24 @@
-import { Request, Response } from 'express';
 import ResumeService from '../services/resume.services';
 import { AuthenticatedRequest } from '../types/authTypes';
+import { Request, Response } from 'express';
 
 const processResume = async (req: any, res: any) => {
   try {
+    console.log('processResume');
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
+    const file_url = req.body.file_url;
+    if (!file_url) {
+      return res.status(400).json({ error: 'No file_url provided' });
+    }
     const extractedData = await ResumeService.extractResumeData(
       req.user.userId,
-      req.file
+      req.file,
+      file_url
     );
     return res.json(extractedData);
   } catch (error) {

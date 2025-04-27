@@ -1,17 +1,21 @@
-import OpenAI from 'openai';
-import fileParser from '../utils/fileParser';
-import ResumeRepository from '../repositories/resume.repository';
-import dotenv from 'dotenv';
 import { OPENAI_API_KEY } from '../config';
-import resumeRepository from '../repositories/resume.repository';
-import { OpenAIEmbeddings } from '@langchain/openai';
 import { IResume } from '../models/resume.model';
+import ResumeRepository from '../repositories/resume.repository';
+import resumeRepository from '../repositories/resume.repository';
+import fileParser from '../utils/fileParser';
+import { OpenAIEmbeddings } from '@langchain/openai';
+import dotenv from 'dotenv';
+import OpenAI from 'openai';
 
 dotenv.config();
 
 const openaiClient = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-const extractResumeData = async (userId: string, file: Express.Multer.File) => {
+const extractResumeData = async (
+  userId: string,
+  file: Express.Multer.File,
+  file_url: string
+) => {
   try {
     const text = await fileParser.extractText(file);
     if (!text) {
@@ -108,7 +112,8 @@ const extractResumeData = async (userId: string, file: Express.Multer.File) => {
     const dbResult = await resumeRepository.uploadUserResume(
       userId,
       parsedJson,
-      embeddings
+      embeddings,
+      file_url
     );
     console.log('dbResult', dbResult);
     const finalResult = { ...parsedJson, resume_id: dbResult };
