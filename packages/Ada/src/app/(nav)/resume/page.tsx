@@ -81,7 +81,6 @@ export default function ResumeDashboard() {
         ? setPrimaryResumeId(response[0].primary_resume_id)
         : setPrimaryResumeId(null);
       setResumes(response);
-      console.log('response', response);
       setError(null);
     } catch (err) {
       setError('Failed to fetch resumes. Please try again later.');
@@ -242,11 +241,6 @@ export default function ResumeDashboard() {
                     <Checkbox
                       checked={resume.id === primaryResumeId}
                       onCheckedChange={(checked) => {
-                        console.log(
-                          'resume id and prim',
-                          resume.id,
-                          resume.primary_resume_id
-                        );
                         if (checked) {
                           handlePrimaryChange(resume.id); // Set this resume as primary
                         }

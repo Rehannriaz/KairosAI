@@ -20,9 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Slider } from '@/components/ui/slider';
-import { Table } from '@/components/ui/table';
 import {
   Sheet,
   SheetContent,
@@ -31,7 +28,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Search, ListFilter, Grid, List, SlidersHorizontal, X } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Slider } from '@/components/ui/slider';
+import { Table } from '@/components/ui/table';
+import {
+  Search,
+  ListFilter,
+  Grid,
+  List,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
 
@@ -76,7 +83,7 @@ const JobsPage = () => {
     categories: [],
   });
 
-  // Draft filter state that's updated when changing filters in the sidebar 
+  // Draft filter state that's updated when changing filters in the sidebar
   // but not yet applied
   const [draftFilters, setDraftFilters] = useState<JobFilters>({
     locations: [],
@@ -93,7 +100,7 @@ const JobsPage = () => {
   // Initialize draft filters when opening the filter sidebar
   useEffect(() => {
     if (filtersOpen) {
-      setDraftFilters({...filters});
+      setDraftFilters({ ...filters });
     }
   }, [filtersOpen]);
 
@@ -102,20 +109,25 @@ const JobsPage = () => {
       try {
         setLoading(true);
         // Pass filters to the API call
-        const response = await jobServiceInstance.getAllJobs(currentPage, 9, filters);
-        console.log('API response:', response);
+        const response = await jobServiceInstance.getAllJobs(
+          currentPage,
+          9,
+          filters
+        );
         setJobs(response.jobs || []);
         setTotalPages(Math.ceil(response.total / 9));
-        
+
         // Extract unique locations for the location filter if not already loaded
-        if (availableLocations.length === 0 && availableCategories.length === 0 && response.jobs) {
+        if (
+          availableLocations.length === 0 &&
+          availableCategories.length === 0 &&
+          response.jobs
+        ) {
           const locations = await jobServiceInstance.getAvailableLocations();
-          console.log('Available locations:', locations);
           // const locations = Array.from(new Set(response.jobs.map((job: Job) => job.location))) as string[];
           setAvailableLocations(locations);
 
           const categories = await jobServiceInstance.getJobCategories();
-          console.log('Available categories:', categories);
           setAvailableCategories(categories);
         }
       } catch (error) {
@@ -155,14 +167,17 @@ const JobsPage = () => {
 
   // Update draft filters instead of real filters
   const handleDraftFilterChange = (key: keyof JobFilters, value: any) => {
-    setDraftFilters(prev => ({ ...prev, [key]: value }));
+    setDraftFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleDraftLocationToggle = (location: string) => {
-    setDraftFilters(prev => {
+    setDraftFilters((prev) => {
       const locations = [...prev.locations];
       if (locations.includes(location)) {
-        return { ...prev, locations: locations.filter(loc => loc !== location) };
+        return {
+          ...prev,
+          locations: locations.filter((loc) => loc !== location),
+        };
       } else {
         return { ...prev, locations: [...locations, location] };
       }
@@ -170,10 +185,13 @@ const JobsPage = () => {
   };
 
   const handleDraftCategoryToggle = (category: string) => {
-    setDraftFilters(prev => {
+    setDraftFilters((prev) => {
       const categories = [...prev.categories];
       if (categories.includes(category)) {
-        return { ...prev, categories: categories.filter(cat => cat !== category) };
+        return {
+          ...prev,
+          categories: categories.filter((cat) => cat !== category),
+        };
       } else {
         return { ...prev, categories: [...categories, category] };
       }
@@ -190,23 +208,23 @@ const JobsPage = () => {
   // For direct filter removal from badges
   const removeFilter = (key: keyof JobFilters, value?: any) => {
     if (key === 'locations' && value) {
-      setFilters(prev => ({
+      setFilters((prev) => ({
         ...prev,
-        locations: prev.locations.filter(loc => loc !== value)
+        locations: prev.locations.filter((loc) => loc !== value),
       }));
     } else if (key === 'categories' && value) {
-      setFilters(prev => ({
+      setFilters((prev) => ({
         ...prev,
-        categories: prev.categories.filter(cat => cat !== value)
+        categories: prev.categories.filter((cat) => cat !== value),
       }));
     } else if (key === 'isRemote') {
-      setFilters(prev => ({ ...prev, isRemote: null }));
+      setFilters((prev) => ({ ...prev, isRemote: null }));
     } else if (key === 'minSalary' || key === 'maxSalary') {
-      setFilters(prev => ({ ...prev, [key]: null }));
+      setFilters((prev) => ({ ...prev, [key]: null }));
     } else if (Array.isArray(filters[key])) {
-      setFilters(prev => ({ ...prev, [key]: [] }));
+      setFilters((prev) => ({ ...prev, [key]: [] }));
     } else {
-      setFilters(prev => ({ ...prev, [key]: null }));
+      setFilters((prev) => ({ ...prev, [key]: null }));
     }
     setCurrentPage(1);
   };
@@ -238,16 +256,18 @@ const JobsPage = () => {
     });
   };
 
-  const ActiveFiltersCount = 
+  const ActiveFiltersCount =
     (filters.locations.length > 0 ? 1 : 0) +
     (filters.isRemote !== null ? 1 : 0) +
     (filters.minSalary !== null || filters.maxSalary !== null ? 1 : 0) +
     (filters.categories.length > 0 ? 1 : 0);
 
-  const DraftFiltersCount = 
+  const DraftFiltersCount =
     (draftFilters.locations.length > 0 ? 1 : 0) +
     (draftFilters.isRemote !== null ? 1 : 0) +
-    (draftFilters.minSalary !== null || draftFilters.maxSalary !== null ? 1 : 0) +
+    (draftFilters.minSalary !== null || draftFilters.maxSalary !== null
+      ? 1
+      : 0) +
     (draftFilters.categories.length > 0 ? 1 : 0);
 
   if (loading) {
@@ -358,12 +378,12 @@ const JobsPage = () => {
             <SheetContent className="w-[300px] sm:w-[400px] overflow-y-auto">
               <SheetHeader>
                 <SheetTitle>Filters</SheetTitle>
-                <SheetDescription>
-                  Refine job search results
-                </SheetDescription>
+                <SheetDescription>Refine job search results</SheetDescription>
               </SheetHeader>
               <div className="py-4 flex justify-between items-center">
-                <h3 className="font-medium">Active filters: {DraftFiltersCount}</h3>
+                <h3 className="font-medium">
+                  Active filters: {DraftFiltersCount}
+                </h3>
                 {DraftFiltersCount > 0 && (
                   <Button variant="ghost" size="sm" onClick={clearDraftFilters}>
                     <X className="w-4 h-4 mr-1" />
@@ -377,18 +397,28 @@ const JobsPage = () => {
                 <h3 className="font-medium mb-2">Job Type</h3>
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
-                    <Checkbox 
+                    <Checkbox
                       id="remote"
                       checked={draftFilters.isRemote === true}
-                      onCheckedChange={() => handleDraftFilterChange('isRemote', draftFilters.isRemote === true ? null : true)}
+                      onCheckedChange={() =>
+                        handleDraftFilterChange(
+                          'isRemote',
+                          draftFilters.isRemote === true ? null : true
+                        )
+                      }
                     />
                     <label htmlFor="remote">Remote</label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Checkbox 
+                    <Checkbox
                       id="onSite"
                       checked={draftFilters.isRemote === false}
-                      onCheckedChange={() => handleDraftFilterChange('isRemote', draftFilters.isRemote === false ? null : false)}
+                      onCheckedChange={() =>
+                        handleDraftFilterChange(
+                          'isRemote',
+                          draftFilters.isRemote === false ? null : false
+                        )
+                      }
                     />
                     <label htmlFor="onSite">On-site</label>
                   </div>
@@ -400,19 +430,29 @@ const JobsPage = () => {
                 <h3 className="font-medium mb-4">Salary Range</h3>
                 <div className="px-2">
                   <div className="flex justify-between mb-6">
-                    <Input 
-                      type="number" 
-                      placeholder="Min" 
+                    <Input
+                      type="number"
+                      placeholder="Min"
                       value={draftFilters.minSalary || ''}
-                      onChange={(e) => handleDraftFilterChange('minSalary', e.target.value ? Number(e.target.value) : null)}
+                      onChange={(e) =>
+                        handleDraftFilterChange(
+                          'minSalary',
+                          e.target.value ? Number(e.target.value) : null
+                        )
+                      }
                       className="w-24"
                     />
                     <span className="mx-2 self-center">to</span>
-                    <Input 
-                      type="number" 
-                      placeholder="Max" 
+                    <Input
+                      type="number"
+                      placeholder="Max"
                       value={draftFilters.maxSalary || ''}
-                      onChange={(e) => handleDraftFilterChange('maxSalary', e.target.value ? Number(e.target.value) : null)}
+                      onChange={(e) =>
+                        handleDraftFilterChange(
+                          'maxSalary',
+                          e.target.value ? Number(e.target.value) : null
+                        )
+                      }
                       className="w-24"
                     />
                   </div>
@@ -425,10 +465,12 @@ const JobsPage = () => {
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {availableLocations.map((location) => (
                     <div key={location} className="flex items-center space-x-2">
-                      <Checkbox 
+                      <Checkbox
                         id={`location-${location}`}
                         checked={draftFilters.locations.includes(location)}
-                        onCheckedChange={() => handleDraftLocationToggle(location)}
+                        onCheckedChange={() =>
+                          handleDraftLocationToggle(location)
+                        }
                       />
                       <label htmlFor={`location-${location}`}>{location}</label>
                     </div>
@@ -442,10 +484,12 @@ const JobsPage = () => {
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {availableCategories.map((category) => (
                     <div key={category} className="flex items-center space-x-2">
-                      <Checkbox 
+                      <Checkbox
                         id={`category-${category}`}
                         checked={draftFilters.categories.includes(category)}
-                        onCheckedChange={() => handleDraftCategoryToggle(category)}
+                        onCheckedChange={() =>
+                          handleDraftCategoryToggle(category)
+                        }
                       />
                       <label htmlFor={`category-${category}`}>{category}</label>
                     </div>
@@ -454,10 +498,7 @@ const JobsPage = () => {
               </div>
 
               <div className="mt-6">
-                <Button 
-                  className="w-full" 
-                  onClick={applyFilters}
-                >
+                <Button className="w-full" onClick={applyFilters}>
                   Apply Filters
                 </Button>
               </div>
@@ -488,10 +529,13 @@ const JobsPage = () => {
       {/* Active Filters Display */}
       {ActiveFiltersCount > 0 && (
         <div className="flex flex-wrap gap-2 my-4">
-          {filters.locations.map(location => (
+          {filters.locations.map((location) => (
             <Badge key={location} variant="secondary" className="px-3 py-1">
               Location: {location}
-              <button onClick={() => removeFilter('locations', location)} className="ml-2">
+              <button
+                onClick={() => removeFilter('locations', location)}
+                className="ml-2"
+              >
                 <X className="w-3 h-3" />
               </button>
             </Badge>
@@ -506,25 +550,36 @@ const JobsPage = () => {
           )}
           {(filters.minSalary !== null || filters.maxSalary !== null) && (
             <Badge variant="secondary" className="px-3 py-1">
-              Salary: {filters.minSalary || 'Any'} - {filters.maxSalary || 'Any'}
-              <button onClick={() => {
-                removeFilter('minSalary');
-                removeFilter('maxSalary');
-              }} className="ml-2">
+              Salary: {filters.minSalary || 'Any'} -{' '}
+              {filters.maxSalary || 'Any'}
+              <button
+                onClick={() => {
+                  removeFilter('minSalary');
+                  removeFilter('maxSalary');
+                }}
+                className="ml-2"
+              >
                 <X className="w-3 h-3" />
               </button>
             </Badge>
           )}
-          {filters.categories.map(category => (
+          {filters.categories.map((category) => (
             <Badge key={category} variant="secondary" className="px-3 py-1">
               Category: {category}
-              <button onClick={() => removeFilter('categories', category)} className="ml-2">
+              <button
+                onClick={() => removeFilter('categories', category)}
+                className="ml-2"
+              >
                 <X className="w-3 h-3" />
               </button>
             </Badge>
           ))}
           {ActiveFiltersCount > 1 && (
-            <Badge variant="outline" className="px-3 py-1 cursor-pointer" onClick={clearFilters}>
+            <Badge
+              variant="outline"
+              className="px-3 py-1 cursor-pointer"
+              onClick={clearFilters}
+            >
               Clear All
             </Badge>
           )}
@@ -558,9 +613,7 @@ const JobsPage = () => {
 
                 <div className="flex items-center gap-2">
                   <span>{job.location}</span>
-                  {job.salary && (
-                    <Badge variant="outline">{job.salary}</Badge>
-                  )}
+                  {job.salary && <Badge variant="outline">{job.salary}</Badge>}
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -620,7 +673,9 @@ const JobsPage = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm">{job.salary || 'Not specified'}</div>
+                    <div className="text-sm">
+                      {job.salary || 'Not specified'}
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -32,7 +32,6 @@ class AuthService {
       localStorage.removeItem('authToken');
       localStorage.clear();
       LogOutSession();
-      console.log('Logged out successfully');
     } catch (error) {
       console.error('Error logging out: ', error);
     }

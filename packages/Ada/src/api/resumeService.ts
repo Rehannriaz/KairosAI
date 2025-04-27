@@ -9,7 +9,6 @@ class ResumeService {
       formData.append('file', file);
 
       formData.append('file_url', fileUrl);
-      console.log('fileUrl', fileUrl);
       const response = await fetch(`${arthurBaseURL}/resumes/upload`, {
         method: 'POST',
         headers: {

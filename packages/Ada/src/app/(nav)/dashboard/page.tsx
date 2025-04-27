@@ -1,11 +1,12 @@
-'use client'
-import { useEffect, useState } from 'react';
+'use client';
+
 import DoughnutChart from '@/components/Dashboard/DoughnutChart';
 import { AnimatedLayout } from '@/components/global/animated-layout';
 import { LineChart } from '@/components/line-chart';
 import { StatCard } from '@/components/stat-card';
 import { getUsername, getUserId } from '@/lib';
 import { Briefcase, Calendar, Users, FileText } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface UserMetaData {
   jobs_applied: number;
@@ -32,22 +33,21 @@ export default function DashboardPage() {
       try {
         // Pass the userId as a query parameter
         const response = await fetch(`/api/user-meta?userId=${userId}`);
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch user meta data');
         }
-        
+
         const result = await response.json();
-        
+
         if (result.data && result.data.length > 0) {
           setMetaData(result.data[0]);
         } else {
-          console.log('No data found for this user, using fallback data');
           // Use fallback data if no data is returned for this user
           setMetaData({
             jobs_applied: 0,
             available_jobs: 0,
-            upcoming_interviews: 0
+            upcoming_interviews: 0,
           });
         }
       } catch (err) {
@@ -57,7 +57,7 @@ export default function DashboardPage() {
         setMetaData({
           jobs_applied: 0,
           available_jobs: 0,
-          upcoming_interviews: 0
+          upcoming_interviews: 0,
         });
       } finally {
         setLoading(false);
@@ -73,7 +73,9 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <h1 className="text-2xl mt-2 font-bold tracking-tight">
-            <span className="font-bold">{userName ? `Welcome, ${userName}` : ""}</span>
+            <span className="font-bold">
+              {userName ? `Welcome, ${userName}` : ''}
+            </span>
           </h1>
           <p className="mt-2">
             This is your dashboard, providing insights into your job
@@ -89,7 +91,7 @@ export default function DashboardPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <StatCard
               title="Applied Jobs"
-              value={metaData?.jobs_applied?.toString() || "0"}
+              value={metaData?.jobs_applied?.toString() || '0'}
               description="Jobs you've applied to"
               icon={<Briefcase className="h-4 w-4" />}
               delay={0}
@@ -102,15 +104,15 @@ export default function DashboardPage() {
               delay={1}
             />
             <StatCard
-              title="Available Job Listings" 
-              value={metaData?.available_jobs?.toString() || "0"}
+              title="Available Job Listings"
+              value={metaData?.available_jobs?.toString() || '0'}
               description="Total jobs currently available"
               icon={<FileText className="h-4 w-4" />}
               delay={2}
             />
             <StatCard
               title="Upcoming Interviews"
-              value={metaData?.upcoming_interviews?.toString() || "0"}
+              value={metaData?.upcoming_interviews?.toString() || '0'}
               description="Interviews scheduled this week"
               icon={<Calendar className="h-4 w-4" />}
               delay={3}

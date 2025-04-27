@@ -55,7 +55,6 @@ export default function ResumeUpload() {
     try {
       const client = createAdminClient();
       const userId = getUserId();
-      console.log('userId', userId);
       if (!userId) {
         throw new Error('User ID not found');
       }
@@ -79,7 +78,6 @@ export default function ResumeUpload() {
     try {
       const fileUrl = await uploadResumesToBucket(file);
       const response = await resumeServiceInstance.uploadResume(file, fileUrl);
-      console.log('result', response);
       router.push(`/resume/review/${response.resume_id}`);
     } catch (error) {
       console.error('Error uploading resume:', error);

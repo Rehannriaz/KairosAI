@@ -13,26 +13,25 @@ interface JobFilters {
 class JobService {
   async getAllJobs(page = 1, limit = 6, filters?: JobFilters) {
     try {
-      console.log('Getting jobs with filters:', filters);
       const jwtToken = await getJWT();
-      
+
       // Build URL with query parameters
       let url = `${pollyBaseURL}/jobs?page=${page}&limit=${limit}`;
-      
+
       // Add filter parameters if they exist
       if (filters) {
         // Add locations filter
         if (filters.locations && filters.locations.length > 0) {
-          filters.locations.forEach(location => {
+          filters.locations.forEach((location) => {
             url += `&locations[]=${encodeURIComponent(location)}`;
           });
         }
-        
+
         // Add remote filter
         if (filters.isRemote !== null && filters.isRemote !== undefined) {
           url += `&isRemote=${filters.isRemote}`;
         }
-        
+
         // Add salary range filters
         if (filters.minSalary) {
           url += `&minSalary=${filters.minSalary}`;
@@ -40,10 +39,10 @@ class JobService {
         if (filters.maxSalary) {
           url += `&maxSalary=${filters.maxSalary}`;
         }
-        
+
         // Add job categories filter
         if (filters.categories && filters.categories.length > 0) {
-          filters.categories.forEach(category => {
+          filters.categories.forEach((category) => {
             url += `&categories[]=${encodeURIComponent(category)}`;
           });
         }
@@ -53,7 +52,7 @@ class JobService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwtToken}`,
+          Authorization: `Bearer ${jwtToken}`,
         },
       });
 
@@ -115,7 +114,7 @@ class JobService {
       throw error; // Propagate the error for further handling
     }
   }
-  
+
   async getAvailableLocations() {
     try {
       const jwtToken = await getJWT();

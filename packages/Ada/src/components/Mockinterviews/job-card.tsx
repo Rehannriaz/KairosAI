@@ -83,7 +83,12 @@ export function JobCard({
         </p>
         <div className="mt-4 flex justify-between text-sm">
           <span>{location || 'Location not specified'}</span>
-          <span>Salary: {salary && salary > 0 ? salary : 'N/A'}</span>
+          <span>
+            Salary:{' '}
+            {salary && salary > 0
+              ? `$${parseInt(salary.toString()).toFixed(0)}`
+              : 'N/A'}
+          </span>
         </div>
       </CardContent>
       <CardFooter className="mt-auto">

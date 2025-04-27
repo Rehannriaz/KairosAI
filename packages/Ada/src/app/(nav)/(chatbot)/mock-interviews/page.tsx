@@ -19,61 +19,6 @@ interface Interview {
   children?: Interview[];
 }
 
-// Updated dummy data for interviews
-// const interviews: Interview[] = [
-//   {
-//     id: 1,
-//     jobTitle: 'Frontend Developer',
-//     company: 'TechCorp',
-//     date: '2023-05-15',
-//     status: 'Completed' as const,
-//     result: 'Passed',
-//     children: [
-//       {
-//         id: 11,
-//         jobTitle: 'React Developer',
-//         company: 'TechCorp',
-//         date: '2023-05-16',
-//         status: 'Completed' as const,
-//         result: 'Passed',
-//       },
-//       {
-//         id: 12,
-//         jobTitle: 'Vue.js Developer',
-//         company: 'TechCorp',
-//         date: '2023-05-17',
-//         status: 'Completed' as const,
-//         result: 'Pending',
-//       },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     jobTitle: 'Backend Engineer',
-//     company: 'DataSystems Inc.',
-//     date: '2023-05-18',
-//     status: 'Ongoing' as const,
-//     result: 'Pending',
-//   },
-//   {
-//     id: 3,
-//     jobTitle: 'Full Stack Developer',
-//     company: 'WebSolutions',
-//     date: '2023-05-20',
-//     status: 'Completed' as const,
-//     result: 'Failed',
-//     children: [
-//       {
-//         id: 31,
-//         jobTitle: 'Node.js Developer',
-//         company: 'WebSolutions',
-//         date: '2023-05-21',
-//         status: 'Completed' as const,
-//         result: 'Pending',
-//       },
-//     ],
-//   },
-// ];
 const TableSkeleton = () => (
   <div className="w-full space-y-3">
     {/* Header row */}
@@ -122,7 +67,6 @@ export default function JobListingsPage() {
         // Transform API response to fit the table format
         const { jobs: fetchedJobs, total } =
           await jobServiceInstance.getAllJobs(currentPage, ITEMS_PER_PAGE);
-        console.log('Fetchedjobs', fetchedJobs);
         setJobs(fetchedJobs);
         const formattedInterviews =
           result?.map((job: any) => ({

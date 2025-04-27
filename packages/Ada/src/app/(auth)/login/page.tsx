@@ -39,7 +39,6 @@ export default function LoginPage() {
 
     try {
       const data = await authServiceInstance.login(email, password);
-      console.log('Login successful:', data);
       await LoginSession(data.token); // Set session token
       router.push('/dashboard'); // Redirect upon successful login
     } catch (error: any) {

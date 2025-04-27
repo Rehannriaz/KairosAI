@@ -60,7 +60,6 @@ export default function SignUpPage() {
 
     try {
       const data = await authServiceInstance.register(name, email, password);
-      console.log('Account created successfully:', data);
       toast({
         title: 'Account created successfully!',
       });
