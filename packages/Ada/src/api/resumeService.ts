@@ -2,13 +2,15 @@ import { arthurBaseURL } from '@/config';
 import { getJWT } from '@/lib/Sessions';
 
 class ResumeService {
+  // resumeService.ts modifications
   async uploadResume(file: File, fileUrl: string) {
     try {
       const jwtToken = await getJWT();
       const formData = new FormData();
       formData.append('file', file);
-
       formData.append('file_url', fileUrl);
+
+      console.log('fileUrl', fileUrl);
       const response = await fetch(`${arthurBaseURL}/resumes/upload`, {
         method: 'POST',
         headers: {
@@ -17,11 +19,15 @@ class ResumeService {
         body: formData,
       });
 
+      console.log('response of resume frontend', response);
+
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error(`Failed to upload resume.`);
+        throw new Error(result.error || 'Failed to upload resume');
       }
 
-      return await response.json();
+      return result;
     } catch (error) {
       console.error('Error uploading resume:', error);
       throw error;

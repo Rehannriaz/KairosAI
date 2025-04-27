@@ -3,6 +3,7 @@
 import resumeServiceInstance from '@/api/resumeService';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
 import { getUserId } from '@/lib';
 import { uploadFileToStorage } from '@/utils/constants';
 import { createAdminClient } from '@/utils/supabase/admin';
@@ -16,6 +17,7 @@ export default function ResumeUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -70,6 +72,7 @@ export default function ResumeUpload() {
       throw error;
     }
   };
+
   const handleSubmit = async () => {
     if (!file) return;
 
@@ -78,10 +81,29 @@ export default function ResumeUpload() {
     try {
       const fileUrl = await uploadResumesToBucket(file);
       const response = await resumeServiceInstance.uploadResume(file, fileUrl);
+      console.log('result', response);
+
+      // Check if the uploaded file is a resume
+      if (!response.is_resume) {
+        // Handle non-resume file case
+        // alert(response.message || "The uploaded file doesn't appear to be a resume.");
+        toast({
+          variant: 'destructive',
+          title: 'Invalid Resume',
+          description:
+            response.message ||
+            "The uploaded file doesn't appear to be a resume. Please upload a valid resume document.",
+        });
+        setFile(null);
+        setIsUploading(false);
+        return;
+      }
+
+      // Continue with resume processing
       router.push(`/resume/review/${response.resume_id}`);
     } catch (error) {
       console.error('Error uploading resume:', error);
-      throw error;
+      alert('Error processing your file. Please try again.');
     } finally {
       setIsUploading(false);
     }

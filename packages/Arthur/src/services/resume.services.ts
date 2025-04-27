@@ -24,21 +24,80 @@ const extractResumeData = async (
     const embeddingsModel = new OpenAIEmbeddings({ apiKey: OPENAI_API_KEY });
     const embeddings = await embeddingsModel.embedQuery(text);
 
+    // const prompt = `
+    // You are a resume parser that extracts structured information from resume text. Analyze the following resume and extract all relevant information into a JSON object.
+
+    // Requirements:
+    // 1. All fields must be present in the response, even if empty
+    // 2. Follow the exact JSON structure provided
+    // 3. Skill level must be one of: "beginner", "intermediate", or "advanced"
+    // 4. Infer skill level based on years of experience and complexity of roles
+    // 5. Format all dates as "YYYY-MM" or "YYYY" if month is not available
+    // 6. Convert all text to proper case (capitalize first letter of names, companies, etc.)
+    // 7. Ensure phone numbers are in E.164 format when possible
+    // 8. Remove any special characters or formatting from text fields
+
+    // Return the data in this exact structure:
+    // {
+    //   "name": "string",
+    //   "location": "string",
+    //   "email": "string",
+    //   "phone": "string",
+    //   "professional_summary": "string",
+    //   "skill_level": "beginner" | "intermediate" | "advanced",
+    //   "skills": ["string"],
+    //   "employment_history": [
+    //     {
+    //       "job_title": "string",
+    //       "company": "string",
+    //       "start_date": "YYYY-MM",
+    //       "end_date": "YYYY-MM" | "present",
+    //       "description": "string",
+    //       "achievements": ["string"]
+    //     }
+    //   ],
+    //   "education": [
+    //     {
+    //       "degree": "string",
+    //       "institution": "string",
+    //       "start_date": "YYYY-MM",
+    //       "end_date": "YYYY-MM" | "present",
+    //       "gpa": "string | null",
+    //       "honors": ["string"]
+    //     }
+    //   ],
+    //   "preferences": {
+    //     "desired_role": "string | null",
+    //     "desired_location": "string | null",
+    //     "desired_salary": "string | null",
+    //     "work_type": "remote" | "hybrid" | "onsite" | null,
+    //     "available_from": "YYYY-MM | null"
+    //   }
+    // }
+
+    // Resume Text:
+    // ${text}
+
+    // Provide the output as a valid JSON object only, with no additional text or formatting.
+    // `;
+
     const prompt = `
-    You are a resume parser that extracts structured information from resume text. Analyze the following resume and extract all relevant information into a JSON object.
+    You are a resume parser that extracts structured information from resume text. Analyze the following text and determine if it's a resume. If it is, extract all relevant information into a JSON object.
 
-    Requirements:
-    1. All fields must be present in the response, even if empty
-    2. Follow the exact JSON structure provided
-    3. Skill level must be one of: "beginner", "intermediate", or "advanced"
-    4. Infer skill level based on years of experience and complexity of roles
-    5. Format all dates as "YYYY-MM" or "YYYY" if month is not available
-    6. Convert all text to proper case (capitalize first letter of names, companies, etc.)
-    7. Ensure phone numbers are in E.164 format when possible
-    8. Remove any special characters or formatting from text fields
-
-    Return the data in this exact structure:
+    First, determine if the provided text appears to be a resume by checking for these characteristics:
+    - Contains sections like experience, education, skills, or similar resume components
+    - Has personal contact information (name, email, phone)
+    - Lists professional experience or job history
+    
+    If the text does NOT appear to be a resume, return only this JSON:
     {
+      "is_resume": false,
+      "message": "The uploaded file does not appear to be a resume. Please upload a resume document for parsing."
+    }
+
+    If the text IS a resume, return the full JSON with "is_resume": true and all the extracted information:
+    {
+      "is_resume": true,
       "name": "string",
       "location": "string",
       "email": "string",
@@ -75,6 +134,16 @@ const extractResumeData = async (
       }
     }
 
+    Requirements for valid resume parsing:
+    1. All fields must be present in the response, even if empty
+    2. Follow the exact JSON structure provided
+    3. Skill level must be one of: "beginner", "intermediate", or "advanced"
+    4. Infer skill level based on years of experience and complexity of roles
+    5. Format all dates as "YYYY-MM" or "YYYY" if month is not available
+    6. Convert all text to proper case (capitalize first letter of names, companies, etc.)
+    7. Ensure phone numbers are in E.164 format when possible
+    8. Remove any special characters or formatting from text fields
+
     Resume Text:
     ${text}
 
@@ -101,6 +170,12 @@ const extractResumeData = async (
     }
 
     const parsedJson = JSON.parse(content);
+
+    // Check if the uploaded file is a resume
+    if (!parsedJson.is_resume) {
+      // Return the error message without saving to database
+      return parsedJson;
+    }
 
     // Validate skill_level
     if (
