@@ -73,9 +73,16 @@ export const formatJobs = async (job: IJob) => {
 
 const getAllJobs = async (
   page: number,
-  limit: number
+  limit: number,
+  filters: {
+    locations?: string[];
+    isRemote?: boolean | null;
+    minSalary?: number | null;
+    maxSalary?: number | null;
+    categories?: string[];
+  }
 ): Promise<{ jobs: IJob[]; total: number }> => {
-  return await jobRepository.findAllJobs(page, limit);
+  return await jobRepository.findAllJobs(page, limit, filters);
 };
 
 const getJobById = async (id: string): Promise<IJob | null> => {
@@ -187,7 +194,7 @@ const scrapeJobs = async (): Promise<void> => {
 };
 
 const fetchJobsFromAPIs = async (
-  query: string = adzunaConfig.queries[0],
+  query: string = adzunaConfig.queries[1],
   location: string = adzunaConfig.locations[0],
   maxPages: number = adzunaConfig.maxPages
 ): Promise<boolean> => {

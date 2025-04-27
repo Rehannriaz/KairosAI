@@ -445,7 +445,7 @@ export default {
   fetchJobListings,
   fetchJobDetails,
   getRecommendedJobs,
-  searchJobs
+  searchJobs,
   getLocations,
   getJobCategories,
 };
