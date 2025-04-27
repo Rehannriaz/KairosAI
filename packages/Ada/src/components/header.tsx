@@ -7,9 +7,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getUsername } from '@/lib';
-import { Bell, Heart, Mail, Search } from 'lucide-react';
+import { Bell, Heart, HomeIcon, Mail, Search } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
 export function Header() {
   const router = useRouter();
@@ -21,9 +22,19 @@ export function Header() {
       console.error(error);
     }
   };
+  const pathname = usePathname();
+  const showHomeIcon = /^\/mock-interviews\/[^\/]+\/[^\/]+$/.test(pathname);
+
   return (
     <header className="flex h-16 items-center px-4 border-b border-border/40">
-      <div className="flex-1 flex items-center">
+      <div
+        className={`flex-1 ${showHomeIcon ? 'gap-x-4' : ''}  flex items-center`}
+      >
+        {showHomeIcon && (
+          <Link href={'/dashboard'}>
+            <HomeIcon />
+          </Link>
+        )}
         <div className="relative w-full max-w-md">
           <ActionSearchBar />
         </div>
