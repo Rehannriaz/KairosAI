@@ -4,6 +4,7 @@ import { PORT } from './config';
 import connectToDatabase from './utils/database';
 import dotenv from 'dotenv';
 
+//test
 dotenv.config();
 
 async function start() {
