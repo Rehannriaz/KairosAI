@@ -6,7 +6,7 @@ import resumeRepository from '../repositories/resume.repository';
 import jobApiService from './job-api.services';
 import jobApiServices from './job-api.services';
 import { OpenAIEmbeddings } from '@langchain/openai';
-import { UserJWT } from 'common/src/types/UserTypes';
+import { UserJWT } from '@polly/types/UserTypes';
 import OpenAI from 'openai';
 
 const openaiClient = new OpenAI({ apiKey: OPENAI_API_KEY });

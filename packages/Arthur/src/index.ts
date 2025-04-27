@@ -1,11 +1,9 @@
-import express, { Application } from 'express';
+import validateToken from './middlewares/authMiddleware';
+import router from './routes/resumeRoutes';
 import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import connectToDatabase from './utils/database';
-import router from './routes/resumeRoutes'; // Updated import
-import { PORT } from './config';
 import cors from 'cors';
-import validateToken from 'common/src/middlewares/authMiddleware';
+import dotenv from 'dotenv';
+import express, { Application } from 'express';
 
 dotenv.config();
 
@@ -18,7 +16,4 @@ app.use(bodyParser.json());
 
 app.use('/api/resumes', validateToken(), router);
 
-app.listen(PORT, async () => {
-  await connectToDatabase();
-  console.log(`Server running on port ${PORT}`);
-});
+export default app;

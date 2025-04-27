@@ -1,24 +1,15 @@
-import express, { Application } from 'express';
+import authRoutes from './routes/authRoutes';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import dotenv from 'dotenv';
-import cors from 'cors'; // Import the cors package
-import connectToDatabase from './utils/database';
-import authRoutes from './routes/authRoutes'; // Updated import
-import { PORT } from './config';
+import express, { Application } from 'express';
 
 dotenv.config();
 
 const app: Application = express();
 
-// Middleware
-app.use(cors()); // Enable CORS for all routes and origins
+app.use(cors());
 app.use(bodyParser.json());
+app.use('/auth', authRoutes);
 
-// Routes
-app.use('/auth', authRoutes); // Use the updated UserRoutes class
-
-// Start Server
-app.listen(PORT, async () => {
-  await connectToDatabase();
-  console.log(`Server running on port ${PORT}`);
-});
+export default app;
