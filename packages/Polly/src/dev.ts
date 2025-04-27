@@ -9,7 +9,7 @@ dotenv.config();
 async function start() {
   await connectToDatabase();
   app.listen(PORT, () => {
-    console.log(`🚀 Auth running on ${PORT}`);
+    console.log(`🚀 Polly running on ${PORT}`);
   });
 }
 

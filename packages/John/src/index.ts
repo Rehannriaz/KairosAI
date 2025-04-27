@@ -17,8 +17,5 @@ app.use(bodyParser.json());
 // Routes
 
 app.use('/api/interview', validateToken(), InterviewRoutes);
-// Start Server
-app.listen(PORT, async () => {
-  await connectToDatabase();
-  console.log(`Server running on port ${PORT}`);
-});
+
+export default app;

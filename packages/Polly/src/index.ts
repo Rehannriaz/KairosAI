@@ -20,8 +20,4 @@ app.use(bodyParser.json());
 // Routes
 app.use('/api/jobs', validateToken(), JobRoutes); // Use the updated UserRoutes class
 
-// Start Server
-app.listen(PORT, async () => {
-  await connectToDatabase();
-  console.log(`Server running on port ${PORT}`);
-});
+export default app;
