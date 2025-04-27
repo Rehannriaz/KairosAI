@@ -1,16 +1,17 @@
-import { pool } from '../utils/database';
 import { IResume } from '../models/resume.model';
+import { pool } from '../utils/database';
 
 const uploadUserResume = async (
   userId: string,
   parsedJson: any,
-  embeddings: any[]
+  embeddings: any[],
+  file_url: string
 ): Promise<number> => {
   try {
     const result = await pool.query(
       `INSERT INTO resumes 
-      (user_id, name, location, email, phone, professional_summary, skills, employment_history, education, preferences, embedding) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) returning *;`,
+      (user_id, name, location, email, phone, professional_summary, skills, employment_history, education, preferences, embedding,file_url) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12) returning *;`,
       [
         userId,
         parsedJson.name,
@@ -23,6 +24,7 @@ const uploadUserResume = async (
         JSON.stringify(parsedJson.education), // Convert JSON to string for jsonb
         JSON.stringify(parsedJson.preferences), // Convert JSON to string for jsonb
         JSON.stringify(embeddings), // Convert JSON to string for jsonb
+        file_url,
       ]
     );
     return result.rows[0].id; // Return the inserted resume's ID
@@ -38,7 +40,7 @@ const getUserResumes = async (userId: string) => {
       `SELECT 
          r.id, r.user_id, r.name, r.location, r.email, r.phone, 
          r.professional_summary, r.skills, r.employment_history, 
-         r.education, r.preferences, r.link, r.skill_level,r.uploaddate,
+         r.education, r.preferences, r.link, r.skill_level,r.uploaddate,r.file_url,
          upr.resume_id AS primary_resume_id
        FROM resumes r
        LEFT JOIN user_primary_resume upr 
