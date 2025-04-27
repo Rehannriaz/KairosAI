@@ -62,7 +62,7 @@ export default function ProfilePage() {
             <CardHeader className="pb-2">
               <div className="flex flex-col items-center text-center">
                 <Avatar className="h-24 w-24 mb-4">
-                  <AvatarImage src="/placeholder-user.jpg" />
+                  <AvatarImage src="/profile_picture.png" />
                   <AvatarFallback className="bg-purple-800 text-purple-200 text-xl">
                     JD
                   </AvatarFallback>
