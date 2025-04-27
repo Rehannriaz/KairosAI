@@ -48,8 +48,18 @@ const findJobById = async (id: string): Promise<IJob | null> => {
 };
 
 const saveJobInDb = async (job: IJob): Promise<IJob> => {
-  console.log('SAVING \n\n\n\n\n', job);
   try {
+    // Check if job with the same listing URL already exists
+    const existingJob = await pool.query(
+      'SELECT job_id FROM jobs WHERE listingurl = $1',
+      [job.listingUrl]
+    );
+
+    if (existingJob.rows.length > 0) {
+      console.log(`Job with URL ${job.listingUrl} already exists, skipping...`);
+      return existingJob.rows[0];
+    }
+
     const result = await pool.query(
       'INSERT INTO jobs (title, company, location, listingurl, posteddate, aboutrole, requirements, description, salary, embedding) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
       [
@@ -121,8 +131,6 @@ const getRecommendedJobs = async (
   limit: number
 ): Promise<IJob[]> => {
   try {
-    console.log('FINAL', JSON.parse(embeddings));
-
     const result = await pool.query(
       `SELECT job_id, title, company, location, salary, description, 
               skills_required, listingurl, posteddate, aboutrole, requirements
@@ -131,10 +139,88 @@ const getRecommendedJobs = async (
        LIMIT $2`,
       [JSON.parse(embeddings), limit]
     );
-    // console.log('here123', result.rows);
     return result.rows;
   } catch (error: any) {
-    // console.error('Error fetching recommended jobs:', error.message);
+    throw error;
+  }
+};
+
+const searchJobs = async (
+  query: string,
+  location: string = '',
+  page: number = 1,
+  limit: number = 10
+): Promise<{ jobs: IJob[]; total: number }> => {
+  try {
+    const offset = (page - 1) * limit;
+    let queryStr = '';
+    const queryParams = [];
+    let paramCounter = 1;
+
+    // Base query
+    queryStr = `
+      SELECT job_id, title, company, location, salary, description, 
+             skills_required, listingurl, posteddate, aboutrole, requirements
+      FROM jobs
+      WHERE 1=1
+    `;
+
+    // Add search term condition if provided
+    if (query && query.trim() !== '') {
+      queryParams.push(`%${query}%`);
+      queryStr += ` AND (
+        title ILIKE $${paramCounter} OR
+        company ILIKE $${paramCounter} OR
+        description ILIKE $${paramCounter} OR
+        skills_required ILIKE $${paramCounter}
+      )`;
+      paramCounter++;
+    }
+
+    // Add location condition if provided
+    if (location && location.trim() !== '') {
+      queryParams.push(`%${location}%`);
+      queryStr += ` AND location ILIKE $${paramCounter}`;
+      paramCounter++;
+    }
+
+    // Add ordering
+    queryStr += ` ORDER BY posteddate DESC`;
+
+    // Add pagination
+    queryStr += ` LIMIT $${paramCounter} OFFSET $${paramCounter + 1}`;
+    queryParams.push(limit, offset);
+
+    // Execute the query
+    const jobsResult = await pool.query(queryStr, queryParams);
+
+    // Count total matching records
+    let countQueryStr = `SELECT COUNT(*) FROM jobs WHERE 1=1`;
+    const countParams = [];
+    paramCounter = 1;
+
+    if (query && query.trim() !== '') {
+      countParams.push(`%${query}%`);
+      countQueryStr += ` AND (
+        title ILIKE $${paramCounter} OR
+        company ILIKE $${paramCounter} OR
+        description ILIKE $${paramCounter} OR
+        skills_required ILIKE $${paramCounter}
+      )`;
+      paramCounter++;
+    }
+
+    if (location && location.trim() !== '') {
+      countParams.push(`%${location}%`);
+      countQueryStr += ` AND location ILIKE $${paramCounter}`;
+    }
+
+    const countResult = await pool.query(countQueryStr, countParams);
+    const total = parseInt(countResult.rows[0].count, 10);
+
+    return { jobs: jobsResult.rows, total };
+  } catch (error: any) {
+    console.error('Error searching jobs:', error.message);
     throw error;
   }
 };
@@ -146,4 +232,5 @@ export default {
   fetchJobListings,
   fetchJobDetails,
   getRecommendedJobs,
+  searchJobs
 };

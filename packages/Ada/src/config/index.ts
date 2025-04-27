@@ -1,7 +1,4 @@
-export const authBaseURL = 'http://localhost:5005/auth';
-
-export const johnBaseURL = 'http://localhost:5001/api';
-
-export const pollyBaseURL = 'http://localhost:5010/api';
-
-export const arthurBaseURL = 'http://localhost:5002/api';
+export const authBaseURL = process.env.NEXT_PUBLIC_AUTH_BASE_URL;
+export const johnBaseURL = process.env.NEXT_PUBLIC_JOHN_BASE_URL;
+export const pollyBaseURL = process.env.NEXT_PUBLIC_POLLY_BASE_URL;
+export const arthurBaseURL = process.env.NEXT_PUBLIC_ARTHUR_BASE_URL;

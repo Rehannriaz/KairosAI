@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.ts",
+    "dev": "ts-node ./src/dev.ts",
     "live": "ts-node ./src/index.ts",
-    "build": "tsc",
-    "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "sync": "ts-node ./src/initialize_db.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -23,6 +23,7 @@
     "dotenv": "^16.4.7",
     "express": "^5.0.0",
     "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.2",
     "langchain": "^0.3.15",
     "multer": "^1.4.5-lts.1",
     "npm": "^11.1.0",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/mongoose": "^5.11.97",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.9.3",

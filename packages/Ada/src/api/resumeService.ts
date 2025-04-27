@@ -2,12 +2,14 @@ import { arthurBaseURL } from '@/config';
 import { getJWT } from '@/lib/Sessions';
 
 class ResumeService {
-  async uploadResume(file: File) {
+  async uploadResume(file: File, fileUrl: string) {
     try {
       const jwtToken = await getJWT();
       const formData = new FormData();
       formData.append('file', file);
 
+      formData.append('file_url', fileUrl);
+      console.log('fileUrl', fileUrl);
       const response = await fetch(`${arthurBaseURL}/resumes/upload`, {
         method: 'POST',
         headers: {

@@ -1,8 +1,6 @@
 import interviewRepository from '../repositories/interview.repository';
-import jobListingText from '../constants/job-listing.json';
-import resumeText from '../constants/resume-text.json';
-import { UserJWT } from 'common/src/types/UserTypes';
 import jobAndResumeDetailsRepository from '../repositories/jobAndResumeDetails.repository';
+import { UserJWT } from '@John/types/UserTypes';
 
 const processInterview = async (
   userObj: UserJWT,
