@@ -10,12 +10,14 @@ import { TrySharp } from '@mui/icons-material';
 import { Upload, File, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ResumeUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -71,19 +73,37 @@ export default function ResumeUpload() {
       throw error;
     }
   };
+  
+
   const handleSubmit = async () => {
     if (!file) return;
-
+  
     setIsUploading(true);
     // Simulate file upload and parsing
     try {
       const fileUrl = await uploadResumesToBucket(file);
       const response = await resumeServiceInstance.uploadResume(file, fileUrl);
       console.log('result', response);
+      
+      // Check if the uploaded file is a resume
+      if (!response.is_resume) {
+        // Handle non-resume file case
+        // alert(response.message || "The uploaded file doesn't appear to be a resume.");
+        toast({
+          variant: "destructive",
+          title: "Invalid Resume",
+          description: response.message || "The uploaded file doesn't appear to be a resume. Please upload a valid resume document.",
+        });
+        setFile(null);
+        setIsUploading(false);
+        return;
+      }
+      
+      // Continue with resume processing
       router.push(`/resume/review/${response.resume_id}`);
     } catch (error) {
       console.error('Error uploading resume:', error);
-      throw error;
+      alert('Error processing your file. Please try again.');
     } finally {
       setIsUploading(false);
     }
