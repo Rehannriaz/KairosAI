@@ -1,11 +1,14 @@
-import express, { Application } from 'express';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import cors from 'cors'; // Import the cors package
-import connectToDatabase from './utils/database';
-import InterviewRoutes from './routes/interview.routes'; // Updated import
+// Updated import
 import { PORT } from './config';
-import validateToken from 'common/src/middlewares/authMiddleware';
+import validateToken from './middlewares/authMiddleware';
+import InterviewRoutes from './routes/interview.routes';
+// Import the cors package
+import connectToDatabase from './utils/database';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express, { Application } from 'express';
+
 dotenv.config();
 const app: Application = express();
 // Middleware

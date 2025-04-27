@@ -1,11 +1,12 @@
-import express, { Application } from 'express';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import connectToDatabase from './utils/database';
-import router from './routes/resumeRoutes'; // Updated import
+// Updated import
 import { PORT } from './config';
+import validateToken from './middlewares/authMiddleware';
+import router from './routes/resumeRoutes';
+import connectToDatabase from './utils/database';
+import bodyParser from 'body-parser';
 import cors from 'cors';
-import validateToken from 'common/src/middlewares/authMiddleware';
+import dotenv from 'dotenv';
+import express, { Application } from 'express';
 
 dotenv.config();
 
