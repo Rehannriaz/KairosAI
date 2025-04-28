@@ -16,11 +16,17 @@ interface UserMetaData {
 }
 
 export default function DashboardPage() {
-  const userName = getUsername();
   const userId = getUserId(); // Get user ID from lib
   const [metaData, setMetaData] = useState<UserMetaData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    // Only run on the client after hydration
+    return setUserName(getUsername() || '');
+  }, []);
 
   useEffect(() => {
     const init = async () => {
