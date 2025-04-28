@@ -19,7 +19,7 @@ export const getUsername = () => {
     if (token) {
       const decodedJWT = decodeToken(token);
       if (decodedJWT) {
-        return decodedJWT.userName;
+        return String(decodedJWT.userName);
       }
     }
   } else {
@@ -33,7 +33,7 @@ export const getUserId = () => {
     if (token) {
       const decodedJWT = decodeToken(token);
       if (decodedJWT) {
-        return decodedJWT.userId;
+        return String(decodedJWT.userId);
       }
     }
   } else {
