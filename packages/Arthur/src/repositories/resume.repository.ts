@@ -44,7 +44,7 @@ const getUserResumes = async (userId: string) => {
       `SELECT 
          r.id, r.user_id, r.name, r.location, r.email, r.phone, 
          r.professional_summary, r.skills, r.employment_history, 
-         r.education, r.preferences, r.link, r.skill_level,r.uploaddate,r.file_url,
+         r.education, r.preferences, r.link, r.skill_level,r.uploaddate,r.file_url,r.linkedin, r.github, r.website,
          upr.resume_id AS primary_resume_id
        FROM resumes r
        LEFT JOIN user_primary_resume upr 
