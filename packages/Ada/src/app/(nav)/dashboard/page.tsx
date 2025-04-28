@@ -88,6 +88,11 @@ export default function DashboardPage() {
     }
   };
 
+  // Skeleton loader component for StatCards
+  const SkeletonLoader = () => (
+    <div className="bg-card/50 animate-pulse h-24 w-full rounded-lg" />
+  );
+
   return (
     <AnimatedLayout>
       <main className="p-6 space-y-6 star-bg">
@@ -106,40 +111,47 @@ export default function DashboardPage() {
           {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
 
-        {loading ? (
-          <div className="text-center py-10">Loading dashboard data...</div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              title="Applied Jobs"
-              value={metaData?.jobs_applied?.toString() || '0'}
-              description="Jobs you've applied to"
-              icon={<Briefcase className="h-4 w-4" />}
-              delay={0}
-            />
-            <StatCard
-              title="Total Users"
-              value="5"
-              description="Active job seekers using the platform"
-              icon={<Users className="h-4 w-4" />}
-              delay={1}
-            />
-            <StatCard
-              title="Available Job Listings"
-              value={metaData?.available_jobs?.toString() || '0'}
-              description="Total jobs currently available"
-              icon={<FileText className="h-4 w-4" />}
-              delay={2}
-            />
-            <StatCard
-              title="Upcoming Interviews"
-              value={metaData?.upcoming_interviews?.toString() || '0'}
-              description="Interviews scheduled this week"
-              icon={<Calendar className="h-4 w-4" />}
-              delay={3}
-            />
-          </div>
-        )}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {loading ? (
+            <>
+              <SkeletonLoader />
+              <SkeletonLoader />
+              <SkeletonLoader />
+              <SkeletonLoader />
+            </>
+          ) : (
+            <>
+              <StatCard
+                title="Applied Jobs"
+                value={metaData?.jobs_applied?.toString() || '0'}
+                description="Jobs you've applied to"
+                icon={<Briefcase className="h-4 w-4" />}
+                delay={0}
+              />
+              <StatCard
+                title="Total Users"
+                value="5"
+                description="Active job seekers using the platform"
+                icon={<Users className="h-4 w-4" />}
+                delay={1}
+              />
+              <StatCard
+                title="Available Job Listings"
+                value={metaData?.available_jobs?.toString() || '0'}
+                description="Total jobs currently available"
+                icon={<FileText className="h-4 w-4" />}
+                delay={2}
+              />
+              <StatCard
+                title="Upcoming Interviews"
+                value={metaData?.upcoming_interviews?.toString() || '0'}
+                description="Interviews scheduled this week"
+                icon={<Calendar className="h-4 w-4" />}
+                delay={3}
+              />
+            </>
+          )}
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <LineChart />

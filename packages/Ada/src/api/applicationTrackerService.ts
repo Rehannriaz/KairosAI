@@ -30,6 +30,30 @@ export const ApplicationTrackerService = {
       throw error;
     }
   },
+  async getApplicationsForChart(userId: string): Promise<any[]> {
+    try {
+      const response = await fetch(
+        `/api/application-tracker/charts?userId=${userId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to fetch applications');
+      }
+
+      const data = await response.json();
+      return data.applications;
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+      throw error;
+    }
+  },
 
   // Create a new application
   async createApplication(
