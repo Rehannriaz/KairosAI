@@ -1,15 +1,21 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { getUserId } from '@/lib';
 import { motion } from 'framer-motion';
 import { Bot, Menu } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type React from 'react';
+import { useEffect, useState } from 'react';
 
 // Added import for React
 
 export default function Navbar() {
+  const [user_id, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    return setUserId(getUserId() ?? null);
+  }, []);
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -34,16 +40,29 @@ export default function Navbar() {
       </div>
 
       <div className="hidden md:flex items-center space-x-4">
-        <Link href={'/login'}>
-          <Button variant="ghost" className="text-white hover:text-purple-400">
-            Sign In
-          </Button>
-        </Link>
-        <Link href={'/signup'}>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-            Get Started
-          </Button>
-        </Link>
+        {user_id ? (
+          <Link href={'/dashboard'}>
+            <Button className="text-white hover:text-purple-400">
+              Dashboard
+            </Button>
+          </Link>
+        ) : (
+          <>
+            <Link href={'/login'}>
+              <Button
+                variant="ghost"
+                className="text-white hover:text-purple-400"
+              >
+                Sign In
+              </Button>
+            </Link>
+            <Link href={'/signup'}>
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+                Get Started
+              </Button>
+            </Link>
+          </>
+        )}
       </div>
 
       <Button variant="ghost" size="icon" className="md:hidden text-white">
