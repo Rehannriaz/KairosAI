@@ -1,5 +1,6 @@
 'use client';
 
+import { checkUserHasResume } from '@/app/actions/resumeActions';
 import DoughnutChart from '@/components/Dashboard/DoughnutChart';
 import { AnimatedLayout } from '@/components/global/animated-layout';
 import { LineChart } from '@/components/line-chart';
@@ -15,57 +16,82 @@ interface UserMetaData {
 }
 
 export default function DashboardPage() {
-  const userName = getUsername();
   const userId = getUserId(); // Get user ID from lib
   const [metaData, setMetaData] = useState<UserMetaData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [userName, setUserName] = useState('');
+
   useEffect(() => {
-    const fetchUserMetaData = async () => {
+    // Only run on the client after hydration
+    return setUserName(getUsername() || '');
+  }, []);
+
+  useEffect(() => {
+    const init = async () => {
       if (!userId) {
-        console.error('No user ID available');
         setError('User identification failed');
         setLoading(false);
         return;
       }
 
-      try {
-        // Pass the userId as a query parameter
-        const response = await fetch(`/api/user-meta?userId=${userId}`);
+      // Check if user has a resume (this will redirect if not)
+      await checkUserHasResume(userId);
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch user meta data');
-        }
+      // Continue with dashboard data loading if user has a resume
+      await fetchUserMetaData();
+    };
 
-        const result = await response.json();
+    init();
+  }, [userId]);
 
-        if (result.data && result.data.length > 0) {
-          setMetaData(result.data[0]);
-        } else {
-          // Use fallback data if no data is returned for this user
-          setMetaData({
-            jobs_applied: 0,
-            available_jobs: 0,
-            upcoming_interviews: 0,
-          });
-        }
-      } catch (err) {
-        console.error('Error fetching user meta data:', err);
-        setError('Could not load dashboard data');
-        // Use fallback data on error
+  const fetchUserMetaData = async () => {
+    if (!userId) {
+      console.error('No user ID available');
+      setError('User identification failed');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Pass the userId as a query parameter
+      const response = await fetch(`/api/user-meta?userId=${userId}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user meta data');
+      }
+
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        setMetaData(result.data[0]);
+      } else {
+        // Use fallback data if no data is returned for this user
         setMetaData({
           jobs_applied: 0,
           available_jobs: 0,
           upcoming_interviews: 0,
         });
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      console.error('Error fetching user meta data:', err);
+      setError('Could not load dashboard data');
+      // Use fallback data on error
+      setMetaData({
+        jobs_applied: 0,
+        available_jobs: 0,
+        upcoming_interviews: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchUserMetaData();
-  }, [userId]); // Re-fetch if userId changes
+  // Skeleton loader component for StatCards
+  const SkeletonLoader = () => (
+    <div className="bg-card/50 animate-pulse h-24 w-full rounded-lg" />
+  );
 
   return (
     <AnimatedLayout>
@@ -85,40 +111,47 @@ export default function DashboardPage() {
           {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
 
-        {loading ? (
-          <div className="text-center py-10">Loading dashboard data...</div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              title="Applied Jobs"
-              value={metaData?.jobs_applied?.toString() || '0'}
-              description="Jobs you've applied to"
-              icon={<Briefcase className="h-4 w-4" />}
-              delay={0}
-            />
-            <StatCard
-              title="Total Users"
-              value="5"
-              description="Active job seekers using the platform"
-              icon={<Users className="h-4 w-4" />}
-              delay={1}
-            />
-            <StatCard
-              title="Available Job Listings"
-              value={metaData?.available_jobs?.toString() || '0'}
-              description="Total jobs currently available"
-              icon={<FileText className="h-4 w-4" />}
-              delay={2}
-            />
-            <StatCard
-              title="Upcoming Interviews"
-              value={metaData?.upcoming_interviews?.toString() || '0'}
-              description="Interviews scheduled this week"
-              icon={<Calendar className="h-4 w-4" />}
-              delay={3}
-            />
-          </div>
-        )}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {loading ? (
+            <>
+              <SkeletonLoader />
+              <SkeletonLoader />
+              <SkeletonLoader />
+              <SkeletonLoader />
+            </>
+          ) : (
+            <>
+              <StatCard
+                title="Applied Jobs"
+                value={metaData?.jobs_applied?.toString() || '0'}
+                description="Jobs you've applied to"
+                icon={<Briefcase className="h-4 w-4" />}
+                delay={0}
+              />
+              <StatCard
+                title="Total Users"
+                value="5"
+                description="Active job seekers using the platform"
+                icon={<Users className="h-4 w-4" />}
+                delay={1}
+              />
+              <StatCard
+                title="Available Job Listings"
+                value={metaData?.available_jobs?.toString() || '0'}
+                description="Total jobs currently available"
+                icon={<FileText className="h-4 w-4" />}
+                delay={2}
+              />
+              <StatCard
+                title="Upcoming Interviews"
+                value={metaData?.upcoming_interviews?.toString() || '0'}
+                description="Interviews scheduled this week"
+                icon={<Calendar className="h-4 w-4" />}
+                delay={3}
+              />
+            </>
+          )}
+        </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <LineChart />

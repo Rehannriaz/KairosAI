@@ -1,6 +1,7 @@
 'use client';
 
 import ActionSearchBar from './global/actionSearchBar';
+import NotificationDropdown from './notifications/notification-dropdown';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import authServiceInstance from '@/api/authService';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -54,22 +55,9 @@ export function Header({ toggleSidebar }: HeaderProps) {
           size="icon"
           className="text-muted-foreground hover:text-foreground"
         >
-          <Bell className="h-5 w-5" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <Mail className="h-5 w-5" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-muted-foreground hover:text-foreground"
-        >
           <Heart className="h-5 w-5" />
         </Button>
+        <NotificationDropdown />
         <Popover>
           <PopoverTrigger>
             {' '}
@@ -85,13 +73,15 @@ export function Header({ toggleSidebar }: HeaderProps) {
           </PopoverTrigger>
           <PopoverContent className="">
             <div className="flex flex-col ml-2">
-              <span className="font-bold text-right">{getUsername()}</span>
-              <div className="text-right cursor-pointer mt-5 p-2 w-full rounded-r-md hover:bg-[#222222] hover:text-white transition duration-100 ease-in">
+              <div className="text-right font-bold p-2 w-full rounded-r-md  duration-100 ease-in">
+                Welcome {getUsername()}!
+              </div>{' '}
+              <div className="text-right cursor-pointer mt-5 p-2 w-full rounded-r-md hover:bg-secondary hover:text-primary transition duration-100 ease-in">
                 View Profile
               </div>
               <div
                 onClick={handleLogout}
-                className="text-right cursor-pointer p-2 mt-5 w-full rounded-r-md hover:bg-[#222222] hover:text-white transition duration-100 ease-in"
+                className="text-right cursor-pointer p-2 mt-5 w-full rounded-r-md  hover:bg-secondary hover:text-primary transition duration-100 ease-in"
               >
                 Log Out
               </div>
