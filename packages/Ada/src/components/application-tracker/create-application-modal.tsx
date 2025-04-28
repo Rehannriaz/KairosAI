@@ -181,15 +181,6 @@ export function CreateApplicationModal({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="logo">Logo URL</Label>
-            <Input
-              id="logo"
-              value={formData.logo}
-              onChange={(e) => handleChange('logo', e.target.value)}
-            />
-          </div>
-
-          <div className="grid gap-2">
             <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"

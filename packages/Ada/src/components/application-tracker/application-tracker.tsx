@@ -113,7 +113,6 @@ export function ApplicationTracker() {
         salary: newApplication.salary,
         next_step: newApplication.next_step,
         url: newApplication.url,
-        logo: newApplication.logo,
         application_tracker_notes: newApplication.application_tracker_notes,
       });
 
@@ -127,7 +126,6 @@ export function ApplicationTracker() {
         applied_date: createdApp.applied_date,
         updated_date: createdApp.updated_date,
         url: createdApp.url || '',
-        logo: createdApp.logo || '',
         salary: createdApp.salary || '',
         application_tracker_notes:
           newApplication.application_tracker_notes || [],
@@ -174,7 +172,7 @@ export function ApplicationTracker() {
   const handleSaveApplication = async (updatedApplication: Application) => {
     if (!userID) return;
     try {
-      await ApplicationTrackerService.updateApplication({
+      const dataToSend = {
         id: updatedApplication.id,
         user_id: userID,
         company: updatedApplication.company,
@@ -186,8 +184,8 @@ export function ApplicationTracker() {
         salary: updatedApplication.salary,
         next_step: updatedApplication.next_step,
         url: updatedApplication.url,
-      });
-
+      };
+      await ApplicationTrackerService.updateApplication(dataToSend);
       // Notes: assume single note for now (optional)
       const notes = updatedApplication.application_tracker_notes;
       if (notes && notes.length > 0) {

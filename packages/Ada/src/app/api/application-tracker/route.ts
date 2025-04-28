@@ -137,7 +137,6 @@ export async function PUT(request: NextRequest) {
       salary,
       next_step,
       url,
-      logo,
     } = body;
 
     if (!id) {
@@ -176,7 +175,6 @@ export async function PUT(request: NextRequest) {
     if (salary !== undefined) updateData.salary = salary;
     if (next_step !== undefined) updateData.next_step = next_step;
     if (url !== undefined) updateData.url = url;
-    if (logo !== undefined) updateData.logo = logo;
 
     // Update application
     const { data: updatedApplication, error } = await supabase
