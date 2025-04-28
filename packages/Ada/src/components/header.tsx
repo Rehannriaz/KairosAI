@@ -76,13 +76,15 @@ export function Header() {
           </PopoverTrigger>
           <PopoverContent className="">
             <div className="flex flex-col ml-2">
-              <span className="font-bold text-right">{getUsername()}</span>
-              <div className="text-right cursor-pointer mt-5 p-2 w-full rounded-r-md hover:bg-[#222222] hover:text-white transition duration-100 ease-in">
+              <div className="text-right font-bold p-2 w-full rounded-r-md  duration-100 ease-in">
+                Welcome {getUsername()}!
+              </div>{' '}
+              <div className="text-right cursor-pointer mt-5 p-2 w-full rounded-r-md hover:bg-secondary hover:text-primary transition duration-100 ease-in">
                 View Profile
               </div>
               <div
                 onClick={handleLogout}
-                className="text-right cursor-pointer p-2 mt-5 w-full rounded-r-md hover:bg-[#222222] hover:text-white transition duration-100 ease-in"
+                className="text-right cursor-pointer p-2 mt-5 w-full rounded-r-md  hover:bg-secondary hover:text-primary transition duration-100 ease-in"
               >
                 Log Out
               </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { checkUserHasResume } from '@/app/actions/resumeActions';
 import DoughnutChart from '@/components/Dashboard/DoughnutChart';
 import { AnimatedLayout } from '@/components/global/animated-layout';
 import { LineChart } from '@/components/line-chart';
@@ -22,50 +23,64 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUserMetaData = async () => {
+    const init = async () => {
       if (!userId) {
-        console.error('No user ID available');
         setError('User identification failed');
         setLoading(false);
         return;
       }
 
-      try {
-        // Pass the userId as a query parameter
-        const response = await fetch(`/api/user-meta?userId=${userId}`);
+      // Check if user has a resume (this will redirect if not)
+      await checkUserHasResume(userId);
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch user meta data');
-        }
+      // Continue with dashboard data loading if user has a resume
+      await fetchUserMetaData();
+    };
 
-        const result = await response.json();
+    init();
+  }, [userId]);
 
-        if (result.data && result.data.length > 0) {
-          setMetaData(result.data[0]);
-        } else {
-          // Use fallback data if no data is returned for this user
-          setMetaData({
-            jobs_applied: 0,
-            available_jobs: 0,
-            upcoming_interviews: 0,
-          });
-        }
-      } catch (err) {
-        console.error('Error fetching user meta data:', err);
-        setError('Could not load dashboard data');
-        // Use fallback data on error
+  const fetchUserMetaData = async () => {
+    if (!userId) {
+      console.error('No user ID available');
+      setError('User identification failed');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Pass the userId as a query parameter
+      const response = await fetch(`/api/user-meta?userId=${userId}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user meta data');
+      }
+
+      const result = await response.json();
+
+      if (result.data && result.data.length > 0) {
+        setMetaData(result.data[0]);
+      } else {
+        // Use fallback data if no data is returned for this user
         setMetaData({
           jobs_applied: 0,
           available_jobs: 0,
           upcoming_interviews: 0,
         });
-      } finally {
-        setLoading(false);
       }
-    };
-
-    fetchUserMetaData();
-  }, [userId]); // Re-fetch if userId changes
+    } catch (err) {
+      console.error('Error fetching user meta data:', err);
+      setError('Could not load dashboard data');
+      // Use fallback data on error
+      setMetaData({
+        jobs_applied: 0,
+        available_jobs: 0,
+        upcoming_interviews: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AnimatedLayout>
