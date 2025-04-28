@@ -43,18 +43,18 @@ export default function JobDetailsPage() {
 
   if (loading) {
     return (
-      <section className="p-8 space-y-6">
-        <Skeleton className="h-10 w-3/4" />
-        <Skeleton className="h-6 w-1/2" />
-        <Skeleton className="h-20 w-full" />
-        <Skeleton className="h-6 w-1/3" />
-        <Skeleton className="h-36 w-full" />
+      <section className="p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6">
+        <Skeleton className="h-8 md:h-10 w-full md:w-3/4" />
+        <Skeleton className="h-6 w-2/3 md:w-1/2" />
+        <Skeleton className="h-16 md:h-20 w-full" />
+        <Skeleton className="h-5 md:h-6 w-1/2 md:w-1/3" />
+        <Skeleton className="h-28 md:h-36 w-full" />
       </section>
     );
   }
 
   if (!job) {
-    return <p>Job not found!</p>;
+    return <p className="p-4 md:p-8 text-center">Job not found!</p>;
   }
 
   let parsedRequirements: any = null;
@@ -65,24 +65,24 @@ export default function JobDetailsPage() {
   }
 
   return (
-    <section className="p-8">
-      <div className="flex justify-end space-x-4">
-        <div className="flex items-center space-x-1 cursor-pointer">
+    <section className="p-4 md:p-6 lg:p-8 max-w-full overflow-x-hidden">
+      <div className="flex justify-end space-x-3 md:space-x-4">
+        <div className="flex items-center space-x-1 cursor-pointer text-sm md:text-base">
           <ShareIcon size={16} />
           <p>Share</p>
         </div>
-        <div className="flex items-center space-x-1 cursor-pointer">
+        <div className="flex items-center space-x-1 cursor-pointer text-sm md:text-base">
           <HeartIcon size={16} />
           <p>Favorite</p>
         </div>
       </div>
 
-      <div className="flex justify-center items-center mt-6">
-        <div className="w-[90%] bg-accent rounded-2xl p-8 flex items-center">
-          <div className="ml-4">
-            <h1 className="text-2xl font-medium">{job.company}</h1>
-            <h2 className="text-xl">{job.title}</h2>
-            <div className="flex space-x-6 mt-2 text-sm">
+      <div className="flex justify-center items-center mt-4 md:mt-6">
+        <div className="w-full md:w-[90%] bg-accent rounded-lg md:rounded-2xl p-4 md:p-6 lg:p-8">
+          <div className="space-y-1 md:space-y-2">
+            <h1 className="text-xl md:text-2xl font-medium">{job.company}</h1>
+            <h2 className="text-lg md:text-xl">{job.title}</h2>
+            <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 mt-2 text-xs md:text-sm">
               <div className="flex space-x-2 items-center">
                 <LocateIcon size={16} />
                 <p>{job.location}</p>
@@ -98,15 +98,15 @@ export default function JobDetailsPage() {
         </div>
       </div>
 
-      <div className="flex justify-center mt-8">
-        <div className="w-[90%] space-y-8">
+      <div className="flex justify-center mt-6 md:mt-8">
+        <div className="w-full md:w-[90%] space-y-6 md:space-y-8">
           <div>
-            <h1 className="text-xl font-semibold mb-4">About Role</h1>
-            <p className="text-sm">{job.aboutrole}</p>
+            <h1 className="text-lg md:text-xl font-semibold mb-2 md:mb-4">About Role</h1>
+            <p className="text-xs md:text-sm">{job.aboutrole}</p>
           </div>
 
           <div>
-            <h1 className="text-xl font-semibold mb-4 mt-10">
+            <h1 className="text-lg md:text-xl font-semibold mb-2 md:mb-4 mt-6 md:mt-10">
               Job Requirements
             </h1>
             {parsedRequirements ? (
@@ -117,16 +117,16 @@ export default function JobDetailsPage() {
                 };
                 return (
                   <div key={key} className="mb-4">
-                    <h2 className="text-lg font-medium capitalize">
+                    <h2 className="text-base md:text-lg font-medium capitalize">
                       {key.replace(/_/g, ' ')}
                     </h2>
                     {typeof reqValue === 'object' && reqValue !== null ? (
-                      <div className="ml-4 space-y-2">
+                      <div className="ml-2 md:ml-4 space-y-1 md:space-y-2">
                         {reqValue.required && (
                           <div>
-                            <h3 className="font-semibold">Required:</h3>
+                            <h3 className="font-semibold text-sm md:text-base">Required:</h3>
                             {Array.isArray(reqValue.required) ? (
-                              <ul className="list-disc ml-5">
+                              <ul className="list-disc ml-4 md:ml-5 text-xs md:text-sm">
                                 {reqValue.required.map(
                                   (item: string, index: number) => (
                                     <li key={index}>{item}</li>
@@ -134,15 +134,15 @@ export default function JobDetailsPage() {
                                 )}
                               </ul>
                             ) : (
-                              <p>{reqValue.required}</p>
+                              <p className="text-xs md:text-sm">{reqValue.required}</p>
                             )}
                           </div>
                         )}
                         {reqValue.preferred && (
                           <div className="mt-2">
-                            <h3 className="font-semibold">Preferred:</h3>
+                            <h3 className="font-semibold text-sm md:text-base">Preferred:</h3>
                             {Array.isArray(reqValue.preferred) ? (
-                              <ul className="list-disc ml-5">
+                              <ul className="list-disc ml-4 md:ml-5 text-xs md:text-sm">
                                 {reqValue.preferred.map(
                                   (item: string, index: number) => (
                                     <li key={index}>{item}</li>
@@ -150,29 +150,29 @@ export default function JobDetailsPage() {
                                 )}
                               </ul>
                             ) : (
-                              <p>{reqValue.preferred}</p>
+                              <p className="text-xs md:text-sm">{reqValue.preferred}</p>
                             )}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <p>{String(value) || 'Not specified'}</p>
+                      <p className="text-xs md:text-sm ml-2 md:ml-4">{String(value) || 'Not specified'}</p>
                     )}
                   </div>
                 );
               })
             ) : (
-              <p className="text-gray-500">No job requirements listed</p>
+              <p className="text-gray-500 text-xs md:text-sm">No job requirements listed</p>
             )}
           </div>
 
           <div>
-            <h1 className="text-xl font-semibold mb-4">Description</h1>
-            <p className="text-sm">{job.description}</p>
+            <h1 className="text-lg md:text-xl font-semibold mb-2 md:mb-4">Description</h1>
+            <p className="text-xs md:text-sm">{job.description}</p>
           </div>
 
-          <div className="mt-6">
-            <Button asChild>
+          <div className="mt-6 pb-8">
+            <Button className="w-full sm:w-auto" asChild>
               <a
                 href={job.listingurl}
                 target="_blank"

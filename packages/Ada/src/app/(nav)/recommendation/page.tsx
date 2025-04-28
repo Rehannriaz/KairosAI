@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Table } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, ListFilter, Grid, List } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
@@ -85,21 +85,23 @@ export default function RecommendationPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8 space-y-6">
-        <div className="flex justify-between items-center">
+      <div className="container mx-auto px-4 py-6 space-y-6 max-w-full">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <Skeleton className="h-8 w-40" />
-          <div className="flex gap-2">
-            <Skeleton className="h-10 w-64" />
-            <Skeleton className="h-10 w-32" />
-            <Skeleton className="h-10 w-10 rounded" />
-            <Skeleton className="h-10 w-10 rounded" />
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <Skeleton className="h-10 w-full sm:w-64" />
+            <Skeleton className="h-10 w-full sm:w-32" />
+            <div className="flex gap-2">
+              <Skeleton className="h-10 w-10 rounded" />
+              <Skeleton className="h-10 w-10 rounded" />
+            </div>
           </div>
         </div>
 
         {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="p-6 space-y-4">
+              <Card key={i} className="p-4 sm:p-6 space-y-4">
                 <div className="space-y-2">
                   <Skeleton className="h-6 w-3/4" />
                   <Skeleton className="h-4 w-1/2" />
@@ -113,34 +115,37 @@ export default function RecommendationPage() {
             ))}
           </div>
         ) : (
-          <div className="rounded-lg shadow">
+          <div className="overflow-x-auto rounded-lg shadow">
             <Table>
-              <thead>
-                <tr>
-                  <th className="px-6 py-3">Job Title</th>
-                  <th className="px-6 py-3">Company</th>
-                  <th className="px-6 py-3">Location</th>
-                  <th className="px-6 py-3">Posted Date</th>
-                </tr>
-              </thead>
-              <tbody>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[40%] sm:w-auto">Job Title</TableHead>
+                  <TableHead className="hidden sm:table-cell">Company</TableHead>
+                  <TableHead className="hidden md:table-cell">Location</TableHead>
+                  <TableHead>Posted</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <tr key={i} className="hover:bg-accent">
-                    <td className="px-6 py-4">
+                  <TableRow key={i}>
+                    <TableCell className="py-4">
                       <Skeleton className="h-4 w-32" />
-                    </td>
-                    <td className="px-6 py-4">
+                      <div className="sm:hidden mt-1">
+                        <Skeleton className="h-3 w-24" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Skeleton className="h-4 w-24" />
-                    </td>
-                    <td className="px-6 py-4">
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
                       <Skeleton className="h-4 w-20" />
-                    </td>
-                    <td className="px-6 py-4">
+                    </TableCell>
+                    <TableCell>
                       <Skeleton className="h-4 w-16" />
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
+              </TableBody>
             </Table>
           </div>
         )}
@@ -149,13 +154,13 @@ export default function RecommendationPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h1 className="text-3xl font-bold">Recommended Jobs</h1>
+    <div className="container mx-auto px-4 py-6 space-y-6 max-w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl md:text-3xl font-bold">Recommended Jobs</h1>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-          <div className="relative flex-1 sm:flex-none">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" />
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <div className="relative flex-1 sm:flex-none w-full sm:w-auto">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
             <Input
               placeholder="Search jobs..."
               className="pl-10 w-full"
@@ -164,68 +169,72 @@ export default function RecommendationPage() {
             />
           </div>
 
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px]">
-              <ListFilter className="w-4 h-4 mr-2" />
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="date">Date Posted</SelectItem>
-              <SelectItem value="company">Company</SelectItem>
-              <SelectItem value="title">Job Title</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2 w-full sm:w-auto justify-between">
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full sm:w-[160px]">
+                <ListFilter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">Date Posted</SelectItem>
+                <SelectItem value="company">Company</SelectItem>
+                <SelectItem value="title">Job Title</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded ${
-                viewMode === 'grid' ? 'bg-accent' : 'hover:bg-accent'
-              }`}
-            >
-              <Grid className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`p-2 rounded ${
-                viewMode === 'list' ? 'bg-accent' : 'hover:bg-accent'
-              }`}
-            >
-              <List className="w-5 h-5" />
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded ${
+                  viewMode === 'grid' ? 'bg-accent' : 'hover:bg-accent'
+                }`}
+                aria-label="Grid view"
+              >
+                <Grid className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`p-2 rounded ${
+                  viewMode === 'list' ? 'bg-accent' : 'hover:bg-accent'
+                }`}
+                aria-label="List view"
+              >
+                <List className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {jobs.length === 0 ? (
         <div className="text-center py-12">
-          <p className=" text-lg">No job recommendations available.</p>
+          <p className="text-lg">No job recommendations available.</p>
         </div>
       ) : viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredAndSortedJobs.map((job) => (
             <Card
               key={job.job_id}
-              className="hover:shadow-white transition-shadow duration-200 cursor-pointer"
+              className="hover:shadow-md transition-shadow duration-200 cursor-pointer"
               onClick={() => handleJobClick(job.job_id)}
             >
-              <div className="p-6 space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold line-clamp-2">
+              <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                <div className="space-y-1 sm:space-y-2">
+                  <h3 className="text-lg sm:text-xl font-semibold line-clamp-2">
                     {job.title}
                   </h3>
-                  <p className=" font-medium">{job.company}</p>
+                  <p className="font-medium">{job.company}</p>
                 </div>
 
-                <div className="flex items-center gap-2 ">
+                <div className="flex items-center gap-2 text-sm sm:text-base">
                   <span>{job.location}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <Badge variant="secondary">
+                  <Badge variant="secondary" className="text-xs sm:text-sm">
                     {new Date(job.posteddate).toLocaleDateString()}
                   </Badge>
-                  <Badge variant="outline" className="cursor-pointer">
+                  <Badge variant="outline" className="cursor-pointer text-xs sm:text-sm">
                     View Details
                   </Badge>
                 </div>
@@ -234,48 +243,43 @@ export default function RecommendationPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-lg shadow">
+        <div className="overflow-x-auto rounded-lg shadow">
           <Table>
-            <thead>
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Job Title
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Company
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
-                  Posted Date
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[40%] sm:w-auto">Job Title</TableHead>
+                <TableHead className="hidden sm:table-cell">Company</TableHead>
+                <TableHead className="hidden md:table-cell">Location</TableHead>
+                <TableHead>Posted Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {filteredAndSortedJobs.map((job) => (
-                <tr
+                <TableRow
                   key={job.job_id}
                   onClick={() => handleJobClick(job.job_id)}
                   className="hover:bg-accent cursor-pointer"
                 >
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium ">{job.title}</div>
-                  </td>
-                  <td className="px-6 py-4">
+                  <TableCell className="py-4">
+                    <div className="text-sm font-medium">{job.title}</div>
+                    <div className="sm:hidden mt-1 text-xs text-muted-foreground">
+                      {job.company}
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
                     <div className="text-sm">{job.company}</div>
-                  </td>
-                  <td className="px-6 py-4">
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
                     <div className="text-sm">{job.location}</div>
-                  </td>
-                  <td className="px-6 py-4">
+                  </TableCell>
+                  <TableCell>
                     <div className="text-sm">
                       {new Date(job.posteddate).toLocaleDateString()}
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
+            </TableBody>
           </Table>
         </div>
       )}

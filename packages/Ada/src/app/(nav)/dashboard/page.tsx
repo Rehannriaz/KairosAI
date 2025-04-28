@@ -20,7 +20,6 @@ export default function DashboardPage() {
   const [metaData, setMetaData] = useState<UserMetaData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
@@ -90,28 +89,28 @@ export default function DashboardPage() {
 
   // Skeleton loader component for StatCards
   const SkeletonLoader = () => (
-    <div className="bg-card/50 animate-pulse h-24 w-full rounded-lg" />
+    <div className="bg-card/50 animate-pulse h-20 sm:h-24 w-full rounded-lg" />
   );
 
   return (
     <AnimatedLayout>
-      <main className="p-6 space-y-6 star-bg">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <h1 className="text-2xl mt-2 font-bold tracking-tight">
+      <main className="p-4 sm:p-5 md:p-6 space-y-4 sm:space-y-5 md:space-y-6 star-bg w-full max-w-full overflow-x-hidden">
+        <div className="w-full">
+          <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-xl sm:text-xl md:text-2xl mt-1 sm:mt-1 md:mt-2 font-bold tracking-tight">
             <span className="font-bold">
               {userName ? `Welcome, ${userName}` : ''}
             </span>
           </h1>
-          <p className="mt-2">
+          <p className="mt-1 md:mt-2 text-sm md:text-base">
             This is your dashboard, providing insights into your job
             applications. Track the jobs you've applied to, see how many
             opportunities are available, and stay updated on your progress.
           </p>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
+          {error && <p className="text-red-500 mt-1 md:mt-2 text-sm md:text-base">{error}</p>}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-2 sm:gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {loading ? (
             <>
               <SkeletonLoader />
@@ -153,9 +152,13 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <LineChart />
-          <DoughnutChart />
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+          <div className="w-full h-full min-h-64">
+            <LineChart />
+          </div>
+          <div className="w-full h-full min-h-64">
+            <DoughnutChart />
+          </div>
         </div>
       </main>
     </AnimatedLayout>

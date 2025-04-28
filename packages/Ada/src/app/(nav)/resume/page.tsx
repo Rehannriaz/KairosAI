@@ -175,8 +175,8 @@ export default function ResumeDashboard() {
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="container mx-auto px-4 py-10">
+      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Resume Dashboard</h1>
           <p className="text-muted-foreground mt-1">
@@ -202,112 +202,116 @@ export default function ResumeDashboard() {
           </div>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Upload Date</TableHead>
-              <TableHead>Primary</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredResumes.map((resume) => (
-              <TableRow key={resume.id}>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span>{resume.name}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    {new Date(resume.uploaddate).toLocaleString('en-US', {
-                      timeZone: 'Asia/Karachi', // GMT+5
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true,
-                    })}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div
-                    className={resume.id != primaryResumeId ? '' : 'opacity-50'}
-                  >
-                    <Checkbox
-                      checked={resume.id === primaryResumeId}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          handlePrimaryChange(resume.id); // Set this resume as primary
-                        }
-                      }}
-                      disabled={resume.id == primaryResumeId}
-                    />
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    {resume.file_url && (
+        <div className="overflow-x-auto w-[360px] md:w-full">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Upload Date</TableHead>
+                <TableHead>Primary</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredResumes.map((resume) => (
+                <TableRow key={resume.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                      <span>{resume.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      {new Date(resume.uploaddate).toLocaleString('en-US', {
+                        timeZone: 'Asia/Karachi', // GMT+5
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div
+                      className={
+                        resume.id != primaryResumeId ? '' : 'opacity-50'
+                      }
+                    >
+                      <Checkbox
+                        checked={resume.id === primaryResumeId}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            handlePrimaryChange(resume.id); // Set this resume as primary
+                          }
+                        }}
+                        disabled={resume.id == primaryResumeId}
+                      />
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      {resume.file_url && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            resume.file_url && handleDownload(resume.file_url)
+                          }
+                        >
+                          <Download className="h-4 w-4" />
+                          <span className="sr-only">Download</span>
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() =>
-                          resume.file_url && handleDownload(resume.file_url)
-                        }
+                        onClick={() => handleEdit(resume.id)}
                       >
-                        <Download className="h-4 w-4" />
-                        <span className="sr-only">Download</span>
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Edit</span>
                       </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(resume.id)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                      <span className="sr-only">Edit</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleReviewClick(resume)}
-                    >
-                      <Eye className="h-4 w-4" />
-                      <span className="sr-only">View</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(resume.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-            {filteredResumes.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-8">
-                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                    <FileText className="h-8 w-8" />
-                    <p>No resumes found</p>
-                    {searchQuery && (
-                      <p className="text-sm">
-                        Try adjusting your search criteria
-                      </p>
-                    )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleReviewClick(resume)}
+                      >
+                        <Eye className="h-4 w-4" />
+                        <span className="sr-only">View</span>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(resume.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filteredResumes.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-8">
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <FileText className="h-8 w-8" />
+                      <p>No resumes found</p>
+                      {searchQuery && (
+                        <p className="text-sm">
+                          Try adjusting your search criteria
+                        </p>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </Card>
 
       {selectedResume && (

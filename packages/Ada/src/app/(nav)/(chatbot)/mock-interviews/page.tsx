@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 
 const ITEMS_PER_PAGE = 6;
+
 interface Interview {
   id: number;
   jobTitle: string;
@@ -19,10 +20,11 @@ interface Interview {
   children?: Interview[];
 }
 
+// Skeleton for Interviews Table
 const TableSkeleton = () => (
   <div className="w-full space-y-3">
     {/* Header row */}
-    <div className="flex w-full gap-4 p-4 bg-accent rounded-t-lg">
+    <div className="hidden sm:flex w-full gap-4 p-4 bg-accent rounded-t-lg">
       <Skeleton className="h-5 w-[30%]" /> {/* Job Title */}
       <Skeleton className="h-5 w-[25%]" /> {/* Company */}
       <Skeleton className="h-5 w-[20%]" /> {/* Date */}
@@ -32,19 +34,23 @@ const TableSkeleton = () => (
 
     {/* Table rows */}
     {[...Array(4)].map((_, i) => (
-      <div key={i} className="flex w-full gap-4 p-4 border rounded-lg">
-        <Skeleton className="h-6 w-[30%]" />
-        <Skeleton className="h-6 w-[25%]" />
-        <Skeleton className="h-6 w-[20%]" />
-        <Skeleton className="h-6 w-[15%]" />
-        <Skeleton className="h-6 w-[10%]" />
+      <div
+        key={i}
+        className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full p-4 border rounded-lg"
+      >
+        <Skeleton className="h-5 w-full sm:w-[30%]" />
+        <Skeleton className="h-5 w-full sm:w-[25%]" />
+        <Skeleton className="h-5 w-full sm:w-[20%]" />
+        <Skeleton className="h-5 w-full sm:w-[15%]" />
+        <Skeleton className="h-5 w-full sm:w-[10%]" />
       </div>
     ))}
   </div>
 );
-// JobGridSkeleton component for the job cards grid
+
+// Skeleton for Job Cards
 const JobGridSkeleton = () => (
-  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {[...Array(ITEMS_PER_PAGE)].map((_, i) => (
       <JobCard key={i} isLoading={true} />
     ))}
@@ -58,32 +64,33 @@ export default function JobListingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [interviews, setInterviews] = useState<Interview[]>([]);
+
   useEffect(() => {
     const fetchJobs = async () => {
       setLoading(true);
       setError(null);
       try {
         const result = await chatServiceInstance.getInterviewsData();
-        // Transform API response to fit the table format
-        const { jobs: fetchedJobs, total } =
-          await jobServiceInstance.getAllJobs(currentPage, ITEMS_PER_PAGE);
+        const { jobs: fetchedJobs, total } = await jobServiceInstance.getAllJobs(currentPage, ITEMS_PER_PAGE);
+
         setJobs(fetchedJobs);
+
         const formattedInterviews =
           result?.map((job: any) => ({
-            id: job.job_id, // Unique ID for job row
+            id: job.job_id,
             jobTitle: job.job_title,
             company: job.job_company,
-            status: job.statuses[0], // Just for parent row display
+            status: job.statuses[0],
             children: job.interview_dates.map((date: any, index: number) => ({
-              id: `${job.interview_ids[index]}`, // Unique ID for child row
+              id: `${job.interview_ids[index]}`,
               jobTitle: job.job_title,
               company: job.job_company,
               date,
-              status: job.statuses[index], // Map status to each interview
+              status: job.statuses[index],
             })),
           })) || [];
-        setInterviews(formattedInterviews);
 
+        setInterviews(formattedInterviews);
         setTotalPages(Math.ceil(total / ITEMS_PER_PAGE));
       } catch (err) {
         setError('Failed to load job listings.');
@@ -96,25 +103,31 @@ export default function JobListingsPage() {
   }, [currentPage]);
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Give a mock interview now!</h1>
-        <p className="text-lg max-w-2xl">
+    <div className="container mx-auto px-4 py-8">
+      <div className="space-y-2 text-center sm:text-left">
+        <h1 className="text-2xl sm:text-3xl font-bold">
+          Give a mock interview now!
+        </h1>
+        <p className="text-base sm:text-lg max-w-2xl mx-auto sm:mx-0">
           You need to have a resume uploaded and set as primary. Select a job
           below and get started with the interview.
         </p>
       </div>
 
+      {/* Interviews Section */}
       <div className="my-8 space-y-4">
-        <h2 className="text-2xl font-semibold">Your Interviews</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold">Your Interviews</h2>
         {loading ? (
           <TableSkeleton />
         ) : (
-          <InterviewsTable interviews={interviews ? interviews : []} />
+          <InterviewsTable interviews={interviews} />
         )}
       </div>
 
-      <h1 className="text-3xl font-semibold my-8 text-center">Job Listings</h1>
+      {/* Job Listings Section */}
+      <h1 className="text-2xl sm:text-3xl font-semibold my-8 text-center">
+        Job Listings
+      </h1>
 
       {error ? (
         <p className="text-center text-red-500">{error}</p>
@@ -123,13 +136,12 @@ export default function JobListingsPage() {
           {loading ? (
             <JobGridSkeleton />
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {jobs.map((job: any) => (
                 <JobCard key={job.job_id} {...job} />
               ))}
             </div>
           )}
-
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

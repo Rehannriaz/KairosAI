@@ -270,70 +270,73 @@ const JobsPage = () => {
       : 0) +
     (draftFilters.categories.length > 0 ? 1 : 0);
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8 space-y-6">
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-8 w-40" />
-          <div className="flex gap-2">
-            <Skeleton className="h-10 w-64" />
-            <Skeleton className="h-10 w-32" />
-            <Skeleton className="h-10 w-10 rounded" />
-            <Skeleton className="h-10 w-10 rounded" />
+    if (loading) {
+      return (
+        <div className="container mx-auto px-4 py-8 space-y-6">
+          {/* Top Bar */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <Skeleton className="h-8 w-40" />
+            <div className="flex flex-wrap gap-2">
+              <Skeleton className="h-10 w-64" />
+              <Skeleton className="h-10 w-32" />
+              <Skeleton className="h-10 w-10 rounded" />
+              <Skeleton className="h-10 w-10 rounded" />
+            </div>
           </div>
-        </div>
-
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="p-6 space-y-4">
-                <div className="space-y-2">
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                </div>
-                <Skeleton className="h-4 w-1/3" />
-                <div className="flex justify-between">
-                  <Skeleton className="h-6 w-20" />
-                  <Skeleton className="h-6 w-24" />
-                </div>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-lg shadow">
-            <Table>
-              <thead>
-                <tr>
-                  <th className="px-6 py-3">Job Title</th>
-                  <th className="px-6 py-3">Company</th>
-                  <th className="px-6 py-3">Location</th>
-                  <th className="px-6 py-3">Posted Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <tr key={i} className="hover:bg-accent">
-                    <td className="px-6 py-4">
-                      <Skeleton className="h-4 w-32" />
-                    </td>
-                    <td className="px-6 py-4">
-                      <Skeleton className="h-4 w-24" />
-                    </td>
-                    <td className="px-6 py-4">
-                      <Skeleton className="h-4 w-20" />
-                    </td>
-                    <td className="px-6 py-4">
-                      <Skeleton className="h-4 w-16" />
-                    </td>
+    
+          {/* Main Content */}
+          {viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i} className="p-6 space-y-4">
+                  <div className="space-y-2">
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                  <Skeleton className="h-4 w-1/3" />
+                  <div className="flex justify-between">
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-6 w-24" />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-lg shadow">
+              <Table className="min-w-[600px]">
+                <thead>
+                  <tr>
+                    <th className="px-6 py-3 text-left">Job Title</th>
+                    <th className="px-6 py-3 text-left">Company</th>
+                    <th className="px-6 py-3 text-left">Location</th>
+                    <th className="px-6 py-3 text-left">Posted Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        )}
-      </div>
-    );
-  }
+                </thead>
+                <tbody>
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <tr key={i} className="hover:bg-accent">
+                      <td className="px-6 py-4">
+                        <Skeleton className="h-4 w-32" />
+                      </td>
+                      <td className="px-6 py-4">
+                        <Skeleton className="h-4 w-24" />
+                      </td>
+                      <td className="px-6 py-4">
+                        <Skeleton className="h-4 w-20" />
+                      </td>
+                      <td className="px-6 py-4">
+                        <Skeleton className="h-4 w-16" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          )}
+        </div>
+      );
+    }
+    
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
@@ -516,7 +519,7 @@ const JobsPage = () => {
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded ${
+              className={`hidden md:block p-2 rounded ${
                 viewMode === 'list' ? 'bg-accent' : 'hover:bg-accent'
               }`}
             >

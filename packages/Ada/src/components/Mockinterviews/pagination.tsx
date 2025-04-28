@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 
 interface PaginationProps {
@@ -6,7 +8,7 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-const MAX_VISIBLE_PAGES = 5; // you can adjust this
+const MAX_VISIBLE_PAGES = 5; // Adjust if needed
 
 export function Pagination({
   currentPage,
@@ -32,21 +34,26 @@ export function Pagination({
   }
 
   return (
-    <div className="flex justify-center items-center space-x-2 mt-8">
+    <div className="flex flex-wrap justify-center items-center gap-2 mt-6 text-sm md:text-base">
       <Button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         variant="outline"
+        className="px-2 md:px-4"
       >
         Previous
       </Button>
 
       {start > 1 && (
         <>
-          <Button onClick={() => onPageChange(1)} variant="outline">
+          <Button
+            onClick={() => onPageChange(1)}
+            variant="outline"
+            className="px-2 md:px-4"
+          >
             1
           </Button>
-          {start > 2 && <span className="px-2">...</span>}
+          {start > 2 && <span className="text-muted-foreground mx-1">...</span>}
         </>
       )}
 
@@ -55,6 +62,7 @@ export function Pagination({
           key={page}
           onClick={() => onPageChange(page)}
           variant={currentPage === page ? 'default' : 'outline'}
+          className="px-2 md:px-4"
         >
           {page}
         </Button>
@@ -62,8 +70,14 @@ export function Pagination({
 
       {end < totalPages && (
         <>
-          {end < totalPages - 1 && <span className="px-2">...</span>}
-          <Button onClick={() => onPageChange(totalPages)} variant="outline">
+          {end < totalPages - 1 && (
+            <span className="text-muted-foreground mx-1">...</span>
+          )}
+          <Button
+            onClick={() => onPageChange(totalPages)}
+            variant="outline"
+            className="px-2 md:px-4"
+          >
             {totalPages}
           </Button>
         </>
@@ -73,6 +87,7 @@ export function Pagination({
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         variant="outline"
+        className="px-2 md:px-4"
       >
         Next
       </Button>

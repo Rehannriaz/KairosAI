@@ -31,37 +31,51 @@ export function Header({ toggleSidebar }: HeaderProps) {
   const showHomeIcon = /^\/mock-interviews\/[^\/]+\/[^\/]+$/.test(pathname);
 
   return (
-    <header className="flex h-16 items-center px-4 border-b border-border/40">
-      <div className="md:hidden mr-2">
-        <Button variant="ghost" size="icon" onClick={toggleSidebar}>
-          <Menu className="h-5 w-5" />
+    <header className="flex h-14 sm:h-16 items-center px-2 sm:px-4 border-b border-border/40 gap-2 sm:gap-4">
+      {/* Hamburger menu - visible only on mobile */}
+      <div className="md:hidden flex-shrink-0">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={toggleSidebar}
+          className="h-8 w-8 sm:h-9 sm:w-9"
+        >
+          <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
         </Button>
       </div>
-      <div
-        className={`flex-1 ${showHomeIcon ? 'gap-x-4' : ''}  flex items-center`}
-      >
+      
+      {/* Logo/Home section with flexible width */}
+      <div className={`flex items-center ${showHomeIcon ? 'gap-2 sm:gap-4' : ''} flex-1 min-w-0`}>
         {showHomeIcon && (
-          <Link href={'/dashboard'}>
-            <HomeIcon />
+          <Link href="/dashboard" className="flex-shrink-0">
+            <HomeIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
         )}
-        <div className="relative w-full max-w-md">
+        
+        {/* Search bar with responsive width */}
+        <div className="flex-1 max-w-md w-full">
           <ActionSearchBar />
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      
+      {/* Action buttons with consistent spacing */}
+      <div className="flex items-center gap-1 sm:gap-4 flex-shrink-0">
         <Button
           variant="ghost"
           size="icon"
-          className="text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground h-8 w-8 sm:h-10 sm:w-10"
         >
-          <Heart className="h-5 w-5" />
+          <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
         </Button>
-        <NotificationDropdown />
+        
+        <div className="hidden xs:block">
+          <NotificationDropdown />
+        </div>
+        
+        {/* User profile with popover */}
         <Popover>
-          <PopoverTrigger>
-            {' '}
-            <span className="block w-8 h-8 overflow-hidden rounded-full border-[0.5px] border-black">
+          <PopoverTrigger className="outline-none">
+            <span className="block w-7 h-7 sm:w-8 sm:h-8 overflow-hidden rounded-full border-[0.5px] border-black">
               <Image
                 src="/profile_picture.png"
                 alt="Profile"
@@ -71,19 +85,21 @@ export function Header({ toggleSidebar }: HeaderProps) {
               />
             </span>
           </PopoverTrigger>
-          <PopoverContent className="">
-            <div className="flex flex-col ml-2">
-              <div className="text-right font-bold p-2 w-full rounded-r-md  duration-100 ease-in">
+          <PopoverContent className="w-56 p-0" align="end">
+            <div className="flex flex-col">
+              <div className="text-right font-bold p-3 w-full rounded-t-md border-b">
                 Welcome {getUsername()}!
-              </div>{' '}
-              <div className="text-right cursor-pointer mt-5 p-2 w-full rounded-r-md hover:bg-secondary hover:text-primary transition duration-100 ease-in">
-                View Profile
               </div>
-              <div
-                onClick={handleLogout}
-                className="text-right cursor-pointer p-2 mt-5 w-full rounded-r-md  hover:bg-secondary hover:text-primary transition duration-100 ease-in"
-              >
-                Log Out
+              <div className="p-2">
+                <button className="text-right cursor-pointer p-2 w-full rounded hover:bg-secondary hover:text-primary transition duration-100 ease-in">
+                  View Profile
+                </button>
+                <button 
+                  onClick={handleLogout}
+                  className="text-right cursor-pointer p-2 w-full rounded hover:bg-secondary hover:text-primary transition duration-100 ease-in mt-1"
+                >
+                  Log Out
+                </button>
               </div>
             </div>
           </PopoverContent>
