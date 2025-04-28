@@ -33,45 +33,51 @@ export function Header({ toggleSidebar }: HeaderProps) {
   return (
     <header className="flex h-14 sm:h-16 items-center px-2 sm:px-4 border-b border-border/40 gap-2 sm:gap-4">
       {/* Hamburger menu - visible only on mobile */}
-      <div className="md:hidden flex-shrink-0">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={toggleSidebar}
-          className="h-8 w-8 sm:h-9 sm:w-9"
-        >
-          <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
-        </Button>
-      </div>
-      
+      {!showHomeIcon && (
+        <div className="md:hidden flex-shrink-0">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            className="h-8 w-8 sm:h-9 sm:w-9"
+          >
+            <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+          </Button>
+        </div>
+      )}
+
       {/* Logo/Home section with flexible width */}
-      <div className={`flex items-center ${showHomeIcon ? 'gap-2 sm:gap-4' : ''} flex-1 min-w-0`}>
+      <div
+        className={`flex items-center ${
+          showHomeIcon ? 'gap-2 sm:gap-4' : ''
+        } flex-1 min-w-0`}
+      >
         {showHomeIcon && (
           <Link href="/dashboard" className="flex-shrink-0">
             <HomeIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
         )}
-        
+
         {/* Search bar with responsive width */}
         <div className="flex-1 max-w-md w-full">
           <ActionSearchBar />
         </div>
       </div>
-      
+
       {/* Action buttons with consistent spacing */}
       <div className="flex items-center gap-1 sm:gap-4 flex-shrink-0">
-        <Button
+        {/* <Button
           variant="ghost"
           size="icon"
           className="text-muted-foreground hover:text-foreground h-8 w-8 sm:h-10 sm:w-10"
         >
           <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
-        </Button>
-        
-        <div className="hidden xs:block">
+        </Button> */}
+
+        <div className="hidden lg:block">
           <NotificationDropdown />
         </div>
-        
+
         {/* User profile with popover */}
         <Popover>
           <PopoverTrigger className="outline-none">
@@ -91,10 +97,13 @@ export function Header({ toggleSidebar }: HeaderProps) {
                 Welcome {getUsername()}!
               </div>
               <div className="p-2">
-                <button className="text-right cursor-pointer p-2 w-full rounded hover:bg-secondary hover:text-primary transition duration-100 ease-in">
+                <button
+                  onClick={() => router.push('/profile')}
+                  className="text-right cursor-pointer p-2 w-full rounded hover:bg-secondary hover:text-primary transition duration-100 ease-in"
+                >
                   View Profile
                 </button>
-                <button 
+                <button
                   onClick={handleLogout}
                   className="text-right cursor-pointer p-2 w-full rounded hover:bg-secondary hover:text-primary transition duration-100 ease-in mt-1"
                 >
