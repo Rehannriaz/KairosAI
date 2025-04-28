@@ -25,26 +25,25 @@ export function ApplicationCard({
   onEditApplication,
   onUpdateStatus,
 }: ApplicationCardProps) {
-  // Get status badge color
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'applied':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+        return 'bg-blue-100 w-[6rem] justify-center text-blue-800 dark:bg-blue-900 dark:text-blue-300';
       case 'interview':
       case 'screening':
       case 'technical':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+        return 'bg-purple-100  w-[6rem] justify-center text-purple-800 dark:bg-purple-900 dark:text-purple-300';
       case 'offer':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+        return 'bg-green-100  w-[6rem] justify-center text-green-800 dark:bg-green-900 dark:text-green-300';
       case 'rejected':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+        return 'bg-red-100  w-[6rem] justify-center text-red-800 dark:bg-red-900 dark:text-red-300';
       case 'accepted':
-        return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300';
+        return 'bg-emerald-100  w-[6rem] justify-center text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300';
       case 'declined':
       case 'withdrawn':
-        return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
+        return 'bg-amber-100  w-[6rem] justify-center text-amber-800 dark:bg-amber-900 dark:text-amber-300';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+        return 'bg-gray-100  w-[6rem] justify-center text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
   };
 
@@ -138,11 +137,17 @@ export function ApplicationCard({
                 {application.next_step}
               </div>
             )}
+            {application.application_tracker_notes?.[0]?.note && (
+              <div className="mt-3 py-2 border-t text-sm">
+                <span className="font-medium">Notes:</span>{' '}
+                {application.application_tracker_notes[0].note}
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="bg-gray-50 dark:bg-gray-800 px-4 py-3 flex justify-between">
+      <CardFooter className="bg-transparent  px-4 py-3 flex justify-between">
         <div className="flex space-x-2">
           <Button
             variant="secondary"

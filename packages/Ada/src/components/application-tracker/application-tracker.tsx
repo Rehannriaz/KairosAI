@@ -29,6 +29,12 @@ export function ApplicationTracker() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [viewApplication, setViewApplication] = useState<Application | null>(
+    null
+  );
+  const [editApplication, setEditApplication] = useState<Application | null>(
+    null
+  );
 
   const userID = getUserId();
 
@@ -78,15 +84,14 @@ export function ApplicationTracker() {
   });
 
   const handleViewDetails = (application: Application) => {
-    setSelectedApplication(application);
+    setViewApplication(application);
     setIsViewModalOpen(true);
   };
 
   const handleEditApplication = (application: Application) => {
-    setSelectedApplication(application);
+    setEditApplication(application);
     setIsEditModalOpen(true);
   };
-
   const handleCreateApplication = async (
     newApplication: Omit<
       Application,
@@ -307,25 +312,32 @@ export function ApplicationTracker() {
       </div>
 
       {/* Modals */}
-      {selectedApplication && (
-        <>
-          <ApplicationDetailsModal
-            application={selectedApplication}
-            isOpen={isViewModalOpen}
-            onClose={() => setIsViewModalOpen(false)}
-            onSave={handleSaveApplication}
-            onDelete={handleDeleteApplication}
-            isEditing={false}
-          />
-          <ApplicationDetailsModal
-            application={selectedApplication}
-            isOpen={isEditModalOpen}
-            onClose={() => setIsEditModalOpen(false)}
-            onSave={handleSaveApplication}
-            onDelete={handleDeleteApplication}
-            isEditing={true}
-          />
-        </>
+      {viewApplication && (
+        <ApplicationDetailsModal
+          application={viewApplication}
+          isOpen={isViewModalOpen}
+          onClose={() => {
+            setIsViewModalOpen(false);
+            setViewApplication(null);
+          }}
+          onSave={handleSaveApplication}
+          onDelete={handleDeleteApplication}
+          isEditing={false}
+        />
+      )}
+
+      {editApplication && (
+        <ApplicationDetailsModal
+          application={editApplication}
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setEditApplication(null);
+          }}
+          onSave={handleSaveApplication}
+          onDelete={handleDeleteApplication}
+          isEditing={true}
+        />
       )}
       <CreateApplicationModal
         isOpen={isCreateModalOpen}
