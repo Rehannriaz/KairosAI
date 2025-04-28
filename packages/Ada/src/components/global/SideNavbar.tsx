@@ -9,6 +9,7 @@ import {
   Video,
   Info,
   Settings,
+  NotebookText,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -64,6 +65,12 @@ export function Sidebar({ className }: SidebarProps) {
               icon={<FileText size={20} />}
               title="Resume"
               active={activeRoute === '/resume'}
+            />
+            <SidebarItem
+              href="/application-tracker"
+              icon={<NotebookText size={20} />}
+              title="Application Tracker"
+              active={activeRoute === '/application-tracker'}
             />
             <SidebarItem
               href="/mock-interviews"
