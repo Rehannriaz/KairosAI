@@ -1,6 +1,7 @@
 'use client';
 
 import ActionSearchBar from './global/actionSearchBar';
+import NotificationDropdown from './notifications/notification-dropdown';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import authServiceInstance from '@/api/authService';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -45,22 +46,9 @@ export function Header() {
           size="icon"
           className="text-muted-foreground hover:text-foreground"
         >
-          <Bell className="h-5 w-5" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <Mail className="h-5 w-5" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-muted-foreground hover:text-foreground"
-        >
           <Heart className="h-5 w-5" />
         </Button>
+        <NotificationDropdown />
         <Popover>
           <PopoverTrigger>
             {' '}
