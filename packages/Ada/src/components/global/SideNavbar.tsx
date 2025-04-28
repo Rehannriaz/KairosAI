@@ -99,6 +99,12 @@ export function Sidebar({ className, isMobileOpen, onClose }: SidebarProps) {
                 active={activeRoute === '/resume'}
               />
               <SidebarItem
+                href="/application-tracker"
+                icon={<NotebookText size={20} />}
+                title="Application Tracker"
+                active={activeRoute === '/application-tracker'}
+              />
+              <SidebarItem
                 href="/mock-interviews"
                 icon={<Video size={20} />}
                 title="Interview"
