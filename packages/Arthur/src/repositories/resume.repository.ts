@@ -10,24 +10,28 @@ const uploadUserResume = async (
   try {
     const result = await pool.query(
       `INSERT INTO resumes 
-      (user_id, name, location, email, phone, professional_summary, skills, employment_history, education, preferences, embedding,file_url) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12) returning *;`,
+      (user_id, name, location, email, phone, linkedin, github, website, professional_summary, skills, employment_history, education, preferences, embedding, file_url) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) 
+      RETURNING *;`,
       [
         userId,
-        parsedJson.name,
-        parsedJson.location,
-        parsedJson.email,
-        parsedJson.phone,
-        parsedJson.professional_summary,
-        parsedJson.skills, // Assuming this is an array of strings (text[])
-        JSON.stringify(parsedJson.employment_history), // Convert JSON to string for jsonb
-        JSON.stringify(parsedJson.education), // Convert JSON to string for jsonb
-        JSON.stringify(parsedJson.preferences), // Convert JSON to string for jsonb
-        JSON.stringify(embeddings), // Convert JSON to string for jsonb
+        parsedJson.name || null,
+        parsedJson.location || null,
+        parsedJson.email || null,
+        parsedJson.phone || null,
+        parsedJson.linkedin || null,
+        parsedJson.github || null,
+        parsedJson.website || null,
+        parsedJson.professional_summary || null,
+        parsedJson.skills || [], // Still assuming text[]
+        JSON.stringify(parsedJson.employment_history || []),
+        JSON.stringify(parsedJson.education || []),
+        JSON.stringify(parsedJson.preferences || {}),
+        JSON.stringify(embeddings),
         file_url,
       ]
     );
-    return result.rows[0].id; // Return the inserted resume's ID
+    return result.rows[0].id;
   } catch (error: any) {
     console.error('Error uploading resume:', error.message);
     throw new Error('Failed to upload resume.');
