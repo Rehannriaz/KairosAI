@@ -180,7 +180,7 @@ export default function ResumeReview({ params }: PageProps) {
           resume
         );
       }
-      router.push('/resume');
+      router.push(`/resume/review/additional-questions`);
     } catch (error) {
       console.error('Error updating resume:', error);
     } finally {
@@ -553,10 +553,10 @@ export default function ResumeReview({ params }: PageProps) {
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
+                Submitting Current Response...
               </>
             ) : (
-              'Submit Resume'
+              'Next'
             )}
           </Button>
         </div>
