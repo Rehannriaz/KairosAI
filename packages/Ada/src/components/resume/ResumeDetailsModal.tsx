@@ -6,12 +6,16 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import React from 'react';
+import { SeparatorConfig } from 'tailwindcss/types/config';
 
 interface ResumeDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   resume: {
     name: string;
+    linkedin?: string;
+    github?: string;
+    website?: string;
     location: string;
     email: string;
     phone: string;
@@ -65,7 +69,12 @@ export function ResumeDetailsModal({
       return date;
     }
   };
-
+  function formatLink(url: string) {
+    if (!url.startsWith('http://www.') && !url.startsWith('https://www.')) {
+      return `https://www.${url}`;
+    }
+    return url;
+  }
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
@@ -93,6 +102,45 @@ export function ResumeDetailsModal({
                   <p className="text-sm text-muted-foreground">Phone</p>
                   <p>{resume.phone}</p>
                 </div>
+                {resume.linkedin && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">LinkedIn</p>
+                    <a
+                      href={formatLink(resume.linkedin)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className=" underline"
+                    >
+                      {resume.linkedin}
+                    </a>
+                  </div>
+                )}
+                {resume.github && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Github</p>
+                    <a
+                      href={formatLink(resume.github)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className=" underline"
+                    >
+                      {resume.github}
+                    </a>
+                  </div>
+                )}
+                {resume.website && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Portfolio</p>
+                    <a
+                      href={formatLink(resume.website)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className=" underline"
+                    >
+                      {resume.website}
+                    </a>
+                  </div>
+                )}
               </div>
             </section>
 

@@ -60,6 +60,7 @@ export default function JobDetailsPage() {
   let parsedRequirements: any = null;
   try {
     parsedRequirements = job.requirements ? JSON.parse(job.requirements) : null;
+    console.log('Parsed Requirements:', parsedRequirements);
   } catch (error) {
     console.error('Failed to parse job requirements:', error);
   }
@@ -101,7 +102,9 @@ export default function JobDetailsPage() {
       <div className="flex justify-center mt-6 md:mt-8">
         <div className="w-full md:w-[90%] space-y-6 md:space-y-8">
           <div>
-            <h1 className="text-lg md:text-xl font-semibold mb-2 md:mb-4">About Role</h1>
+            <h1 className="text-lg md:text-xl font-semibold mb-2 md:mb-4">
+              About Role
+            </h1>
             <p className="text-xs md:text-sm">{job.aboutrole}</p>
           </div>
 
@@ -117,14 +120,13 @@ export default function JobDetailsPage() {
                 };
                 return (
                   <div key={key} className="mb-4">
-                    <h2 className="text-base md:text-lg font-medium capitalize">
-                      {key.replace(/_/g, ' ')}
-                    </h2>
                     {typeof reqValue === 'object' && reqValue !== null ? (
                       <div className="ml-2 md:ml-4 space-y-1 md:space-y-2">
                         {reqValue.required && (
                           <div>
-                            <h3 className="font-semibold text-sm md:text-base">Required:</h3>
+                            <h3 className="font-semibold text-sm md:text-base">
+                              Required:
+                            </h3>
                             {Array.isArray(reqValue.required) ? (
                               <ul className="list-disc ml-4 md:ml-5 text-xs md:text-sm">
                                 {reqValue.required.map(
@@ -134,13 +136,17 @@ export default function JobDetailsPage() {
                                 )}
                               </ul>
                             ) : (
-                              <p className="text-xs md:text-sm">{reqValue.required}</p>
+                              <p className="text-xs md:text-sm">
+                                {reqValue.required}
+                              </p>
                             )}
                           </div>
                         )}
                         {reqValue.preferred && (
                           <div className="mt-2">
-                            <h3 className="font-semibold text-sm md:text-base">Preferred:</h3>
+                            <h3 className="font-semibold text-sm md:text-base">
+                              Preferred:
+                            </h3>
                             {Array.isArray(reqValue.preferred) ? (
                               <ul className="list-disc ml-4 md:ml-5 text-xs md:text-sm">
                                 {reqValue.preferred.map(
@@ -150,24 +156,32 @@ export default function JobDetailsPage() {
                                 )}
                               </ul>
                             ) : (
-                              <p className="text-xs md:text-sm">{reqValue.preferred}</p>
+                              <p className="text-xs md:text-sm">
+                                {reqValue.preferred}123
+                              </p>
                             )}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <p className="text-xs md:text-sm ml-2 md:ml-4">{String(value) || 'Not specified'}</p>
+                      <p className="text-xs md:text-sm ml-2 md:ml-4">
+                        - {String(value) || 'Not specified'}
+                      </p>
                     )}
                   </div>
                 );
               })
             ) : (
-              <p className="text-gray-500 text-xs md:text-sm">No job requirements listed</p>
+              <p className="text-gray-500 text-xs md:text-sm">
+                No job requirements listed
+              </p>
             )}
           </div>
 
           <div>
-            <h1 className="text-lg md:text-xl font-semibold mb-2 md:mb-4">Description</h1>
+            <h1 className="text-lg md:text-xl font-semibold mb-2 md:mb-4">
+              Description
+            </h1>
             <p className="text-xs md:text-sm">{job.description}</p>
           </div>
 

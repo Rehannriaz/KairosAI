@@ -38,6 +38,9 @@ interface Resume {
   name: string;
   location: string;
   email: string;
+  website?: string;
+  linkedin?: string;
+  github?: string;
   phone: string;
   professional_summary: string;
   skill_level: string;
@@ -278,6 +281,36 @@ export default function ResumeReview({ params }: PageProps) {
                   id="phone"
                   value={resume.phone}
                   onChange={(e) => handleContentChange('phone', e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="linkedin">LinkedIn</Label>
+                <Input
+                  id="linkedin"
+                  value={resume?.linkedin}
+                  onChange={(e) =>
+                    handleContentChange('linkedin', e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="github">GitHub</Label>
+                <Input
+                  id="github"
+                  value={resume?.github}
+                  onChange={(e) =>
+                    handleContentChange('github', e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="website">Portfolio</Label>
+                <Input
+                  id="website"
+                  value={resume?.website}
+                  onChange={(e) =>
+                    handleContentChange('website', e.target.value)
+                  }
                 />
               </div>
             </div>

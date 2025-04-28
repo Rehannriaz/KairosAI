@@ -13,10 +13,17 @@ export async function GET(
   try {
     const { data, error } = await supabase
       .from('user_additional_answers')
-      .select('question_id, answer')
+      .select(
+        `
+        question_id,
+        answer,
+        additional_questions (
+          question
+        )
+      `
+      )
       .eq('user_id', userId);
 
-    console.log('data in getUsersPreviousResponse', data);
     if (error) {
       console.error('Error fetching user responses:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
