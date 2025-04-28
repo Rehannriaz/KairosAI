@@ -1,11 +1,6 @@
 'use client';
+
 import chatServiceInstance from '@/api/chatService';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Skeleton } from '@/components/ui/skeleton';
-import { PlusCircle, Trash } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +12,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
+import { PlusCircle, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface ChatHistory {
   id: string;
@@ -26,7 +27,15 @@ interface ChatHistory {
   lastMessage: string;
 }
 
-export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
+export function Sidebar({
+  jobID,
+  chatID,
+  onSelectChat,
+}: {
+  jobID: string;
+  chatID: string;
+  onSelectChat?: () => void;
+}) {
   const [loading, setLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
   const router = useRouter();
@@ -69,6 +78,7 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
         jobID
       );
       router.push(`/mock-interviews/${jobID}/${newChat.interview_id}`);
+      if (onSelectChat) onSelectChat();
     } catch (error) {
       console.error('Error initiating chat:', error);
     }
@@ -97,7 +107,7 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
   );
 
   return (
-    <div className="w-80 border-r bg-muted/10">
+    <div className="w-full md:w-80 h-full border-l bg-muted/10">
       <div className="p-4 border-b">
         <Button
           className="w-full justify-start"
@@ -108,7 +118,7 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
           New Interview
         </Button>
       </div>
-      <ScrollArea className="h-[calc(100vh-5rem)]">
+      <ScrollArea className="bg-muted bg-opacity-25 h-[calc(100vh-5rem)]">
         <div className="p-4 space-y-4">
           {loading ? (
             <>
@@ -121,9 +131,10 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
               <div
                 onClick={() => {
                   router.push(`/mock-interviews/${jobID}/${chat.id}`);
+                  if (onSelectChat) onSelectChat();
                 }}
                 key={chat.id}
-                className={`cursor-pointer w-full text-left p-4 rounded-lg hover:bg-muted transition-colors border ${
+                className={`cursor-pointer bg-black w-full text-left p-4 rounded-lg hover:bg-muted transition-colors border ${
                   chatID === chat.id ? 'border-black' : 'bg-transparent'
                 }`}
               >
@@ -139,7 +150,11 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
                   </div>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="outline" size="icon">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <Trash className="h-4 w-4 text-red-500" />
                       </Button>
                     </AlertDialogTrigger>
@@ -155,7 +170,9 @@ export function Sidebar({ jobID, chatID }: { jobID: string; chatID: string }) {
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
+                          Cancel
+                        </AlertDialogCancel>
                         <AlertDialogAction
                           onClick={(e) => {
                             e.stopPropagation();

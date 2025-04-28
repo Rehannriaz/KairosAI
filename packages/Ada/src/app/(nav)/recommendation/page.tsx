@@ -12,7 +12,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Search, ListFilter, Grid, List } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
@@ -86,14 +93,19 @@ export default function RecommendationPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-6 space-y-6 max-w-full">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <Skeleton className="h-8 w-40" />
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            <Skeleton className="h-10 w-full sm:w-64" />
-            <Skeleton className="h-10 w-full sm:w-32" />
-            <div className="flex gap-2">
-              <Skeleton className="h-10 w-10 rounded" />
-              <Skeleton className="h-10 w-10 rounded" />
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
+            {/* Tablet optimized search and filter layout */}
+            <div className="flex flex-col sm:flex-row w-full gap-2">
+              <Skeleton className="h-10 w-full sm:w-64" />
+              <div className="flex gap-2 w-full sm:w-auto justify-between sm:justify-start">
+                <Skeleton className="h-10 w-full sm:w-32 flex-grow sm:flex-grow-0" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-10 w-10 rounded" />
+                  <Skeleton className="h-10 w-10 rounded" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -120,8 +132,12 @@ export default function RecommendationPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[40%] sm:w-auto">Job Title</TableHead>
-                  <TableHead className="hidden sm:table-cell">Company</TableHead>
-                  <TableHead className="hidden md:table-cell">Location</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    Company
+                  </TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Location
+                  </TableHead>
                   <TableHead>Posted</TableHead>
                 </TableRow>
               </TableHeader>
@@ -155,12 +171,16 @@ export default function RecommendationPage() {
 
   return (
     <div className="container mx-auto px-4 py-6 space-y-6 max-w-full">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-2xl md:text-3xl font-bold">Recommended Jobs</h1>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <div className="relative flex-1 sm:flex-none w-full sm:w-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+        {/* Tablet optimized control layout */}
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+          <div className="relative flex-1 sm:flex-initial w-full">
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+              size={18}
+            />
             <Input
               placeholder="Search jobs..."
               className="pl-10 w-full"
@@ -169,9 +189,9 @@ export default function RecommendationPage() {
             />
           </div>
 
-          <div className="flex gap-2 w-full sm:w-auto justify-between">
+          <div className="flex gap-2 w-full sm:w-auto justify-between sm:justify-start">
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full sm:w-[160px]">
+              <SelectTrigger className="w-full sm:w-[160px] flex-grow sm:flex-grow-0">
                 <ListFilter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
@@ -182,7 +202,7 @@ export default function RecommendationPage() {
               </SelectContent>
             </Select>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 ml-auto sm:ml-0">
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded ${
@@ -220,7 +240,7 @@ export default function RecommendationPage() {
             >
               <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                 <div className="space-y-1 sm:space-y-2">
-                  <h3 className="text-lg sm:text-xl font-semibold line-clamp-2">
+                  <h3 className="text-lg font-semibold line-clamp-2 sm:text-xl">
                     {job.title}
                   </h3>
                   <p className="font-medium">{job.company}</p>
@@ -234,7 +254,10 @@ export default function RecommendationPage() {
                   <Badge variant="secondary" className="text-xs sm:text-sm">
                     {new Date(job.posteddate).toLocaleDateString()}
                   </Badge>
-                  <Badge variant="outline" className="cursor-pointer text-xs sm:text-sm">
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer text-xs sm:text-sm"
+                  >
                     View Details
                   </Badge>
                 </div>

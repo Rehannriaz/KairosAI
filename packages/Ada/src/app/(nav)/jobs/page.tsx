@@ -270,81 +270,81 @@ const JobsPage = () => {
       : 0) +
     (draftFilters.categories.length > 0 ? 1 : 0);
 
-    if (loading) {
-      return (
-        <div className="container mx-auto px-4 py-8 space-y-6">
-          {/* Top Bar */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <Skeleton className="h-8 w-40" />
-            <div className="flex flex-wrap gap-2">
-              <Skeleton className="h-10 w-64" />
-              <Skeleton className="h-10 w-32" />
-              <Skeleton className="h-10 w-10 rounded" />
-              <Skeleton className="h-10 w-10 rounded" />
-            </div>
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        {/* Top Bar */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <Skeleton className="h-8 w-40" />
+          <div className="flex flex-wrap gap-2">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-10 rounded" />
+            <Skeleton className="h-10 w-10 rounded" />
           </div>
-    
-          {/* Main Content */}
-          {viewMode === 'grid' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Card key={i} className="p-6 space-y-4">
-                  <div className="space-y-2">
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                  <Skeleton className="h-4 w-1/3" />
-                  <div className="flex justify-between">
-                    <Skeleton className="h-6 w-20" />
-                    <Skeleton className="h-6 w-24" />
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="overflow-x-auto rounded-lg shadow">
-              <Table className="min-w-[600px]">
-                <thead>
-                  <tr>
-                    <th className="px-6 py-3 text-left">Job Title</th>
-                    <th className="px-6 py-3 text-left">Company</th>
-                    <th className="px-6 py-3 text-left">Location</th>
-                    <th className="px-6 py-3 text-left">Posted Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <tr key={i} className="hover:bg-accent">
-                      <td className="px-6 py-4">
-                        <Skeleton className="h-4 w-32" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <Skeleton className="h-4 w-24" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <Skeleton className="h-4 w-20" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <Skeleton className="h-4 w-16" />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-          )}
         </div>
-      );
-    }
-    
+
+        {/* Main Content */}
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="p-6 space-y-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+                <Skeleton className="h-4 w-1/3" />
+                <div className="flex justify-between">
+                  <Skeleton className="h-6 w-20" />
+                  <Skeleton className="h-6 w-24" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-lg shadow">
+            <Table className="min-w-[600px]">
+              <thead>
+                <tr>
+                  <th className="px-6 py-3 text-left">Job Title</th>
+                  <th className="px-6 py-3 text-left">Company</th>
+                  <th className="px-6 py-3 text-left">Location</th>
+                  <th className="px-6 py-3 text-left">Posted Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <tr key={i} className="hover:bg-accent">
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-32" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-24" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-20" />
+                    </td>
+                    <td className="px-6 py-4">
+                      <Skeleton className="h-4 w-16" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-3xl font-bold">All Jobs</h1>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-          <div className="relative flex-1 sm:flex-none">
+        {/* Improved search and filter controls for tablet */}
+        <div className="flex flex-col sm:flex-row flex-wrap gap-4 w-full md:w-auto">
+          <div className="relative flex-1 sm:min-w-[200px]">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" />
             <Input
               placeholder="Search jobs..."
@@ -354,177 +354,196 @@ const JobsPage = () => {
             />
           </div>
 
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px]">
-              <ListFilter className="w-4 h-4 mr-2" />
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="date">Date Posted</SelectItem>
-              <SelectItem value="company">Company</SelectItem>
-              <SelectItem value="title">Job Title</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-wrap gap-2 sm:flex-nowrap">
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <ListFilter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">Date Posted</SelectItem>
+                <SelectItem value="company">Company</SelectItem>
+                <SelectItem value="title">Job Title</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="relative">
-                <SlidersHorizontal className="w-4 h-4 mr-2" />
-                Filters
-                {ActiveFiltersCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                    {ActiveFiltersCount}
-                  </span>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-[300px] sm:w-[400px] overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Filters</SheetTitle>
-                <SheetDescription>Refine job search results</SheetDescription>
-              </SheetHeader>
-              <div className="py-4 flex justify-between items-center">
-                <h3 className="font-medium">
-                  Active filters: {DraftFiltersCount}
-                </h3>
-                {DraftFiltersCount > 0 && (
-                  <Button variant="ghost" size="sm" onClick={clearDraftFilters}>
-                    <X className="w-4 h-4 mr-1" />
-                    Clear all
-                  </Button>
-                )}
-              </div>
-
-              {/* Remote/On-site Filter */}
-              <div className="border-t py-4">
-                <h3 className="font-medium mb-2">Job Type</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="remote"
-                      checked={draftFilters.isRemote === true}
-                      onCheckedChange={() =>
-                        handleDraftFilterChange(
-                          'isRemote',
-                          draftFilters.isRemote === true ? null : true
-                        )
-                      }
-                    />
-                    <label htmlFor="remote">Remote</label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="onSite"
-                      checked={draftFilters.isRemote === false}
-                      onCheckedChange={() =>
-                        handleDraftFilterChange(
-                          'isRemote',
-                          draftFilters.isRemote === false ? null : false
-                        )
-                      }
-                    />
-                    <label htmlFor="onSite">On-site</label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Salary Range Filter */}
-              <div className="border-t py-4">
-                <h3 className="font-medium mb-4">Salary Range</h3>
-                <div className="px-2">
-                  <div className="flex justify-between mb-6">
-                    <Input
-                      type="number"
-                      placeholder="Min"
-                      value={draftFilters.minSalary || ''}
-                      onChange={(e) =>
-                        handleDraftFilterChange(
-                          'minSalary',
-                          e.target.value ? Number(e.target.value) : null
-                        )
-                      }
-                      className="w-24"
-                    />
-                    <span className="mx-2 self-center">to</span>
-                    <Input
-                      type="number"
-                      placeholder="Max"
-                      value={draftFilters.maxSalary || ''}
-                      onChange={(e) =>
-                        handleDraftFilterChange(
-                          'maxSalary',
-                          e.target.value ? Number(e.target.value) : null
-                        )
-                      }
-                      className="w-24"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Location Filter */}
-              <div className="border-t py-4">
-                <h3 className="font-medium mb-2">Locations</h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {availableLocations.map((location) => (
-                    <div key={location} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`location-${location}`}
-                        checked={draftFilters.locations.includes(location)}
-                        onCheckedChange={() =>
-                          handleDraftLocationToggle(location)
-                        }
-                      />
-                      <label htmlFor={`location-${location}`}>{location}</label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Job Category Filter */}
-              <div className="border-t py-4">
-                <h3 className="font-medium mb-2">Job Categories</h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {availableCategories.map((category) => (
-                    <div key={category} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`category-${category}`}
-                        checked={draftFilters.categories.includes(category)}
-                        onCheckedChange={() =>
-                          handleDraftCategoryToggle(category)
-                        }
-                      />
-                      <label htmlFor={`category-${category}`}>{category}</label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <Button className="w-full" onClick={applyFilters}>
-                  Apply Filters
+            <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="relative flex-1 sm:flex-none"
+                >
+                  <SlidersHorizontal className="w-4 h-4 mr-2" />
+                  Filters
+                  {ActiveFiltersCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                      {ActiveFiltersCount}
+                    </span>
+                  )}
                 </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetTrigger>
+              <SheetContent className="w-[300px] sm:w-[400px] overflow-y-auto">
+                <SheetHeader>
+                  <SheetTitle>Filters</SheetTitle>
+                  <SheetDescription>Refine job search results</SheetDescription>
+                </SheetHeader>
+                <div className="py-4 flex justify-between items-center">
+                  <h3 className="font-medium">
+                    Active filters: {DraftFiltersCount}
+                  </h3>
+                  {DraftFiltersCount > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearDraftFilters}
+                    >
+                      <X className="w-4 h-4 mr-1" />
+                      Clear all
+                    </Button>
+                  )}
+                </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-2 rounded ${
-                viewMode === 'grid' ? 'bg-accent' : 'hover:bg-accent'
-              }`}
-            >
-              <Grid className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`hidden md:block p-2 rounded ${
-                viewMode === 'list' ? 'bg-accent' : 'hover:bg-accent'
-              }`}
-            >
-              <List className="w-5 h-5" />
-            </button>
+                {/* Remote/On-site Filter */}
+                <div className="border-t py-4">
+                  <h3 className="font-medium mb-2">Job Type</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="remote"
+                        checked={draftFilters.isRemote === true}
+                        onCheckedChange={() =>
+                          handleDraftFilterChange(
+                            'isRemote',
+                            draftFilters.isRemote === true ? null : true
+                          )
+                        }
+                      />
+                      <label htmlFor="remote">Remote</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="onSite"
+                        checked={draftFilters.isRemote === false}
+                        onCheckedChange={() =>
+                          handleDraftFilterChange(
+                            'isRemote',
+                            draftFilters.isRemote === false ? null : false
+                          )
+                        }
+                      />
+                      <label htmlFor="onSite">On-site</label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Salary Range Filter */}
+                <div className="border-t py-4">
+                  <h3 className="font-medium mb-4">Salary Range</h3>
+                  <div className="px-2">
+                    <div className="flex justify-between mb-6">
+                      <Input
+                        type="number"
+                        placeholder="Min"
+                        value={draftFilters.minSalary || ''}
+                        onChange={(e) =>
+                          handleDraftFilterChange(
+                            'minSalary',
+                            e.target.value ? Number(e.target.value) : null
+                          )
+                        }
+                        className="w-24"
+                      />
+                      <span className="mx-2 self-center">to</span>
+                      <Input
+                        type="number"
+                        placeholder="Max"
+                        value={draftFilters.maxSalary || ''}
+                        onChange={(e) =>
+                          handleDraftFilterChange(
+                            'maxSalary',
+                            e.target.value ? Number(e.target.value) : null
+                          )
+                        }
+                        className="w-24"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Location Filter */}
+                <div className="border-t py-4">
+                  <h3 className="font-medium mb-2">Locations</h3>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {availableLocations.map((location) => (
+                      <div
+                        key={location}
+                        className="flex items-center space-x-2"
+                      >
+                        <Checkbox
+                          id={`location-${location}`}
+                          checked={draftFilters.locations.includes(location)}
+                          onCheckedChange={() =>
+                            handleDraftLocationToggle(location)
+                          }
+                        />
+                        <label htmlFor={`location-${location}`}>
+                          {location}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Job Category Filter */}
+                <div className="border-t py-4">
+                  <h3 className="font-medium mb-2">Job Categories</h3>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {availableCategories.map((category) => (
+                      <div
+                        key={category}
+                        className="flex items-center space-x-2"
+                      >
+                        <Checkbox
+                          id={`category-${category}`}
+                          checked={draftFilters.categories.includes(category)}
+                          onCheckedChange={() =>
+                            handleDraftCategoryToggle(category)
+                          }
+                        />
+                        <label htmlFor={`category-${category}`}>
+                          {category}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <Button className="w-full" onClick={applyFilters}>
+                    Apply Filters
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded ${
+                  viewMode === 'grid' ? 'bg-accent' : 'hover:bg-accent'
+                }`}
+              >
+                <Grid className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`hidden lg:block p-2 rounded ${
+                  viewMode === 'list' ? 'bg-accent' : 'hover:bg-accent'
+                }`}
+              >
+                <List className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -632,7 +651,7 @@ const JobsPage = () => {
           ))}
         </div>
       ) : (
-        <div className="rounded-lg shadow">
+        <div className="rounded-lg shadow overflow-x-auto">
           <Table>
             <thead>
               <tr>
@@ -648,7 +667,6 @@ const JobsPage = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Posted Date
                 </th>
-                {/* Add salary column in list view */}
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                   Salary
                 </th>

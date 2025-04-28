@@ -67,6 +67,7 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
   const [isStreaming, setIsStreaming] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchChat = async () => {
@@ -162,6 +163,10 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
     } finally {
       setLoading(false);
       setIsStreaming(false);
+      // Focus on input after response is complete
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
     }
   };
 
@@ -173,7 +178,7 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
 
   if (initialLoading) {
     return (
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col h-[calc(100vh-64px)]">
         <ChatHeaderSkeleton />
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-4">
@@ -190,15 +195,15 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col h-[calc(100vh-64px)]">
       <div className="border-b p-4">
-        <h1 className="text-xl font-semibold">
+        <h1 className="text-xl font-semibold truncate pr-16 md:pr-0">
           {jobDetails?.title} role at {jobDetails?.company}{' '}
         </h1>
         <p className="text-sm text-muted-foreground">AI Interview Assistant</p>
       </div>
       <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4">
+        <div className="space-y-4 max-w-3xl mx-auto">
           {messages?.map((message, index) => (
             <div
               key={`${message.id}-${index}`}
@@ -207,7 +212,7 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
               }`}
             >
               <div
-                className={`rounded-lg px-4 py-2 max-w-[80%] ${
+                className={`rounded-lg px-4 py-2 max-w-[90%] sm:max-w-[80%] ${
                   message.role === 'user'
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted'
@@ -226,15 +231,19 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
         </div>
         <div ref={messagesEndRef} />
       </ScrollArea>
-      <form onSubmit={handleSubmit} className="border-t p-4 flex gap-4">
+      <form
+        onSubmit={handleSubmit}
+        className="border-t p-2 sm:p-4 flex gap-2 sm:gap-4"
+      >
         <Input
+          ref={inputRef}
           placeholder="Type your response..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           className="flex-1"
           disabled={loading}
         />
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="shrink-0">
           {loading ? (
             <Skeleton className="h-4 w-4 rounded-full" />
           ) : (
