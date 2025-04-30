@@ -1,9 +1,8 @@
 // Updated import
-import { PORT } from './config';
 import validateToken from './middlewares/authMiddleware';
+import feedbackRoutes from './routes/feedback.routes';
 import InterviewRoutes from './routes/interview.routes';
 // Import the cors package
-import connectToDatabase from './utils/database';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -17,5 +16,6 @@ app.use(bodyParser.json());
 // Routes
 
 app.use('/api/interview', validateToken(), InterviewRoutes);
+app.use('/api/feedback', validateToken(), feedbackRoutes);
 
 export default app;

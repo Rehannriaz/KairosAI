@@ -99,18 +99,39 @@ const initiateInterview = async (
   userId: string
 ): Promise<any> => {
   try {
-    // Initiate an interview for the given job ID (Replace with actual database call)
-    const result = await pool.query(
-      'INSERT INTO mock_interview (job_id,user_id) VALUES ($1,$2) RETURNING *',
-      [jobID, userId]
+    // First, get job details from the jobs table
+    const jobResult = await pool.query(
+      'SELECT title, company, location, salary FROM jobs WHERE job_id = $1',
+      [jobID]
     );
+
+    if (!jobResult.rows.length) {
+      throw new Error('Job not found');
+    }
+
+    const jobDetails = jobResult.rows[0];
+
+    // Create initial welcome message
+    const initialWelcomeMessage = {
+      role: 'assistant',
+      content: `Hello and Welcome to your AI Mock Interview at ${jobDetails.company}! I'm here to help you prepare for your actual interview. Please start off by introducing yourself!`,
+    };
+
+    // Create interview_data array with the welcome message
+    const interviewData = [initialWelcomeMessage];
+
+    // Insert new interview with initial message
+    const result = await pool.query(
+      'INSERT INTO mock_interview (job_id, user_id, interview_data) VALUES ($1, $2, $3) RETURNING *',
+      [jobID, userId, JSON.stringify(interviewData)]
+    );
+
     return result.rows.length ? result.rows[0] : null;
   } catch (error: any) {
     console.error('Error in initiateInterview:', error.message);
     throw new Error('Failed to initiate interview.');
   }
 };
-
 const updateInterviewData = async (
   interviewId: string,
   userId: string,

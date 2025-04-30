@@ -11,6 +11,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface JobCardProps {
   title?: string;
@@ -35,6 +36,7 @@ export function JobCard({
 }: JobCardProps) {
   const isDisabled = !job_id;
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   if (isLoading) {
     return (
       <Card className="w-full h-[400px] flex flex-col">
@@ -62,6 +64,7 @@ export function JobCard({
   }
   const handleInitiateInterviewClick = async (job_id: string) => {
     try {
+      setLoading(true);
       const newChat = await chatServiceInstance.initateChatForSpecificJob(
         job_id
       );
@@ -94,7 +97,7 @@ export function JobCard({
       <CardFooter className="mt-auto">
         <Button
           className="w-full"
-          disabled={isDisabled}
+          disabled={isDisabled || loading}
           onClick={() => job_id && handleInitiateInterviewClick(job_id)}
         >
           Start Interview Now

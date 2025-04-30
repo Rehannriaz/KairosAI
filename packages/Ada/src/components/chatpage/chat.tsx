@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Send } from 'lucide-react';
+import { Loader2, Send } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
 
 interface Message {
@@ -65,9 +66,23 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
   const [initialLoading, setInitialLoading] = useState(true);
   const [jobDetails, setJobDetails] = useState<JobDetails | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
+  const router = useRouter();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Check for INTERVIEW_DONE trigger in messages
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (
+        lastMessage.role === 'assistant' &&
+        lastMessage.content.includes('INTERVIEW_DONE')
+      ) {
+        router.push('/mock-interviews');
+      }
+    }
+  }, [messages, router]);
 
   useEffect(() => {
     const fetchChat = async () => {
@@ -77,14 +92,14 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
           jobID,
           chatID
         );
-        const initialWelcomeMessage: Message = {
-          id: '1',
-          role: 'assistant',
-          content: `Hello and Welcome to your AI Mock Interview at ${chat.company} ! I'm here to help you prepare for your actual interview. Please start off by introducing yourself!`,
-        };
+
+        // Simply use the interview_data from the backend which already contains the welcome message
         const loadedMessages = chat?.interview_data?.length
-          ? [initialWelcomeMessage, ...chat.interview_data]
-          : [initialWelcomeMessage];
+          ? chat.interview_data.map((msg: any, index: number) => ({
+              ...msg,
+              id: msg.id || `msg-${index}`, // Ensure each message has an ID
+            }))
+          : [];
 
         setMessages(loadedMessages);
         setJobDetails({
@@ -241,11 +256,10 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           className="flex-1"
-          disabled={loading}
         />
         <Button type="submit" disabled={loading} className="shrink-0">
           {loading ? (
-            <Skeleton className="h-4 w-4 rounded-full" />
+            <Loader2 className="h-4 w-4 rounded-full animate-spin" />
           ) : (
             <Send className="h-4 w-4" />
           )}
