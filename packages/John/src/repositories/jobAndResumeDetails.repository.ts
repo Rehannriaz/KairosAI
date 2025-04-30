@@ -33,7 +33,6 @@ const getDetailsForResumeAndJob = async (
   userId: string
 ): Promise<{ jobListingText: JobListing; resumeText: Resume }> => {
   try {
-    console.log('jobId', jobId, userId);
     const result = await pool.query(
       `
         SELECT 
@@ -50,7 +49,6 @@ const getDetailsForResumeAndJob = async (
       [jobId, userId]
     );
 
-    console.log('result', result.rows);
     if (result.rows.length === 0) {
       throw new Error('No matching job or resume found.');
     }

@@ -7,14 +7,12 @@ const startInterview = async (req: any, res: any) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   try {
-    console.log('Received user response:', userResponse);
     const response = await interviewServices.processInterview(
       req.user,
       jobID,
       userResponse,
       interviewID
     );
-    console.log('Response sent to client:', response);
     res.status(200).json({ res: response });
   } catch (error: any) {
     console.error('Error in startInterview:', error.message);

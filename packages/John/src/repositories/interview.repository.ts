@@ -39,7 +39,6 @@ const getAllChatsForJob = async (
   userId: string
 ): Promise<any> => {
   try {
-    console.log('job and user', jobId, userId);
     // Fetch all chats for the given job ID (Replace with actual database call)
     const result = await pool.query(
       'SELECT * FROM jobs j JOIN mock_interview mi ON j.job_id = mi.job_id WHERE mi.job_id = $1 AND mi.user_id = $2',
@@ -100,7 +99,6 @@ const initiateInterview = async (
   userId: string
 ): Promise<any> => {
   try {
-    console.log('job and user', jobID, userId);
     // Initiate an interview for the given job ID (Replace with actual database call)
     const result = await pool.query(
       'INSERT INTO mock_interview (job_id,user_id) VALUES ($1,$2) RETURNING *',
@@ -177,7 +175,6 @@ const updateInterviewStatus = async (
       'UPDATE mock_interview SET status = $1 WHERE interview_id = $2 AND user_id = $3 AND job_id = $4',
       [status, interviewId, userId, jobId]
     );
-    console.log(`Interview ${interviewId} status updated to ${status}`);
   } catch (error: any) {
     console.error('Error updating interview status:', error.message);
     throw new Error('Failed to update interview status.');

@@ -97,7 +97,6 @@ const processInterview = async (
         userObj.userId,
         jobId
       );
-      console.log('interviewData', interviewData);
 
       if (interviewData && interviewData.interview_data) {
         // Check if interview_data is a string before parsing
@@ -113,7 +112,6 @@ const processInterview = async (
         }
 
         interviewHistory = interviewDataParsed;
-        console.log('interviewhist', interviewHistory);
       } else {
         // Initialize if no history exists
         interviewHistory.push({ role: 'system', content: systemPrompt });
@@ -143,7 +141,6 @@ const processInterview = async (
     );
 
     // Prepare the updated interview data to save into the database
-    console.log('updatedInterviewData', filteredHistory);
     const updatedInterviewData = JSON.stringify(filteredHistory);
     // Update the interview data in the database
     if (interviewId && userObj && jobId) {
@@ -178,7 +175,6 @@ const streamInterview = async (
       );
 
     const systemPrompt = interviewSystemPrompt(jobListingText, resumeText);
-    console.log('sytemPrompt', systemPrompt);
     // Fetch existing interview history
     let interviewHistory: { role: string; content: string }[] = [];
 
