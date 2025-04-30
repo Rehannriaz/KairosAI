@@ -20,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { motion } from 'framer-motion';
 import { Search, ListFilter, Grid, List } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react';
@@ -233,36 +234,43 @@ export default function RecommendationPage() {
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredAndSortedJobs.map((job) => (
-            <Card
+            <motion.div
               key={job.job_id}
-              className="hover:shadow-md transition-shadow duration-200 cursor-pointer"
-              onClick={() => handleJobClick(job.job_id)}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
-                <div className="space-y-1 sm:space-y-2">
-                  <h3 className="text-lg font-semibold line-clamp-2 sm:text-xl">
-                    {job.title}
-                  </h3>
-                  <p className="font-medium">{job.company}</p>
+              <Card
+                className="hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                onClick={() => handleJobClick(job.job_id)}
+              >
+                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                  <div className="space-y-1 sm:space-y-2">
+                    <h3 className="text-lg font-semibold line-clamp-2 sm:text-xl">
+                      {job.title}
+                    </h3>
+                    <p className="font-medium">{job.company}</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm sm:text-base">
+                    <span>{job.location}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Badge variant="secondary" className="text-xs sm:text-sm">
+                      {new Date(job.posteddate).toLocaleDateString()}
+                    </Badge>
+                    <Badge
+                      variant="outline"
+                      className="cursor-pointer text-xs sm:text-sm"
+                    >
+                      View Details
+                    </Badge>
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-2 text-sm sm:text-base">
-                  <span>{job.location}</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <Badge variant="secondary" className="text-xs sm:text-sm">
-                    {new Date(job.posteddate).toLocaleDateString()}
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer text-xs sm:text-sm"
-                  >
-                    View Details
-                  </Badge>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </motion.div>
           ))}
         </div>
       ) : (

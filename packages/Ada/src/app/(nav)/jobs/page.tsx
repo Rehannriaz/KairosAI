@@ -635,7 +635,13 @@ const JobsPage = () => {
 
                 <div className="flex items-center gap-2">
                   <span>{job.location}</span>
-                  {job.salary && <Badge variant="outline">{job.salary}</Badge>}
+                  {job.salary && (
+                    <Badge variant="outline">
+                      {!job.salary || parseInt(job.salary) === 0
+                        ? 'N/A'
+                        : `$${parseInt(job.salary).toLocaleString()}`}
+                    </Badge>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -695,7 +701,9 @@ const JobsPage = () => {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm">
-                      {job.salary || 'Not specified'}
+                      {!job.salary || parseInt(job.salary) === 0
+                        ? 'N/A'
+                        : `$${parseInt(job.salary).toLocaleString()}`}
                     </div>
                   </td>
                 </tr>
