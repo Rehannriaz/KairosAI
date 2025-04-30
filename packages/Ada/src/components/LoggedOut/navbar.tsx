@@ -38,12 +38,14 @@ export default function Navbar() {
           <span className="text-white font-medium text-xl">KairosAI</span>
         </Link>
 
-        <div className="hidden md:flex items-center space-x-8">
-          <NavLink href="/">Home</NavLink>
-          <NavLink href="/about">About Us</NavLink>
-          <NavLink href="/faqs">FAQs</NavLink>
-          <NavLink href="/pricing">Pricing</NavLink>
-        </div>
+        {!user_id && (
+          <div className="hidden md:flex items-center space-x-8">
+            <NavLink href="/">Home</NavLink>
+            <NavLink href="/about">About Us</NavLink>
+            <NavLink href="/faqs">FAQs</NavLink>
+            <NavLink href="/pricing">Pricing</NavLink>
+          </div>
+        )}
 
         <div className="hidden md:flex items-center space-x-4">
           {user_id ? (
@@ -91,7 +93,7 @@ export default function Navbar() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="md:hidden bg-purple-900/20 backdrop-blur-sm py-4 px-6 border-b border-white/10"
+          className="md:hidden absolute top-[70] left-0 right-0 bg-purple-900/20 backdrop-blur-sm py-4 px-6 border-b border-white/10 z-50"
         >
           <div className="flex flex-col space-y-4">
             <MobileNavLink href="/" onClick={toggleMenu}>

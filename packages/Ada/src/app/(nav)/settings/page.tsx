@@ -1,3 +1,5 @@
+'use client';
+
 import { AnimatedLayout } from '@/components/global/animated-layout';
 import { SettingsToggle } from '@/components/settings/settings-toggle';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,6 +12,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { getUserImportantData } from '@/lib';
 import {
   Bell,
   Moon,
@@ -20,8 +23,21 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import type React from 'react';
+import { useEffect, useState } from 'react';
 
 export default function SettingsPage() {
+  const [userData, setUserData] = useState<
+    { userName: string; email: string } | null | undefined
+  >(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const data = await getUserImportantData();
+      setUserData(data);
+    };
+    fetchUserData();
+  }, []);
+
   return (
     <AnimatedLayout>
       <main className="p-6 space-y-6 star-bg">
@@ -43,13 +59,16 @@ export default function SettingsPage() {
                 <Avatar className="h-24 w-24">
                   <AvatarImage src="/placeholder-user.jpg" />
                   <AvatarFallback className="bg-purple-800 text-purple-200 text-xl">
-                    U
+                    {userData?.userName
+                      ? userData.userName.charAt(0).toUpperCase()
+                      : 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <Button
                   variant="outline"
                   size="sm"
                   className="flex items-center gap-2"
+                  disabled
                 >
                   <Upload size={14} />
                   <span>Change Avatar</span>
@@ -64,7 +83,7 @@ export default function SettingsPage() {
                   >
                     Full Name
                   </label>
-                  <Input id="name" defaultValue="User Name" />
+                  <Input id="name" defaultValue={userData?.userName} disabled />
                 </div>
 
                 <div className="space-y-2">
@@ -77,7 +96,8 @@ export default function SettingsPage() {
                   <Input
                     id="email"
                     type="email"
-                    defaultValue="user@example.com"
+                    defaultValue={userData?.email}
+                    disabled
                   />
                 </div>
 
@@ -140,9 +160,11 @@ export default function SettingsPage() {
                 <SettingsToggle
                   title="Dark Mode"
                   description="Use dark theme throughout the application"
+                  disabled
                   defaultChecked={true}
                 />
                 <SettingsToggle
+                  disabled
                   title="Reduce Animations"
                   description="Minimize motion for accessibility"
                   defaultChecked={false}

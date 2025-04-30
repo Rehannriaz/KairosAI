@@ -1,5 +1,7 @@
 import feedbackRepository from '../repositories/feedback.repository';
 import { UserJWT } from '../types/UserTypes';
+import OpenAI from 'openai';
+import { ChatCompletionMessageParam } from 'openai/resources';
 
 interface FeedbackData {
   rating: number;
@@ -7,6 +9,9 @@ interface FeedbackData {
   improvements: string[];
   tips: string[];
 }
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 /**
  * Fetches an interview with its associated feedback
@@ -102,7 +107,6 @@ const generateAIFeedback = async (
   userObj: UserJWT
 ): Promise<FeedbackData> => {
   try {
-    // Get the interview data first
     const interviewData = await feedbackRepository.getInterviewWithFeedback(
       interviewId,
       userObj.userId
@@ -116,39 +120,69 @@ const generateAIFeedback = async (
       throw new Error('Interview data not found or chat history is empty');
     }
 
-    // This is where you'd call your AI service to analyze the chat
-    // For now, we'll return mock data
-    // TODO: Replace with actual AI service call
+    const messages: ChatCompletionMessageParam[] = [
+      {
+        role: 'system',
+        content: `You are an expert career coach providing mock interview feedback. Your only job is to return objective, constructive, and helpful feedback as structured JSON. YOU MUST RESPOND ONLY WITH VALID JSON and nothing else. The format is:
+  
+  {
+    "rating": number, // from 1 to 10
+    "strengths": [string],
+    "improvements": [string],
+    "tips": [string]
+  }
+  
+  Always ensure your response is strictly valid JSON. Do not include explanations or text outside the JSON block.`,
+      },
+      {
+        role: 'user',
+        content: `Here is the mock interview transcript. Analyze it and give feedback.
+  
+  ${interviewData.chatHistory
+    .map(
+      (msg: any) =>
+        `${msg.role === 'user' ? 'Candidate' : 'Interviewer'}: ${msg.content}`
+    )
+    .join('\n')}`,
+      },
+    ];
 
-    const mockFeedback: FeedbackData = {
-      rating: 7.5,
-      strengths: [
-        'You were concise in your responses',
-        'You showed up for the interview',
-      ],
-      improvements: [
-        'Your responses were too brief and lacked detail',
-        "You didn't properly introduce yourself when prompted",
-        'You should provide more context about your experience and skills',
-        "Try to engage more with the interviewer's questions",
-      ],
-      tips: [
-        'Prepare a 30-second elevator pitch about yourself',
-        'Use the STAR method (Situation, Task, Action, Result) for answering behavioral questions',
-        'Research the company before the interview',
-        'Practice common interview questions out loud',
-        'Ask thoughtful questions at the end of the interview',
-      ],
-    };
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: messages,
+      temperature: 0.5,
+    });
 
-    // Save this generated feedback
+    const raw = completion.choices[0].message.content;
+
+    let feedback: FeedbackData;
+    try {
+      if (raw === null) {
+        throw new Error('OpenAI returned null content.');
+      }
+      feedback = JSON.parse(raw);
+    } catch (err) {
+      console.error('Invalid JSON from OpenAI:', raw);
+      throw new Error('OpenAI returned invalid JSON.');
+    }
+
+    // Optional: validate structure manually if needed
+    if (
+      typeof feedback.rating !== 'number' ||
+      !Array.isArray(feedback.strengths) ||
+      !Array.isArray(feedback.improvements) ||
+      !Array.isArray(feedback.tips)
+    ) {
+      throw new Error('Invalid feedback format received from OpenAI.');
+    }
+
     await feedbackRepository.saveFeedback(
       interviewId,
       userObj.userId,
-      mockFeedback
+      feedback
     );
 
-    return mockFeedback;
+    return feedback;
   } catch (error: any) {
     console.error('Error generating AI feedback:', error.message);
     throw new Error('Failed to generate AI feedback.');

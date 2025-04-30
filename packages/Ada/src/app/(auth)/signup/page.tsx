@@ -22,11 +22,14 @@ import { useState } from 'react';
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleConfirmPasswordVisibility = () =>
+    setShowConfirmPassword(!showConfirmPassword);
 
   const handleSignupSubmit = async (
     event: React.FormEvent<HTMLFormElement>
@@ -40,6 +43,7 @@ export default function SignUpPage() {
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
 
+    // Field validation
     if (!name || !email || !password || !confirmPassword) {
       toast({
         variant: 'destructive',
@@ -49,10 +53,35 @@ export default function SignUpPage() {
       return;
     }
 
+    // Password match check
     if (password !== confirmPassword) {
       toast({
         variant: 'destructive',
         title: 'Passwords do not match.',
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Email regex validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid email format.',
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Password length and complexity check
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      toast({
+        variant: 'destructive',
+        title:
+          'Password must be at least 8 characters long and include a number and a special character.',
       });
       setIsLoading(false);
       return;
@@ -158,7 +187,7 @@ export default function SignUpPage() {
                       </button>
                     </div>
                   </div>
-                  <div>
+                  <div className="relative">
                     <Label htmlFor="confirmPassword" className="text-white">
                       Confirm Password
                     </Label>
@@ -170,6 +199,18 @@ export default function SignUpPage() {
                       className="bg-purple-900/50 border-purple-500/50 text-white placeholder-gray-400"
                       required
                     />
+                    <button
+                      type="button"
+                      onClick={toggleConfirmPasswordVisibility}
+                      className="absolute inset-y-0 right-0  top-[1.5rem] pr-3 flex items-center text-gray-400 hover:text-white"
+                      aria-label="Toggle password visibility"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOffIcon className="h-5 w-5" />
+                      ) : (
+                        <EyeIcon className="h-5 w-5" />
+                      )}
+                    </button>
                   </div>
                 </div>
                 <CardFooter className="flex flex-col space-y-4 mt-6">

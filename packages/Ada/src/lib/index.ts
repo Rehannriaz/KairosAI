@@ -26,6 +26,22 @@ export const getUsername = () => {
     return null;
   }
 };
+export const getUserImportantData = () => {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      const decodedJWT = decodeToken(token);
+      if (decodedJWT) {
+        return {
+          userName: String(decodedJWT.userName),
+          email: String(decodedJWT.email),
+        };
+      }
+    }
+  } else {
+    return null;
+  }
+};
 
 export const getUserId = () => {
   if (typeof window !== 'undefined' && window.localStorage) {

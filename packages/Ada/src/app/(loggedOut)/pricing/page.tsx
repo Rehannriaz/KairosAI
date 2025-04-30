@@ -33,11 +33,11 @@ export default function PricingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <PricingCard
               title="Starter"
-              price="$9.99"
+              price="$2.99"
               period="per month"
               features={[
                 'Resume parsing & formatting',
-                '5 job applications per month',
+                '15 job applications per month',
                 'Basic job recommendations',
                 'Standard support',
               ]}
@@ -45,11 +45,11 @@ export default function PricingPage() {
             />
             <PricingCard
               title="Pro"
-              price="$24.99"
+              price="$8.99"
               period="per month"
               features={[
                 'Advanced resume optimization',
-                '25 job applications per month',
+                '85 job applications per month',
                 'AI-powered job matching',
                 'ATS keyword analysis',
                 'Priority support',
