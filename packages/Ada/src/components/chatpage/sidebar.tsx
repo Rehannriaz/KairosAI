@@ -108,7 +108,7 @@ export function Sidebar({
 
   return (
     <div className="w-full md:w-80 h-full border-l bg-muted/10">
-      <div className="p-4 border-b">
+      <div className="p-4">
         <Button
           className="w-full justify-start"
           variant="outline"
@@ -118,7 +118,7 @@ export function Sidebar({
           New Interview
         </Button>
       </div>
-      <ScrollArea className="bg-muted bg-opacity-25 h-[calc(100vh-5rem)]">
+      <ScrollArea className="bg-card-50/2  h-[calc(100vh-5rem)]">
         <div className="p-4 space-y-4">
           {loading ? (
             <>
@@ -134,7 +134,7 @@ export function Sidebar({
                   if (onSelectChat) onSelectChat();
                 }}
                 key={chat.id}
-                className={`cursor-pointer bg-black w-full text-left p-4 rounded-lg hover:bg-muted transition-colors border ${
+                className={`cursor-pointer bg-black sm:w-full w-[98%] text-left p-4 rounded-lg hover:bg-muted transition-colors border ${
                   chatID === chat.id ? 'border-black' : 'bg-transparent'
                 }`}
               >

@@ -203,7 +203,7 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
         <p className="text-sm text-muted-foreground">AI Interview Assistant</p>
       </div>
       <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4 max-w-3xl mx-auto">
+        <div className="space-y-4 max-w-3xl sm:max-w-full">
           {messages?.map((message, index) => (
             <div
               key={`${message.id}-${index}`}
@@ -233,7 +233,7 @@ export function Chat({ jobID, chatID }: { jobID: string; chatID: string }) {
       </ScrollArea>
       <form
         onSubmit={handleSubmit}
-        className="border-t p-2 sm:p-4 flex gap-2 sm:gap-4"
+        className="border-t p-2 sm:p-4 flex gap-2 mx-4 sm:mx-2 sm:gap-4"
       >
         <Input
           ref={inputRef}
