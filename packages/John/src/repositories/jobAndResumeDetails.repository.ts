@@ -1,5 +1,6 @@
 import { pool } from '../utils/database';
-interface JobListing {
+
+export interface JobListing {
   title: string;
   company: string;
   location: string;
@@ -12,7 +13,7 @@ interface JobListing {
   requirements: string;
 }
 
-interface Resume {
+export interface Resume {
   name: string;
   user_location: string;
   email: string;

@@ -165,12 +165,31 @@ const deleteChatForJob = async (
     throw new Error('Failed to delete chat.');
   }
 };
-
+const updateInterviewStatus = async (
+  interviewId: string,
+  userId: string,
+  jobId: string,
+  status: string
+): Promise<void> => {
+  try {
+    // Update the interview status
+    await pool.query(
+      'UPDATE mock_interview SET status = $1 WHERE interview_id = $2 AND user_id = $3 AND job_id = $4',
+      [status, interviewId, userId, jobId]
+    );
+    console.log(`Interview ${interviewId} status updated to ${status}`);
+  } catch (error: any) {
+    console.error('Error updating interview status:', error.message);
+    throw new Error('Failed to update interview status.');
+  }
+};
 const streamChatCompletion = async (
   messages: any[],
   onChunk: (chunk: string) => void
 ): Promise<void> => {
   try {
+    console.log('streamChatCompletion called with messages:', messages);
+
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: messages,
@@ -200,4 +219,5 @@ export default {
   deleteChatForJob,
   fetchInterviewsData,
   streamChatCompletion,
+  updateInterviewStatus,
 };
