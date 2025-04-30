@@ -38,7 +38,6 @@ export function LineChart() {
         const data = await ApplicationTrackerService.getApplicationsForChart(
           userID
         ); // Replace with your API endpoint
-        console.log('Fetched application data:', data);
 
         // Update the state with the counted applications per month
         setChartData(data);

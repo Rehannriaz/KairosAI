@@ -193,7 +193,6 @@ const extractResumeData = async (
       embeddings,
       file_url
     );
-    console.log('dbResult', dbResult);
     const finalResult = { ...parsedJson, resume_id: dbResult };
     return finalResult;
   } catch (error) {

@@ -147,7 +147,6 @@ export default function AdditionalQuestions() {
               await additionalQuestionsService.getUsersPreviousResponse(
                 user_id
               );
-            console.log('existingAnswers', existingAnswers);
             if (
               existingAnswers &&
               Array.isArray(existingAnswers) &&
@@ -159,7 +158,6 @@ export default function AdditionalQuestions() {
                 answer: answer.answer,
               }));
               setAnswers(formattedAnswers);
-              console.log('Formatted and set answers:', formattedAnswers);
               setAnswers(existingAnswers);
             } else {
               // Initialize answers with empty values
@@ -181,7 +179,6 @@ export default function AdditionalQuestions() {
               setAnswers(initialAnswers);
             }
           } catch (error) {
-            console.log('No existing answers found, creating empty answers');
             // Initialize answers with empty values
             const initialAnswers = sampleQuestions.map((q) => ({
               question_id: q.id,
@@ -400,7 +397,6 @@ export default function AdditionalQuestions() {
         await additionalQuestionsService.submitUsersResponse(user_id, answers);
       }
       router.push(`/resume`);
-      console.log('answers', answers);
     } catch (error) {
       console.error('Error saving answers:', error);
     } finally {

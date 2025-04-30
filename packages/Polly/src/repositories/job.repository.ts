@@ -16,8 +16,6 @@ const findAllJobs = async (
     categories?: string[];
   }
 ): Promise<{ jobs: IJob[]; total: number }> => {
-  console.log('filters in job.repository.ts', filters);
-  
   try {
     const offset = (page - 1) * limit;
     const queryParams: (number | string)[] = [];
@@ -27,7 +25,9 @@ const findAllJobs = async (
 
     // Location filter
     if (filters.locations && filters.locations.length > 0) {
-      const placeholders = filters.locations.map(() => `$${paramCounter++}`).join(', ');
+      const placeholders = filters.locations
+        .map(() => `$${paramCounter++}`)
+        .join(', ');
       whereConditions.push(`location IN (${placeholders})`);
       queryParams.push(...filters.locations);
     }
@@ -52,12 +52,12 @@ const findAllJobs = async (
     // Categories filter
     if (filters.categories && filters.categories.length > 0) {
       const categoryConditions: string[] = [];
-      
+
       // For each category, build a specific condition based on title patterns
       for (const category of filters.categories) {
         let categoryCondition = '';
-        
-        switch(category) {
+
+        switch (category) {
           case 'Software Engineer':
             categoryCondition = `(title ILIKE '%software engineer%' OR title ILIKE '%software developer%')`;
             break;
@@ -90,10 +90,10 @@ const findAllJobs = async (
             paramCounter++;
             break;
         }
-        
+
         categoryConditions.push(categoryCondition);
       }
-      
+
       whereConditions.push(`(${categoryConditions.join(' OR ')})`);
     }
 
@@ -103,7 +103,7 @@ const findAllJobs = async (
              skills_required, listingurl, posteddate, aboutrole, requirements 
       FROM jobs
     `;
-    
+
     if (whereConditions.length > 0) {
       baseQuery += ` WHERE ${whereConditions.join(' AND ')}`;
     }
@@ -121,10 +121,17 @@ const findAllJobs = async (
     // Count query
     const countQuery = `
       SELECT COUNT(*) FROM jobs
-      ${whereConditions.length > 0 ? `WHERE ${whereConditions.join(' AND ')}` : ''}
+      ${
+        whereConditions.length > 0
+          ? `WHERE ${whereConditions.join(' AND ')}`
+          : ''
+      }
     `;
 
-    const countResult = await pool.query(countQuery, queryParams.slice(0, paramCounter - 3)); // Only filters, not limit/offset
+    const countResult = await pool.query(
+      countQuery,
+      queryParams.slice(0, paramCounter - 3)
+    ); // Only filters, not limit/offset
     const total = parseInt(countResult.rows[0].count, 10);
 
     return { jobs: jobsResult.rows, total };
@@ -133,7 +140,6 @@ const findAllJobs = async (
     throw error;
   }
 };
-
 
 const findJobById = async (id: string): Promise<IJob | null> => {
   try {
@@ -156,7 +162,6 @@ const saveJobInDb = async (job: IJob): Promise<IJob> => {
     );
 
     if (existingJob.rows.length > 0) {
-      console.log(`Job with URL ${job.listingUrl} already exists, skipping...`);
       return existingJob.rows[0];
     }
 
@@ -326,7 +331,9 @@ const searchJobs = async (
 };
 const getLocations = async (): Promise<string[]> => {
   try {
-    const result = await pool.query('SELECT DISTINCT location FROM jobs WHERE location IS NOT NULL');
+    const result = await pool.query(
+      'SELECT DISTINCT location FROM jobs WHERE location IS NOT NULL'
+    );
     return result.rows.map((row) => row.location);
   } catch (error: any) {
     console.error('Error fetching locations:', error.message);
@@ -430,7 +437,7 @@ const getJobCategories = async (): Promise<string[]> => {
       WHERE title IS NOT NULL
       ORDER BY category
     `);
-    
+
     return result.rows.map((row) => row.category);
   } catch (error: any) {
     console.error('Error fetching job categories:', error.message);

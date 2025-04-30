@@ -10,7 +10,6 @@ export async function GET() {
       .select('*')
       .order('id', { ascending: true });
 
-    console.log('Fetched additional questions:', data);
     if (error) {
       console.error('Error fetching additional questions:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });

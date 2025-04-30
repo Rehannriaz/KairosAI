@@ -206,8 +206,6 @@ const streamChatCompletion = async (
   onChunk: (chunk: string) => void
 ): Promise<void> => {
   try {
-    console.log('streamChatCompletion called with messages:', messages);
-
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: messages,

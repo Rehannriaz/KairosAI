@@ -211,8 +211,6 @@ const streamInterview = async (
       ...interviewHistory.filter((msg) => msg.role !== 'system'),
     ];
 
-    console.log('Sending messages to OpenAI with system prompt');
-
     // Variable to capture the full assistant response
     let fullAssistantResponse = '';
 

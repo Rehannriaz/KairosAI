@@ -43,7 +43,6 @@ export default function FeedbackPage({ params }: PageProps) {
         const data = await feedbackService.getInterviewWithFeedback(
           interviewID
         );
-        console.log('data', data);
         if (!data) {
           // router.replace('/404');
           return;

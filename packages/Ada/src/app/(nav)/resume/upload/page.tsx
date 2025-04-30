@@ -81,7 +81,6 @@ export default function ResumeUpload() {
     try {
       const fileUrl = await uploadResumesToBucket(file);
       const response = await resumeServiceInstance.uploadResume(file, fileUrl);
-      console.log('result', response);
 
       // Check if the uploaded file is a resume
       if (!response.is_resume) {

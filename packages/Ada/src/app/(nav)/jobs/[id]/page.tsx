@@ -60,7 +60,6 @@ export default function JobDetailsPage() {
   let parsedRequirements: any = null;
   try {
     parsedRequirements = job.requirements ? JSON.parse(job.requirements) : null;
-    console.log('Parsed Requirements:', parsedRequirements);
   } catch (error) {
     console.error('Failed to parse job requirements:', error);
   }

@@ -1,10 +1,9 @@
-import { Request, Response } from 'express';
 import userServices from '../services/user.services';
+import { Request, Response } from 'express';
 
 const getAllUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const users = await userServices.getAllUsers();
-    console.log('reached here', users);
     res.status(200).json(users);
   } catch (error: Error | any) {
     res.status(500).json({ error: error.message });

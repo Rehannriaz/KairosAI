@@ -9,7 +9,6 @@ class AdditionalQuestionsService {
   async getAdditionalQuestions(): Promise<Question[]> {
     try {
       const response = await axios.get(`/api/additional-questions`);
-      console.log('resopnse in service', response);
       return response.data;
     } catch (error) {
       console.error('Error fetching additional questions:', error);
@@ -35,7 +34,6 @@ class AdditionalQuestionsService {
       const response = await axios.get(
         `/api/additional-questions/responses/${userId}`
       );
-      console.log('data in getUsersPreviousResponse', response.data);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {

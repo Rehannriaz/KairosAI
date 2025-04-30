@@ -1,7 +1,8 @@
+import { JWT_SECRET } from '../config';
+import { IUser } from '../models/user.model';
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { IUser } from '../models/user.model';
-import { JWT_SECRET } from '../config';
+
 export const verifyAuthToken = (
   req: Request,
   res: Response,
@@ -22,7 +23,6 @@ export const verifyAuthToken = (
         return;
       }
 
-      console.log('req', req);
       // Attach user information to the request object
       // req.user = decoded;
       res.status(200).json({ message: 'User authenticated successfully.' });

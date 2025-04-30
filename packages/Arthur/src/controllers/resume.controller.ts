@@ -4,7 +4,6 @@ import { Request, Response } from 'express';
 
 const processResume = async (req: any, res: any) => {
   try {
-    console.log('processResume');
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
